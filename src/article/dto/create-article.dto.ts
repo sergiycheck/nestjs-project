@@ -25,8 +25,4 @@ export class CreateArticleDto extends BaseEntity {
   @IsNotEmpty()
   @IsString()
   public ownerId: string;
-
-  constructor(attrs: any) {
-    super(attrs);
-  }
 }

@@ -1,14 +1,33 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { instanceToPlain } from 'class-transformer';
-import { UserWithRelationsIds } from './dto/response-user.dto';
+import { ArticleMapperService } from 'src/article/article-mapper.service';
+import { BaseMapper } from 'src/base/mappers/base.mapper';
+import {
+  UserWithRelationsIds,
+  UserWithIncludedRelations,
+} from './dto/response-user.dto';
 import { User } from './entities/user.entity';
 
 @Injectable()
-export class UserMapperService {
+export class UserMapperService extends BaseMapper {
+  constructor(
+    @Inject(forwardRef(() => ArticleMapperService))
+    private articleMapper: ArticleMapperService,
+  ) {
+    super();
+  }
+
   public userToUserResponse(user: User) {
-    //we have to stringify and parse because we can not map array of  buffer Object ids
-    const obj = JSON.parse(JSON.stringify(user));
+    const obj = this.getConvertedFromJson(user);
     const userResp = new UserWithRelationsIds(obj);
+    const userResponse = instanceToPlain(userResp);
+
+    return userResponse;
+  }
+
+  public userToUserResponseWithRelations(user: User) {
+    const obj = this.getConvertedFromJson(user) as User;
+    const userResp = new UserWithIncludedRelations(obj);
     const userResponse = instanceToPlain(userResp);
     return userResponse;
   }

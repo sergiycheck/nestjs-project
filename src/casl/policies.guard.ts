@@ -20,6 +20,8 @@ export class PoliciesGuard implements CanActivate {
         context.getHandler(),
       ) || [];
 
+    //body article is missing for findOne request but we dont need it
+    //body article is only present in patch request
     const { user: user0, body } = context.switchToHttp().getRequest();
 
     const user = new User(user0);

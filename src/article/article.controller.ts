@@ -19,14 +19,20 @@ import {
 import { ArticleService } from './article.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
+import { ArticlesEndpoint } from 'src/api/endpoints';
+import { GetUserFromReq } from '../base/decorators/get-user-from-req.decorator';
+import { User } from 'src/users/entities/user.entity';
 
-@Controller('article')
+@Controller(ArticlesEndpoint)
 export class ArticleController {
   constructor(private readonly articleService: ArticleService) {}
 
   @Post()
-  create(@Body() createArticleDto: CreateArticleDto) {
-    return this.articleService.create(createArticleDto);
+  create(
+    @Body() createArticleDto: CreateArticleDto,
+    @GetUserFromReq() user: User,
+  ) {
+    return this.articleService.create(createArticleDto, user);
   }
 
   @Public()
@@ -35,23 +41,24 @@ export class ArticleController {
     return this.articleService.findAll();
   }
 
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  //JwtAuthGuard is bounded automatically because it is declared as a global guard
+  @UseGuards(PoliciesGuard)
   @CheckPolicies(new ReadArticlePolicyHandler())
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.articleService.findOne(+id);
+    return this.articleService.findOne(id);
   }
 
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  //JwtAuthGuard is bounded automatically because it is declared as a global guard
+  @UseGuards(PoliciesGuard)
   @CheckPolicies(new UpdateArticlePolicyHandler())
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateArticleDto: UpdateArticleDto) {
-    //TODO: retrieve article from db and check whether user possess it
-    return this.articleService.update(+id, updateArticleDto);
+    return this.articleService.update(id, updateArticleDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.articleService.remove(+id);
+  remove(@Param('id') id: string, @GetUserFromReq() user: User) {
+    return this.articleService.remove(id, user);
   }
 }

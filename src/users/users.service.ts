@@ -1,19 +1,30 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  forwardRef,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Model, Connection } from 'mongoose';
-import { User, UserDocument } from './entities/user.entity';
+import { User, UserDocument, UserToFindOne } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import mongoose from 'mongoose';
 import { UserMapperService } from './user-mapper.service';
+import { BaseService } from 'src/base/services/base.service';
+import { ArticleService } from 'src/article/article.service';
 
 @Injectable()
-export class UsersService {
+export class UsersService extends BaseService {
   constructor(
-    @InjectModel(User.name) private userModel: Model<UserDocument>,
+    @InjectModel(User.name) public userModel: Model<UserDocument>,
     @InjectConnection() private connection: Connection,
-    private userMapper: UserMapperService,
-  ) {}
+    public userMapper: UserMapperService,
+    @Inject(forwardRef(() => ArticleService))
+    private readonly articleService: ArticleService,
+  ) {
+    super();
+  }
 
   async create(createUserDto: CreateUserDto) {
     try {
@@ -27,30 +38,57 @@ export class UsersService {
         );
       }
 
-      const createdCat = new this.userModel({
-        id: new mongoose.Types.ObjectId(),
+      const newUser = new this.userModel({
+        _id: new mongoose.Types.ObjectId(),
         ...createUserDto,
       });
-      return createdCat.save();
+
+      const createdUserQuery = await newUser.save();
+      const userDoc = this.queryToObj(createdUserQuery) as User;
+      return this.userMapper.userToUserResponse(userDoc);
     } catch (error) {
       throw error;
     }
   }
 
-  findAll() {
-    return this.userModel.find().populate({ path: 'articles' }).exec();
+  async findAll() {
+    const resQuery = await this.userModel
+      .find()
+      .populate({ path: 'articles' })
+      .exec();
+
+    const resArr = resQuery.map((query) => {
+      const leanDoc = this.queryToObj(query) as User;
+      return this.userMapper.userToUserResponseWithRelations(leanDoc);
+    });
+    return resArr;
   }
 
-  async findOne(id: string) {
+  async findOneWithRelations(id: string) {
     try {
-      const userDoc = (await this.userModel
+      const userQuery = await this.userModel
         .findById(id)
         .populate({ path: 'articles' })
-        .exec()) as User;
-      return userDoc;
+        .exec();
+      const userDoc = this.queryToObj(userQuery) as User;
+      return this.userMapper.userToUserResponseWithRelations(userDoc);
     } catch (error) {
       throw new BadRequestException(`cannot find user with id ${id}`);
     }
+  }
+
+  async findByIdWithRelationsIds(id: string) {
+    try {
+      const res = await this.userModel.findById(id);
+      return this.queryToObj<User>(res);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async findOne(userProps: UserToFindOne) {
+    const res = await this.userModel.findOne(userProps);
+    return this.queryToObj<User>(res);
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
@@ -60,11 +98,7 @@ export class UsersService {
         { ...updateUserDto },
         { runValidators: true, new: true },
       );
-      const obj = updatedUserQuery.toObject({
-        getters: true,
-        virtuals: true,
-        versionKey: false,
-      });
+      const obj = this.queryToObj(updatedUserQuery) as User;
 
       return this.userMapper.userToUserResponse(obj);
     } catch (error) {
@@ -74,7 +108,8 @@ export class UsersService {
 
   async remove(id: string) {
     try {
-      return await this.userModel.deleteOne({ _id: id });
+      const deleteRes = await this.userModel.deleteOne({ _id: id });
+      return { ...deleteRes, userId: id };
     } catch (error) {
       throw error;
     }

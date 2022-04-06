@@ -33,11 +33,11 @@ export class User extends BaseEntity {
     type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Article' }],
   })
   public articles: Article[];
-
-  constructor(attrs: any) {
-    super(attrs);
-  }
 }
 
 export type UserDocument = User & Document;
 export const UserSchema = SchemaFactory.createForClass(User);
+
+export type UserToFindOne = Partial<
+  Pick<User, 'username' | 'firstName' | 'lastName' | 'createdAt'>
+>;

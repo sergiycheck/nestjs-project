@@ -12,9 +12,10 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Public } from 'src/auth/metadata.decorators';
 import { CustomParseIntPipe } from 'src/pipes/custom-parse-objectid.pipe';
+import { UsersEndpoint } from 'src/api/endpoints';
 
 @Public()
-@Controller('users')
+@Controller(UsersEndpoint)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -30,7 +31,7 @@ export class UsersController {
 
   @Get(':id')
   async findOne(@Param('id', new CustomParseIntPipe()) id: string) {
-    const user = await this.usersService.findOne(id);
+    const user = await this.usersService.findOneWithRelations(id);
     return user;
   }
 

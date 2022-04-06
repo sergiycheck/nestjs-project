@@ -9,11 +9,14 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     super();
   }
 
+  //this method is called if body contains {"username": "username val 1", "password": "password val 1"} json
   async validate(username: string, password: string) {
     const user = await this.authService.validateUser(username, password);
 
     if (!user) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException({
+        message: `user with username ${username} and password ${password} was not found`,
+      });
     }
     return user;
   }

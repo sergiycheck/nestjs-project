@@ -40,10 +40,6 @@ export class Article extends BaseEntity {
     required: true,
   })
   public owner: User;
-
-  constructor(attrs: any) {
-    super(attrs);
-  }
 }
 
 export type ArticleDocument = Article & Document;

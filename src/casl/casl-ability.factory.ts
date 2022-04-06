@@ -28,7 +28,7 @@ export class CaslAbilityFactory {
       can(ActionAbility.Read, 'all');
     }
 
-    const userId = user._id.toString();
+    const userId = user._id.valueOf().toString();
     can(ActionAbility.Update, CreateArticleDto, { ownerId: { $eq: userId } });
 
     const buildedAbility = build({
