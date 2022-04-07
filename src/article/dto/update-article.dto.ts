@@ -41,3 +41,9 @@ export class UpdateArticleDto extends BaseEntity {
   @IsEnum(ArticleGenre)
   public category: ArticleGenre;
 }
+
+export class ArticleId extends BaseEntity {
+  @IsNotEmpty()
+  @IsString()
+  public id: string;
+}

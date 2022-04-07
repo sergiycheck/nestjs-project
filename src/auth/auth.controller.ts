@@ -13,7 +13,6 @@ export class AuthController {
   @Public()
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  //@Req() req
   async login(@GetUserFromReq() user: User) {
     const access_token = await this.authService.login(user);
     return {

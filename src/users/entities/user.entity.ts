@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Role } from 'src/authorization/roles.enum';
+import { Role } from './roles.enum';
 import { BaseEntity } from 'src/base/entities/base-entities';
 import { Article } from 'src/article/entities/article.entity';
 

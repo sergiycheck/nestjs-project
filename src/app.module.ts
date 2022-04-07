@@ -3,7 +3,6 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
-import { CaslModule } from './casl/casl.module';
 import { ArticleModule } from './article/article.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD, APP_FILTER } from '@nestjs/core';
@@ -28,7 +27,6 @@ import { CustomConnectionService } from './custom-conn.service';
     ThrottlerModule.forRoot({ ttl: 5, limit: 10 }),
     AuthModule,
     UsersModule,
-    CaslModule,
     ArticleModule,
   ],
   controllers: [AppController],

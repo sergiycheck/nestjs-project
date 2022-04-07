@@ -28,3 +28,22 @@ export class ArticleWithIncludedRelations extends ArticleResponseRootData {
   @Type(() => UserWithRelationsIds)
   public owner: UserWithRelationsIds;
 }
+
+class ArticleNonChangeableData extends BaseEntity {
+  public title: string;
+  public subtitle: string;
+  public description: string;
+  public category: string;
+  public createdAt: string;
+  public updatedAt: string;
+}
+
+export class MappedArticleResponse extends ArticleNonChangeableData {
+  public id: string;
+  public ownerId: string;
+}
+
+export class MappedArticleResponseWithRelations extends ArticleNonChangeableData {
+  public id: string;
+  public owner: UserWithRelationsIds;
+}

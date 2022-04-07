@@ -73,6 +73,7 @@ export class DbInitializer {
           subtitle: 'subtitle great',
           description: 'article description 1',
           category: 'history',
+          createdAt: '2021-03-21',
           owner: authors[0]._id,
         },
         {
@@ -81,6 +82,7 @@ export class DbInitializer {
           subtitle: 'subtitle great 2',
           description: 'article description 3',
           category: 'games',
+          createdAt: '2021-04-21',
           owner: authors[0]._id,
         },
         {
@@ -89,6 +91,7 @@ export class DbInitializer {
           subtitle: 'subtitle arrogant',
           description: 'article description dark',
           category: 'history',
+          createdAt: '2021-03-10',
           owner: authors[1]._id,
         },
         {
@@ -97,6 +100,7 @@ export class DbInitializer {
           subtitle: 'subtitle bored',
           description: 'article description cute',
           category: 'sport',
+          createdAt: '2020-07-27',
           owner: authors[1]._id,
         },
         {

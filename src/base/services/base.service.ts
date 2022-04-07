@@ -1,3 +1,4 @@
+import { InternalServerErrorException } from '@nestjs/common';
 import mongoose from 'mongoose';
 
 export type ToObjectContainingQuery<T> = {
@@ -6,6 +7,11 @@ export type ToObjectContainingQuery<T> = {
 
 export class BaseService {
   protected queryToObj<T>(query: ToObjectContainingQuery<T>) {
+    if (!query)
+      throw new InternalServerErrorException(
+        'query was not provided for calling toObject method',
+      );
+
     return query.toObject({
       getters: true,
       virtuals: true,

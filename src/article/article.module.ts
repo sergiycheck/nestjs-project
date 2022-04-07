@@ -7,7 +7,6 @@ import {
 } from '@nestjs/common';
 import { ArticleService } from './article.service';
 import { ArticleController } from './article.controller';
-import { CaslModule } from 'src/casl/casl.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Article, ArticleSchema } from './entities/article.entity';
 import { ArticleMapperService } from './article-mapper.service';
@@ -18,8 +17,32 @@ import { CheckIfUserPossessesArticleMiddleware } from './middlewares/check-if-us
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: Article.name, schema: ArticleSchema }]),
-    CaslModule,
+    MongooseModule.forFeatureAsync([
+      {
+        name: Article.name,
+        useFactory: () => {
+          const schema = ArticleSchema;
+          schema.index(
+            {
+              title: 'text',
+              subtitle: 'text',
+              description: 'text',
+              category: 'text',
+            },
+            {
+              weights: {
+                title: 10,
+                subtitle: 8,
+                description: 2,
+                category: 5,
+              },
+              name: 'ArticleTextIndex',
+            },
+          );
+          return schema;
+        },
+      },
+    ]),
     forwardRef(() => UsersModule),
   ],
   controllers: [ArticleController],

@@ -13,9 +13,11 @@ import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
 import { DbInitializer } from './seedDb';
 import { CustomConnectionService } from './custom-conn.service';
+import mongoose from 'mongoose';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { bufferLogs: true });
+  mongoose.set('debug', { shell: true });
 
   const logger = new MyLogger(app.get(ConfigService));
   app.useLogger(logger);

@@ -6,23 +6,21 @@ import {
   Patch,
   Param,
   Delete,
-  UseGuards,
+  Query,
 } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Public } from 'src/auth/metadata.decorators';
-import { CheckPolicies } from 'src/casl/check-policies.decorat';
-import { PoliciesGuard } from 'src/casl/policies.guard';
-import {
-  ReadArticlePolicyHandler,
-  UpdateArticlePolicyHandler,
-} from 'src/casl/article-policy-handlers';
 import { ArticleService } from './article.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { ArticlesEndpoint } from 'src/api/endpoints';
 import { GetUserFromReq } from '../base/decorators/get-user-from-req.decorator';
 import { User } from 'src/users/entities/user.entity';
+import { CustomParseObjectIdPipe } from 'src/pipes/custom-parse-objectid.pipe';
+import { ArticleSearchText } from './dto/article-requests';
 
+//JwtAuthGuard is bounded automatically to endpoint that is not marked with @Public decorator
+//because it is declared as a global guard
+//user is add to the req obj by passport
 @Controller(ArticlesEndpoint)
 export class ArticleController {
   constructor(private readonly articleService: ArticleService) {}
@@ -37,23 +35,35 @@ export class ArticleController {
 
   @Public()
   @Get()
-  findAll() {
-    return this.articleService.findAll();
+  findAll(@Query() query: ArticleSearchText) {
+    return this.articleService.findAll(query);
   }
 
-  //JwtAuthGuard is bounded automatically because it is declared as a global guard
-  @UseGuards(PoliciesGuard)
-  @CheckPolicies(new ReadArticlePolicyHandler())
+  @Public()
+  @Get('by-user-id/:userId')
+  findArticlesByUser(
+    @Param('userId', new CustomParseObjectIdPipe()) userId: string,
+  ) {
+    return this.articleService.getArticlesByUserId(userId);
+  }
+
+  @Public()
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', new CustomParseObjectIdPipe()) id: string) {
     return this.articleService.findOne(id);
   }
 
-  //JwtAuthGuard is bounded automatically because it is declared as a global guard
-  @UseGuards(PoliciesGuard)
-  @CheckPolicies(new UpdateArticlePolicyHandler())
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateArticleDto: UpdateArticleDto) {
+    // const userFromBearerTokenId = user._id.valueOf().toString();
+    // if (userFromBearerTokenId !== userFromArticle.id) {
+    //   return next(
+    //     new BadRequestException({
+    //       message: `user from bearer token is not the same as owner of this article ${userFromBearerTokenId} !== ${userFromArticle.id}`,
+    //     }),
+    //   );
+    // }
+
     return this.articleService.update(id, updateArticleDto);
   }
 

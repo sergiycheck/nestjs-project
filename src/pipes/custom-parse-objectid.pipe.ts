@@ -7,7 +7,7 @@ import {
 import mongoose from 'mongoose';
 
 @Injectable()
-export class CustomParseIntPipe implements PipeTransform {
+export class CustomParseObjectIdPipe implements PipeTransform {
   transform(value: string, metadata: ArgumentMetadata) {
     const ObjectId = mongoose.Types.ObjectId;
     if (!ObjectId.isValid(value))

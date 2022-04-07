@@ -34,3 +34,22 @@ export class UserWithIncludedRelations extends UserResponseRootData {
   @Type(() => ArticleWithRelationsIds)
   public articles: ArticleWithRelationsIds[];
 }
+
+class UserNonChangeableData extends BaseEntity {
+  public username: string;
+  public firstName: string;
+  public lastName: string;
+  public role: string;
+  public createdAt: string;
+  public numberOfArticles: string;
+}
+
+export class MappedUserResponse extends UserNonChangeableData {
+  public id: string;
+  public articleIds: string[];
+}
+
+export class MappedUserResponseWithRelations extends UserNonChangeableData {
+  public id: string;
+  public articleIds: ArticleWithRelationsIds[];
+}
