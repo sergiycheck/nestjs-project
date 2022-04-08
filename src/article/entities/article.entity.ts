@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { BaseEntity } from 'src/base/entities/base-entities';
-import { User } from 'src/users/entities/user.entity';
+import { BaseEntity } from '../../base/entities/base-entities';
+import { User } from '../../users/entities/user.entity';
 import { ArticleGenre } from './article.enum';
 import { Expose } from 'class-transformer';
 

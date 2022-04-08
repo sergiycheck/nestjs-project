@@ -10,9 +10,9 @@ import { ArticleController } from './article.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Article, ArticleSchema } from './entities/article.entity';
 import { ArticleMapperService } from './article-mapper.service';
-import { UsersModule } from 'src/users/users.module';
+import { UsersModule } from '../users/users.module';
 import { AddOwnerToRequestMiddleware } from './middlewares/add-owner-to-request.middleware';
-import { ArticlesEndpoint } from 'src/api/endpoints';
+import { ArticlesEndpoint } from '../api/endpoints';
 import { CheckIfUserPossessesArticleMiddleware } from './middlewares/check-if-user-possesses-article.middleware';
 
 @Module({

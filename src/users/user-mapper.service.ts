@@ -1,7 +1,7 @@
 import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { instanceToPlain } from 'class-transformer';
-import { ArticleMapperService } from 'src/article/article-mapper.service';
-import { BaseMapper } from 'src/base/mappers/base.mapper';
+import { ArticleMapperService } from '../article/article-mapper.service';
+import { BaseMapper } from '../base/mappers/base.mapper';
 import {
   UserWithRelationsIds,
   UserWithIncludedRelations,

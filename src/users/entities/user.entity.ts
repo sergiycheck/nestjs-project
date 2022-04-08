@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Role } from './roles.enum';
-import { BaseEntity } from 'src/base/entities/base-entities';
-import { Article } from 'src/article/entities/article.entity';
+import { BaseEntity } from '../../base/entities/base-entities';
+import { Article } from '../../article/entities/article.entity';
 
 @Schema()
 export class User extends BaseEntity {

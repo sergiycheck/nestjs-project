@@ -1,5 +1,5 @@
 import { Length, IsNotEmpty, IsString, IsEnum } from 'class-validator';
-import { BaseEntity } from 'src/base/entities/base-entities';
+import { BaseEntity } from '../../base/entities/base-entities';
 import { ArticleGenre } from '../entities/article.enum';
 
 export class CreateArticleDto extends BaseEntity {

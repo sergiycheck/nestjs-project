@@ -3,7 +3,7 @@ import {
   Injectable,
   NestMiddleware,
 } from '@nestjs/common';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from '../../users/users.service';
 import { Request, Response, NextFunction } from 'express';
 import { validate } from 'class-validator';
 import { ArticleId } from '../dto/update-article.dto';

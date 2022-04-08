@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ArticleModule } from './article/article.module';
@@ -11,6 +9,8 @@ import { MyLoggerModule } from './injecting-custom-logger/myLogger.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AllExceptionsFilter } from './filters/all-exceptions.filter';
 import { CustomConnectionService } from './custom-conn.service';
+import { AppController } from './app-initial/app.controller';
+import { AppService } from './app-initial/app.service';
 
 @Module({
   imports: [
@@ -31,10 +31,12 @@ import { CustomConnectionService } from './custom-conn.service';
   ],
   controllers: [AppController],
   providers: [
-    AppService,
-    { provide: APP_GUARD, useClass: ThrottlerGuard },
-    { provide: APP_FILTER, useClass: AllExceptionsFilter },
+    { provide: APP_GUARD, useExisting: ThrottlerGuard },
+    { provide: APP_FILTER, useExisting: AllExceptionsFilter },
+    ThrottlerGuard,
+    AllExceptionsFilter,
     CustomConnectionService,
+    AppService,
   ],
 })
 export class AppModule {}

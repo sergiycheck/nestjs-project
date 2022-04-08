@@ -3,7 +3,6 @@ import {
   forwardRef,
   Inject,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -17,8 +16,8 @@ import { UserMapperService } from './user-mapper.service';
 import {
   BaseService,
   ToObjectContainingQuery,
-} from 'src/base/services/base.service';
-import { ArticleService } from 'src/article/article.service';
+} from '../base/services/base.service';
+import { ArticleService } from '../article/article.service';
 import {
   MappedUserResponse,
   MappedUserResponseWithRelations,
