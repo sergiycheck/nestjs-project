@@ -1,6 +1,6 @@
 import { Exclude, Expose, Type } from 'class-transformer';
-import { ArticleWithRelationsIds } from 'src/article/dto/response-article.dto';
-import { BaseEntity } from 'src/base/entities/base-entities';
+import { ArticleWithRelationsIds } from '../../article/dto/response-article.dto';
+import { BaseEntity } from '../../base/entities/base-entities';
 
 //TODO: use mixins to describe controller return types
 //https://www.typescriptlang.org/docs/handbook/mixins.html
@@ -51,5 +51,5 @@ export class MappedUserResponse extends UserNonChangeableData {
 
 export class MappedUserResponseWithRelations extends UserNonChangeableData {
   public id: string;
-  public articleIds: ArticleWithRelationsIds[];
+  public articles: ArticleWithRelationsIds[];
 }

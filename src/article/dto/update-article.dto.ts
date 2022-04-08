@@ -5,7 +5,7 @@ import {
   IsString,
   Length,
 } from 'class-validator';
-import { BaseEntity } from 'src/base/entities/base-entities';
+import { BaseEntity } from '../../base/entities/base-entities';
 import { ArticleGenre } from '../entities/article.enum';
 
 //validators aren't executed if we extend from PartialType

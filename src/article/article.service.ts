@@ -10,12 +10,13 @@ import { Model } from 'mongoose';
 import {
   BaseService,
   ToObjectContainingQuery,
-} from 'src/base/services/base.service';
-import { User } from 'src/users/entities/user.entity';
-import { UsersService } from 'src/users/users.service';
+} from '../base/services/base.service';
+import { User } from '../users/entities/user.entity';
+import { UsersService } from '../users/users.service';
 import { ArticleMapperService } from './article-mapper.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import {
+  CreateArticleResponse,
   MappedArticleResponse,
   MappedArticleResponseWithRelations,
 } from './dto/response-article.dto';
@@ -62,7 +63,7 @@ export class ArticleService extends BaseService {
     return {
       updatedUser: userResp,
       newArticle: articleResp,
-    };
+    } as CreateArticleResponse;
   }
 
   public getResponse(articleQuery: ToObjectContainingQuery<Article>) {

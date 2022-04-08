@@ -11,9 +11,9 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Public } from 'src/auth/metadata.decorators';
-import { CustomParseObjectIdPipe } from 'src/pipes/custom-parse-objectid.pipe';
-import { UsersEndpoint } from 'src/api/endpoints';
+import { Public } from '../auth/metadata.decorators';
+import { CustomParseObjectIdPipe } from '../pipes/custom-parse-objectid.pipe';
+import { UsersEndpoint } from '../api/endpoints';
 
 @Public()
 @Controller(UsersEndpoint)

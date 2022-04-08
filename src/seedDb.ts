@@ -5,21 +5,21 @@ import { Article, ArticleDocument } from './article/entities/article.entity';
 import { MyLogger } from './injecting-custom-logger/my-logger.service';
 
 export class DbInitializer {
+  public userCollectionName = `${User.name.toLowerCase()}s`;
+  public articleCollectionName = `${Article.name.toLowerCase()}s`;
+
   constructor(private connection: Connection, private logger: MyLogger) {}
 
   public async seedDb() {
-    const userCollectionName = `${User.name.toLowerCase()}s`;
-    const articleCollectionName = `${Article.name.toLowerCase()}s`;
-
     const userCollection = await this.connection.db
       .listCollections({
-        name: userCollectionName,
+        name: this.userCollectionName,
       })
       .toArray();
 
     const articleCollection = await this.connection.db
       .listCollections({
-        name: articleCollectionName,
+        name: this.articleCollectionName,
       })
       .toArray();
 

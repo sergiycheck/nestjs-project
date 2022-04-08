@@ -8,14 +8,14 @@ import {
   Delete,
   Query,
 } from '@nestjs/common';
-import { Public } from 'src/auth/metadata.decorators';
+import { Public } from '../auth/metadata.decorators';
 import { ArticleService } from './article.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
-import { ArticlesEndpoint } from 'src/api/endpoints';
+import { ArticlesEndpoint } from '../api/endpoints';
 import { GetUserFromReq } from '../base/decorators/get-user-from-req.decorator';
-import { User } from 'src/users/entities/user.entity';
-import { CustomParseObjectIdPipe } from 'src/pipes/custom-parse-objectid.pipe';
+import { User } from '../users/entities/user.entity';
+import { CustomParseObjectIdPipe } from '../pipes/custom-parse-objectid.pipe';
 import { ArticleSearchText } from './dto/article-requests';
 
 //JwtAuthGuard is bounded automatically to endpoint that is not marked with @Public decorator

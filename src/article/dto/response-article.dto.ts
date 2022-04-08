@@ -1,6 +1,9 @@
-import { UserWithRelationsIds } from 'src/users/dto/response-user.dto';
+import {
+  MappedUserResponse,
+  UserWithRelationsIds,
+} from '../../users/dto/response-user.dto';
 import { Expose, Type } from 'class-transformer';
-import { BaseEntity } from 'src/base/entities/base-entities';
+import { BaseEntity } from '../../base/entities/base-entities';
 
 export class ArticleResponseRootData extends BaseEntity {
   @Expose({ name: 'id' })
@@ -47,3 +50,8 @@ export class MappedArticleResponseWithRelations extends ArticleNonChangeableData
   public id: string;
   public owner: UserWithRelationsIds;
 }
+
+export type CreateArticleResponse = {
+  updatedUser: MappedUserResponse;
+  newArticle: MappedArticleResponse;
+};
