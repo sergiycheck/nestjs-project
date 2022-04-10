@@ -16,7 +16,7 @@ class UserResponseRootData extends BaseEntity {
   public lastName: string;
 
   @Exclude()
-  public password: string;
+  public passwordHash: string;
 
   public role: string;
 

@@ -1,8 +1,10 @@
 import mongoose from 'mongoose';
 import { Model, Connection } from 'mongoose';
+import * as bcrypt from 'bcrypt';
 import { User, UserDocument } from './users/entities/user.entity';
 import { Article, ArticleDocument } from './article/entities/article.entity';
 import { MyLogger } from './injecting-custom-logger/my-logger.service';
+import { SALT_ROUNDS } from './auth/constants';
 
 export class DbInitializer {
   public userCollectionName = `${User.name.toLowerCase()}s`;
@@ -39,12 +41,21 @@ export class DbInitializer {
     )) as Model<ArticleDocument>;
 
     try {
+      const usersPasswords = ['cft0id32', 'v32rfizx', '3182v53f'];
+      const usersHashes = [];
+      for (const userPass of usersPasswords) {
+        const salt = await bcrypt.genSalt(SALT_ROUNDS);
+        const hash = await bcrypt.hash(userPass, salt);
+        usersHashes.push(hash);
+      }
+      const [user1Hash, user2Hash, user3Hash] = usersHashes;
+
       const authors = await UserModel.create([
         {
           _id: new mongoose.Types.ObjectId(),
           firstName: 'Leanne',
           lastName: 'Graham',
-          password: 'cft0id32',
+          passwordHash: user1Hash,
           username: 'leane1Gra',
           role: 'user',
         },
@@ -52,7 +63,7 @@ export class DbInitializer {
           _id: new mongoose.Types.ObjectId(),
           firstName: 'Clementine',
           lastName: 'Bauch',
-          password: 'v32rfizx',
+          passwordHash: user2Hash,
           username: 'Samantha',
           role: 'writer',
         },
@@ -60,7 +71,7 @@ export class DbInitializer {
           _id: new mongoose.Types.ObjectId(),
           firstName: 'badFirstName',
           lastName: 'Howell',
-          password: '3182v53f',
+          passwordHash: user3Hash,
           username: 'dweege3',
           role: 'admin',
         },

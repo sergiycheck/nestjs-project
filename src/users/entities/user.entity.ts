@@ -17,8 +17,8 @@ export class User extends BaseEntity {
   @Prop({ type: String, required: true, minlength: 3, maxlength: 60 })
   public lastName: string;
 
-  @Prop({ type: String, required: true, minlength: 6, maxlength: 50 })
-  public password: string;
+  @Prop({ type: String, required: true, minlength: 6, maxlength: 500 })
+  public passwordHash: string;
 
   @Prop({ type: String, enum: Role })
   public role: Role;

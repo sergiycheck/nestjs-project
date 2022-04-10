@@ -7,11 +7,12 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
-import { Model, Connection } from 'mongoose';
+import mongoose, { Model, Connection } from 'mongoose';
+import * as bcrypt from 'bcrypt';
+
 import { User, UserDocument, UserToFindOne } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import mongoose from 'mongoose';
 import { UserMapperService } from './user-mapper.service';
 import {
   BaseService,
@@ -22,6 +23,7 @@ import {
   MappedUserResponse,
   MappedUserResponseWithRelations,
 } from './dto/response-user.dto';
+import { SALT_ROUNDS } from '../auth/constants';
 
 //all thrown exceptions is handled by global exception filter
 @Injectable()
@@ -47,9 +49,13 @@ export class UsersService extends BaseService {
       );
     }
 
+    const { password, ...props } = createUserDto;
+    const hash = await bcrypt.hash(password, SALT_ROUNDS);
+
     const newUser = new this.userModel({
       _id: new mongoose.Types.ObjectId(),
-      ...createUserDto,
+      passwordHash: hash,
+      ...props,
     });
 
     const createdUserQuery = await newUser.save();

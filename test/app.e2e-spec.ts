@@ -23,6 +23,9 @@ import { CreateArticleResponse } from '../src/article/dto/response-article.dto';
 // change this options in package.json from "rootDir": "src" to "rootDir": "\" to
 // be able to debug and run e2e.spec.ts files from vscode-jest extension
 
+//instruction how to debug jest test from microsoft
+//https://github.com/Microsoft/vscode-recipes/tree/master/debugging-jest-tests
+
 describe('app (e2e)', () => {
   let app: INestApplication;
   let connection: Connection;
@@ -117,9 +120,8 @@ describe('app (e2e)', () => {
     return test;
   });
 
-  it('/ (POST) creates article', async () => {
+  it('/ (POST) creates article', async function () {
     expect.assertions(9);
-
     const userToLogin = {
       username: 'leane1Gra',
       password: 'cft0id32',
@@ -172,5 +174,7 @@ describe('app (e2e)', () => {
     expect(updatedUser.numberOfArticles).toBe(
       userFindByUsernameResponse.numberOfArticles + 1,
     );
-  });
+  }, 147483647); // timeout max 32 bit signed integer
+  //dont forget to set timeout for debugging, otherwise afterEach and afterAll will
+  //be called before test finish
 });
