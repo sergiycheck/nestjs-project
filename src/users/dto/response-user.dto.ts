@@ -53,3 +53,9 @@ export class MappedUserResponseWithRelations extends UserNonChangeableData {
   public id: string;
   public articles: ArticleWithRelationsIds[];
 }
+
+export type UserDeleteResult = {
+  userId: string;
+  acknowledged: boolean;
+  deletedCount: number;
+};

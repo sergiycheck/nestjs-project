@@ -4,10 +4,9 @@ import {
   Inject,
   Injectable,
   NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
-import mongoose, { Model, Connection } from 'mongoose';
+import mongoose, { Model, Connection, LeanDocument } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 
 import { User, UserDocument, UserToFindOne } from './entities/user.entity';
@@ -22,6 +21,7 @@ import { ArticleService } from '../article/article.service';
 import {
   MappedUserResponse,
   MappedUserResponseWithRelations,
+  UserDeleteResult,
 } from './dto/response-user.dto';
 import { SALT_ROUNDS } from '../auth/constants';
 
@@ -38,16 +38,21 @@ export class UsersService extends BaseService {
     super();
   }
 
-  async create(createUserDto: CreateUserDto) {
+  private async countUsername(username?: string) {
+    if (!username) return;
     const usernameCount = await this.userModel.count({
-      username: createUserDto.username,
+      username: username,
     });
 
     if (usernameCount) {
       throw new BadRequestException(
-        `${createUserDto.username} username has already been taken`,
+        `${username} username has already been taken`,
       );
     }
+  }
+
+  async create(createUserDto: CreateUserDto) {
+    this.countUsername(createUserDto.username);
 
     const { password, ...props } = createUserDto;
     const hash = await bcrypt.hash(password, SALT_ROUNDS);
@@ -63,12 +68,24 @@ export class UsersService extends BaseService {
     return this.getResponse(createdUserQuery);
   }
 
-  public getResponse(entityQuery: ToObjectContainingQuery<User>) {
+  public getResponse(
+    entityQuery: ToObjectContainingQuery<User>,
+  ): MappedUserResponse | null {
+    if (!entityQuery) return null;
+
     const entityDoc = super.queryToObj(entityQuery);
-    return this.userMapper.userToUserResponse(entityDoc) as MappedUserResponse;
+    return this.userObjToPlain(entityDoc);
   }
 
-  private getResponseWithRelations(entityQuery: ToObjectContainingQuery<User>) {
+  public userObjToPlain(user: LeanDocument<User>) {
+    return this.userMapper.userToUserResponse(user) as MappedUserResponse;
+  }
+
+  private getResponseWithRelations(
+    entityQuery: ToObjectContainingQuery<User>,
+  ): MappedUserResponseWithRelations | null {
+    if (!entityQuery) return null;
+
     const entityDoc = super.queryToObj(entityQuery);
     return this.userMapper.userToUserResponseWithRelations(
       entityDoc,
@@ -104,18 +121,13 @@ export class UsersService extends BaseService {
     return this.getResponse(res);
   }
 
-  private async findOneUserByProps(userProps: UserToFindOne) {
-    const res = await this.userModel.findOne(userProps);
-    if (!res)
-      throw new UnauthorizedException({
-        message: 'user was not found for props',
-        props: userProps,
-      });
-    return res;
+  private findOneUserByProps(userProps: UserToFindOne) {
+    return this.userModel.findOne(userProps);
   }
 
   async findOne(userProps: UserToFindOne) {
     const res = await this.findOneUserByProps(userProps);
+    if (!res) return null;
     return this.queryToObj<User>(res);
   }
 
@@ -125,6 +137,7 @@ export class UsersService extends BaseService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
+    this.countUsername(updateUserDto?.username);
     const updatedUserQuery = await this.userModel.findOneAndUpdate(
       { _id: id },
       { ...updateUserDto },
@@ -135,6 +148,7 @@ export class UsersService extends BaseService {
 
   async remove(id: string) {
     const deleteRes = await this.userModel.deleteOne({ _id: id });
-    return { ...deleteRes, userId: id };
+    if (!deleteRes.deletedCount) return null;
+    return { ...deleteRes, userId: id } as UserDeleteResult;
   }
 }

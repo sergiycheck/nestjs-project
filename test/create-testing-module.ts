@@ -11,14 +11,19 @@ import { CustomConnectionService } from '../src/custom-conn.service';
 import { AppController } from '../src/app-initial/app.controller';
 import { AppService } from '../src/app-initial/app.service';
 
-export const createAndCompileTestingModule = async () => {
+export const createAndCompileTestingModule = async ({
+  partOfTheDbName,
+}: {
+  partOfTheDbName: string;
+}) => {
   const moduleFixture: TestingModule = await Test.createTestingModule({
     imports: [
       ConfigModule.forRoot({ cache: true, expandVariables: true }),
       MongooseModule.forRootAsync({
         imports: [ConfigModule],
         useFactory: async (configService: ConfigService) => {
-          const uri = configService.get<string>('MONGO_TESTING_DB_URI');
+          let uri = configService.get<string>('MONGO_TESTING_DB_URI');
+          uri = uri.concat(partOfTheDbName);
           return { uri };
         },
         inject: [ConfigService],

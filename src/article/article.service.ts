@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
-import { Model } from 'mongoose';
+import { Model, LeanDocument } from 'mongoose';
 import {
   BaseService,
   ToObjectContainingQuery,
@@ -39,7 +39,7 @@ export class ArticleService extends BaseService {
     super();
   }
 
-  async create(createArticleDto: CreateArticleDto, user: User) {
+  async create(createArticleDto: CreateArticleDto, user: LeanDocument<User>) {
     delete createArticleDto.ownerId;
 
     const newArticle = new this.articleModel({
@@ -167,7 +167,7 @@ export class ArticleService extends BaseService {
     return this.getResponse(updatedArticleQuery);
   }
 
-  async remove(id: string, user: User) {
+  async remove(id: string, user: LeanDocument<User>) {
     const updatedUserQuery = await this.usersService.userModel.findOneAndUpdate(
       { _id: user._id },
       {

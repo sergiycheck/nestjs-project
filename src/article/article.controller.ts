@@ -13,22 +13,26 @@ import { ArticleService } from './article.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { ArticlesEndpoint } from '../api/endpoints';
-import { GetUserFromReq } from '../base/decorators/get-user-from-req.decorator';
+import { GetUserFromReqDec } from '../base/decorators/get-user-from-req.decorator';
 import { User } from '../users/entities/user.entity';
 import { CustomParseObjectIdPipe } from '../pipes/custom-parse-objectid.pipe';
 import { ArticleSearchText } from './dto/article-requests';
+import { BaseController } from '../base/controllers/base.controller';
+import { LeanDocument } from 'mongoose';
 
 //JwtAuthGuard is bounded automatically to endpoint that is not marked with @Public decorator
 //because it is declared as a global guard
 //user is add to the req obj by passport
 @Controller(ArticlesEndpoint)
-export class ArticleController {
-  constructor(private readonly articleService: ArticleService) {}
+export class ArticleController extends BaseController {
+  constructor(private readonly articleService: ArticleService) {
+    super();
+  }
 
   @Post()
   create(
     @Body() createArticleDto: CreateArticleDto,
-    @GetUserFromReq() user: User,
+    @GetUserFromReqDec() user: LeanDocument<User>,
   ) {
     return this.articleService.create(createArticleDto, user);
   }
@@ -55,20 +59,15 @@ export class ArticleController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateArticleDto: UpdateArticleDto) {
-    // const userFromBearerTokenId = user._id.valueOf().toString();
-    // if (userFromBearerTokenId !== userFromArticle.id) {
-    //   return next(
-    //     new BadRequestException({
-    //       message: `user from bearer token is not the same as owner of this article ${userFromBearerTokenId} !== ${userFromArticle.id}`,
-    //     }),
-    //   );
-    // }
-
+    //TODO: check if user is accessed to update article
     return this.articleService.update(id, updateArticleDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string, @GetUserFromReq() user: User) {
+  remove(
+    @Param('id') id: string,
+    @GetUserFromReqDec() user: LeanDocument<User>,
+  ) {
     return this.articleService.remove(id, user);
   }
 }
