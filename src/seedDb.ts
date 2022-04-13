@@ -13,18 +13,6 @@ export class DbInitializer {
   constructor(private connection: Connection, private logger: MyLogger) {}
 
   public async seedDb() {
-    // const userCollection = await this.connection.db
-    //   .listCollections({
-    //     name: this.userCollectionName,
-    //   })
-    //   .toArray();
-
-    // const articleCollection = await this.connection.db
-    //   .listCollections({
-    //     name: this.articleCollectionName,
-    //   })
-    //   .toArray();
-
     const usersDocs = await this.connection.db
       .collection(this.userCollectionName)
       .find()
