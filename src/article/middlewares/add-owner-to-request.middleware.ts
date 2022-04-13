@@ -36,8 +36,6 @@ export class AddOwnerToRequestMiddleware implements NestMiddleware {
         }),
       );
 
-    // user is add by passport we just learning middlewares
-    // req.user = user;
     return next();
   }
 }

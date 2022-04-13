@@ -25,7 +25,6 @@ import {
 } from './dto/response-user.dto';
 import { SALT_ROUNDS } from '../auth/constants';
 
-// all thrown exceptions is handled by global exception filter
 @Injectable()
 export class UsersService extends BaseService {
   constructor(

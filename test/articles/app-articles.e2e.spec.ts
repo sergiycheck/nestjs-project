@@ -134,8 +134,6 @@ describe('app articles (e2e)', () => {
     TIMEOUT_FOR_DEBUGGING,
   );
 
-  // TODO: BUG passing when running separately but fails if runs with app article all tests
-
   it(
     '/ (GET) find articles with owner by owner id (ArticleController findArticlesByUser)',
     async () => {
@@ -158,10 +156,6 @@ describe('app articles (e2e)', () => {
     },
     TIMEOUT_FOR_DEBUGGING,
   );
-
-  // TODO: BUG passing when running separately but fails if runs with app article all tests
-  // TODO: ERROR [ExceptionsHandler] text index required for $text query
-  // text index is not creating for tests in debug mode
 
   it(
     '/ (GET) find article by id (ArticleController findOne)',
@@ -234,8 +228,6 @@ describe('app articles (e2e)', () => {
     TIMEOUT_FOR_DEBUGGING,
   );
 
-  // TODO: force space after comment
-
   it(
     '/ (DELETE) deletes article (ArticleController remove)',
     async () => {
@@ -274,6 +266,4 @@ describe('app articles (e2e)', () => {
     },
     TIMEOUT_FOR_DEBUGGING,
   );
-
-  // it('/ (GET) (ArticleController findOne)', async () => {}, TIMEOUT_FOR_DEBUGGING);
 });

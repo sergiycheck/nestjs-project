@@ -27,9 +27,6 @@ import {
 import { MappedUserResponse } from '../users/dto/response-user.dto';
 import { CanUserManageArticleGuard } from './can-user-manage-article.guard';
 
-// JwtAuthGuard is bounded automatically to endpoint that is not marked with @Public decorator
-// because it is declared as a global guard
-// user is add to the req obj by passport
 @Controller(ArticlesEndpoint)
 export class ArticleController extends BaseController {
   constructor(private readonly articleService: ArticleService) {
@@ -86,7 +83,6 @@ export class ArticleController extends BaseController {
     );
   }
 
-  // TODO: check if user is accessed to update article
   @UseGuards(CanUserManageArticleGuard)
   @Patch(':id')
   async update(
@@ -101,7 +97,6 @@ export class ArticleController extends BaseController {
     );
   }
 
-  // TODO: check if user is accessed to delete article
   @UseGuards(CanUserManageArticleGuard)
   @Delete(':id')
   async remove(

@@ -9,16 +9,6 @@ import { MyLogger } from '../src/injecting-custom-logger/my-logger.service';
 import { DbInitializer } from '../src/seedDb';
 import { Connection } from 'mongoose';
 
-// change this options in package.json from "rootDir": "src" to "rootDir": "\" to
-// be able to debug and run e2e.spec.ts files from vscode-jest extension
-
-// to debug hit the break point and choose "Jest Current File" run and debug option
-
-// instruction how to debug jest test from microsoft
-// https://github.com/Microsoft/vscode-recipes/tree/master/debugging-jest-tests
-
-// TODO: change jest-e2e.json from  "rootDir": "./articles" to "rootDir": "."
-
 describe('app global (e2e)', () => {
   let app: INestApplication;
   let connection: Connection;

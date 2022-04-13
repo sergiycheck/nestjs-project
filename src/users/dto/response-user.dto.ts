@@ -2,9 +2,6 @@ import { Exclude, Expose, Type } from 'class-transformer';
 import { ArticleWithRelationsIds } from '../../article/dto/response-article.dto';
 import { BaseEntity } from '../../base/entities/base-entities';
 
-// TODO: use mixins to describe controller return types
-// https://www.typescriptlang.org/docs/handbook/mixins.html
-
 class UserResponseRootData extends BaseEntity {
   @Expose({ name: 'id' })
   public _id: string;

@@ -10,8 +10,6 @@ import {
 } from './dto/response-article.dto';
 import { Article } from './entities/article.entity';
 
-// TODO: https://stackoverflow.com/questions/31776949/create-object-from-class-name-in-javasscript-ecmascript-6
-
 @Injectable()
 export class ArticleMapperService extends BaseMapper {
   constructor(

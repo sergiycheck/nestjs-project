@@ -29,16 +29,15 @@ export const createAndCompileTestingModule = async ({
         inject: [ConfigService],
       }),
       MyLoggerModule,
-      // ThrottlerModule.forRoot({ ttl: 5, limit: 10 }),
+
       AuthModule,
       UsersModule,
       ArticleModule,
     ],
     controllers: [AppController],
     providers: [
-      // { provide: APP_GUARD, useExisting: ThrottlerGuard },
       { provide: APP_FILTER, useExisting: AllExceptionsFilter },
-      // ThrottlerGuard,
+
       AllExceptionsFilter,
       CustomConnectionService,
       AppService,

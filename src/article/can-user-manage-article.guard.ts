@@ -17,7 +17,7 @@ export class CanUserManageArticleGuard implements CanActivate {
     const userFromBearerToken = GetUserFromReqInner(context);
 
     const articleId = request.params['id'] as string;
-    // check if we get data from db in canActivate
+
     const userFromDb = await this.usersService.findByIdWithRelationsIds(
       userFromBearerToken.id,
     );

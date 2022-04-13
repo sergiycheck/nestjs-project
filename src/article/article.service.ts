@@ -28,7 +28,6 @@ import {
 } from './dto/article-requests';
 import { MappedUserResponse } from '../users/dto/response-user.dto';
 
-// all thrown exceptions is handled by global exception filter
 @Injectable()
 export class ArticleService extends BaseService {
   constructor(
@@ -163,7 +162,6 @@ export class ArticleService extends BaseService {
         .exec();
     }
 
-    // losing this if we pass only method call
     const resArr = resQuery.map(this.getResponseWithRelations.bind(this));
     return resArr;
   }
