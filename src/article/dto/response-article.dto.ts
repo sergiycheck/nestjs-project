@@ -1,6 +1,7 @@
 import {
   MappedUserResponse,
   UserWithRelationsIds,
+  UserWithExcludedProps,
 } from '../../users/dto/response-user.dto';
 import { Expose, Type } from 'class-transformer';
 import { BaseEntity } from '../../base/entities/base-entities';
@@ -32,6 +33,12 @@ export class ArticleWithIncludedRelations extends ArticleResponseRootData {
   public owner: UserWithRelationsIds;
 }
 
+export class ArticleWithRelationsIdsExcludedUserProps extends ArticleResponseRootData {
+  @Expose({ name: 'ownerId' })
+  @Type(() => UserWithExcludedProps)
+  public owner: UserWithExcludedProps;
+}
+
 class ArticleNonChangeableData extends BaseEntity {
   public title: string;
   public subtitle: string;
@@ -48,10 +55,17 @@ export class MappedArticleResponse extends ArticleNonChangeableData {
 
 export class MappedArticleResponseWithRelations extends ArticleNonChangeableData {
   public id: string;
-  public owner: UserWithRelationsIds;
+  public owner: MappedUserResponse;
 }
 
 export type CreateArticleResponse = {
   updatedUser: MappedUserResponse;
   newArticle: MappedArticleResponse;
+};
+
+export type ArticleDeleteResult = {
+  articleId: string;
+  updatedUser: MappedUserResponse;
+  acknowledged: boolean;
+  deletedCount: number;
 };

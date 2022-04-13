@@ -5,10 +5,12 @@ import { UserMapperService } from '../users/user-mapper.service';
 import {
   ArticleWithRelationsIds,
   ArticleWithIncludedRelations,
+  ArticleWithRelationsIdsExcludedUserProps,
+  MappedArticleResponse,
 } from './dto/response-article.dto';
 import { Article } from './entities/article.entity';
 
-//TODO: https://stackoverflow.com/questions/31776949/create-object-from-class-name-in-javasscript-ecmascript-6
+// TODO: https://stackoverflow.com/questions/31776949/create-object-from-class-name-in-javasscript-ecmascript-6
 
 @Injectable()
 export class ArticleMapperService extends BaseMapper {
@@ -30,6 +32,22 @@ export class ArticleMapperService extends BaseMapper {
     const obj = this.getConvertedFromJson(entity);
     const entityResp = new ArticleWithIncludedRelations(obj);
     const entityResponse = instanceToPlain(entityResp);
+    return entityResponse;
+  }
+
+  public articleToArticleResponseWithExcludedRelations(entity: Article) {
+    const obj = this.getConvertedFromJson(entity);
+    const entityResp = new ArticleWithRelationsIdsExcludedUserProps(obj);
+    const {
+      ownerId: owner,
+      ...transformedData
+    }: { ownerId: { id: string }; transformedData: any[] } = instanceToPlain(
+      entityResp,
+    ) as any;
+    const entityResponse = {
+      ownerId: owner.id,
+      ...transformedData,
+    } as unknown as MappedArticleResponse;
     return entityResponse;
   }
 }

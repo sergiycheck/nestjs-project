@@ -13,21 +13,30 @@ export class DbInitializer {
   constructor(private connection: Connection, private logger: MyLogger) {}
 
   public async seedDb() {
-    const userCollection = await this.connection.db
-      .listCollections({
-        name: this.userCollectionName,
-      })
+    // const userCollection = await this.connection.db
+    //   .listCollections({
+    //     name: this.userCollectionName,
+    //   })
+    //   .toArray();
+
+    // const articleCollection = await this.connection.db
+    //   .listCollections({
+    //     name: this.articleCollectionName,
+    //   })
+    //   .toArray();
+
+    const usersDocs = await this.connection.db
+      .collection(this.userCollectionName)
+      .find()
+      .toArray();
+    const articleDocs = await this.connection.db
+      .collection(this.articleCollectionName)
+      .find()
       .toArray();
 
-    const articleCollection = await this.connection.db
-      .listCollections({
-        name: this.articleCollectionName,
-      })
-      .toArray();
-
-    if (userCollection.length || articleCollection.length) {
+    if (usersDocs.length || articleDocs.length) {
       this.logger.customLog(
-        `userCollection.length ${userCollection.length} articleCollection.length ${articleCollection.length}`,
+        `userCollection.length ${usersDocs.length} articleCollection.length ${articleDocs.length}`,
       );
       return;
     }

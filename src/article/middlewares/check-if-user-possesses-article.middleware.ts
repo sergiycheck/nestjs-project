@@ -9,7 +9,7 @@ import { validate } from 'class-validator';
 import { ArticleId } from '../dto/update-article.dto';
 import { ArticleService } from '../article.service';
 
-//user will be added to request later, after middleware
+// user will be added to request later, after middleware
 @Injectable()
 export class CheckIfUserPossessesArticleMiddleware implements NestMiddleware {
   constructor(

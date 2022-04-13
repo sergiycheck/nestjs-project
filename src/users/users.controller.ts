@@ -46,8 +46,8 @@ export class UsersController extends BaseController {
   async findAll() {
     const res = await this.usersService.findAll();
     return this.getResponse<MappedUserResponseWithRelations[]>(
-      'users was found',
-      'no users was found',
+      'users were found',
+      'no users were found',
       res,
     );
   }
@@ -97,7 +97,7 @@ export class UsersController extends BaseController {
 
     return this.getResponse<UserDeleteResult>(
       'user was deleted successfully',
-      'failt to delete user',
+      'fail to delete the user',
       res,
     );
   }

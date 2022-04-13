@@ -4,6 +4,7 @@ import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { User } from '../users/entities/user.entity';
+import { MappedUserResponse } from '../users/dto/response-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -15,7 +16,7 @@ export class AuthService {
   async validateUser(
     username: string,
     pass: string,
-  ): Promise<LeanDocument<User>> {
+  ): Promise<MappedUserResponse> {
     const user = await this.usersService.findOne({ username });
 
     if (!user)
@@ -26,7 +27,7 @@ export class AuthService {
 
     const isMatch = await bcrypt.compare(pass, user.passwordHash);
     if (user && isMatch) {
-      return user;
+      return this.getResponseForUser(user);
     }
     return null;
   }
@@ -35,14 +36,13 @@ export class AuthService {
     return this.usersService.userObjToPlain(user);
   }
 
-  async login(user: LeanDocument<User>) {
-    const payload = { username: user.username, sub: user._id };
-    const userResponse = this.getResponseForUser(user);
+  async login(user: MappedUserResponse) {
+    const payload = { username: user.username, sub: user.id };
 
     return {
-      //generate JWT token
+      // generate JWT token
       access_token: this.jwtService.sign(payload),
-      userResponse,
+      userResponse: user,
     };
   }
 }

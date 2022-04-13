@@ -50,8 +50,12 @@ describe('app users (e2e)', () => {
   });
 
   afterEach(async () => {
-    await connection.db.dropCollection(dbInitializer.articleCollectionName);
-    await connection.db.dropCollection(dbInitializer.userCollectionName);
+    await connection.db
+      .collection(dbInitializer.articleCollectionName)
+      .deleteMany({});
+    await connection.db
+      .collection(dbInitializer.userCollectionName)
+      .deleteMany({});
   });
 
   it('/ (GET) users with populated articles (UsersController findAll)', () => {
@@ -65,7 +69,7 @@ describe('app users (e2e)', () => {
           MappedUserResponseWithRelations[]
         >;
 
-        expect(result.message).toBe('users was found');
+        expect(result.message).toBe('users were found');
         expect(result.data).toBeInstanceOf(Array);
         expect(result.data.length).toBe(3);
         expect(Array.isArray(result.data[0].articles)).toBeTruthy();

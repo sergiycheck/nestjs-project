@@ -4,9 +4,8 @@ import { Public } from './metadata.decorators';
 import { LocalAuthGuard } from './local-auth.guard';
 import { AuthService } from './auth.service';
 import { GetUserFromReqDec } from '../base/decorators/get-user-from-req.decorator';
-import { User } from '../users/entities/user.entity';
 import { UserLoginResponse } from './responses/responses.dto';
-import { LeanDocument } from 'mongoose';
+import { MappedUserResponse } from '../users/dto/response-user.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -15,7 +14,7 @@ export class AuthController {
   @Public()
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  async login(@GetUserFromReqDec() user: LeanDocument<User>) {
+  async login(@GetUserFromReqDec() user: MappedUserResponse) {
     const { access_token, userResponse } = await this.authService.login(user);
     return new UserLoginResponse({
       message: 'successfully logged in',

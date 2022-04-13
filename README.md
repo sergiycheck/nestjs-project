@@ -58,4 +58,6 @@ $ npm run test:cov
 
 8. Delete any article from database with decreasing **_numberOfArticles_** field for user that created this article.
 
-TODO: 9. Api endpoints is tested with supertest library.
+9. Api endpoints is tested with supertest library.
+
+TODO: 10. add more tests with trying different requests json data. try requests with bad and invalid data

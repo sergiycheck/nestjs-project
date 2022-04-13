@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { Public } from '../auth/metadata.decorators';
 import { ArticleService } from './article.service';
@@ -14,15 +15,21 @@ import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { ArticlesEndpoint } from '../api/endpoints';
 import { GetUserFromReqDec } from '../base/decorators/get-user-from-req.decorator';
-import { User } from '../users/entities/user.entity';
 import { CustomParseObjectIdPipe } from '../pipes/custom-parse-objectid.pipe';
 import { ArticleSearchText } from './dto/article-requests';
 import { BaseController } from '../base/controllers/base.controller';
-import { LeanDocument } from 'mongoose';
+import {
+  ArticleDeleteResult,
+  CreateArticleResponse,
+  MappedArticleResponse,
+  MappedArticleResponseWithRelations,
+} from './dto/response-article.dto';
+import { MappedUserResponse } from '../users/dto/response-user.dto';
+import { CanUserManageArticleGuard } from './can-user-manage-article.guard';
 
-//JwtAuthGuard is bounded automatically to endpoint that is not marked with @Public decorator
-//because it is declared as a global guard
-//user is add to the req obj by passport
+// JwtAuthGuard is bounded automatically to endpoint that is not marked with @Public decorator
+// because it is declared as a global guard
+// user is add to the req obj by passport
 @Controller(ArticlesEndpoint)
 export class ArticleController extends BaseController {
   constructor(private readonly articleService: ArticleService) {
@@ -30,44 +37,82 @@ export class ArticleController extends BaseController {
   }
 
   @Post()
-  create(
+  async create(
     @Body() createArticleDto: CreateArticleDto,
-    @GetUserFromReqDec() user: LeanDocument<User>,
+    @GetUserFromReqDec() user: MappedUserResponse,
   ) {
-    return this.articleService.create(createArticleDto, user);
+    const res = await this.articleService.create(createArticleDto, user);
+
+    return this.getResponse<CreateArticleResponse>(
+      'article was created',
+      'article was not created',
+      res,
+    );
   }
 
   @Public()
   @Get()
-  findAll(@Query() query: ArticleSearchText) {
-    return this.articleService.findAll(query);
+  async findAll(@Query() query: ArticleSearchText) {
+    const res = await this.articleService.findAll(query);
+    return this.getResponse<MappedArticleResponseWithRelations[]>(
+      'articles were found',
+      'no articles was found',
+      res,
+    );
   }
 
   @Public()
   @Get('by-user-id/:userId')
-  findArticlesByUser(
+  async findArticlesByUser(
     @Param('userId', new CustomParseObjectIdPipe()) userId: string,
   ) {
-    return this.articleService.getArticlesByUserId(userId);
+    const res = await this.articleService.getArticlesByUserId(userId);
+    return this.getResponse<MappedArticleResponseWithRelations[]>(
+      `articles were found four user`,
+      'no articles were found',
+      res,
+    );
   }
 
   @Public()
   @Get(':id')
-  findOne(@Param('id', new CustomParseObjectIdPipe()) id: string) {
-    return this.articleService.findOne(id);
+  async findOne(@Param('id', new CustomParseObjectIdPipe()) id: string) {
+    const res = await this.articleService.findOne(id);
+
+    return this.getResponse<MappedArticleResponseWithRelations>(
+      'article was found',
+      `article was not found for id ${id}`,
+      res,
+    );
   }
 
+  // TODO: check if user is accessed to update article
+  @UseGuards(CanUserManageArticleGuard)
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateArticleDto: UpdateArticleDto) {
-    //TODO: check if user is accessed to update article
-    return this.articleService.update(id, updateArticleDto);
+  async update(
+    @Param('id') id: string,
+    @Body() updateArticleDto: UpdateArticleDto,
+  ) {
+    const res = await this.articleService.update(id, updateArticleDto);
+    return this.getResponse<MappedArticleResponse>(
+      'article was updated successfully',
+      'fail to update the article',
+      res,
+    );
   }
 
+  // TODO: check if user is accessed to delete article
+  @UseGuards(CanUserManageArticleGuard)
   @Delete(':id')
-  remove(
+  async remove(
     @Param('id') id: string,
-    @GetUserFromReqDec() user: LeanDocument<User>,
+    @GetUserFromReqDec() user: MappedUserResponse,
   ) {
-    return this.articleService.remove(id, user);
+    const res = await this.articleService.remove(id, user);
+    return this.getResponse<ArticleDeleteResult>(
+      'article was deleted successfully',
+      'fail to delete the article',
+      res,
+    );
   }
 }

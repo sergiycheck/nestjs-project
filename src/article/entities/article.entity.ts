@@ -5,7 +5,7 @@ import { User } from '../../users/entities/user.entity';
 import { ArticleGenre } from './article.enum';
 import { Expose } from 'class-transformer';
 
-//A collection can only have one text search index, but that index can cover multiple fields.
+// A collection can only have one text search index, but that index can cover multiple fields.
 @Schema()
 export class Article extends BaseEntity {
   @Expose({ name: 'id' })

@@ -3,6 +3,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ConfigService } from '@nestjs/config';
 import { UsersService } from './../users/users.service';
+import { MappedUserResponse } from '../users/dto/response-user.dto';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -18,7 +19,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super(configObj);
   }
 
-  async validate(payload: any) {
+  async validate(payload: any): Promise<MappedUserResponse> {
     const userObj = { userId: payload.sub, username: payload.username };
 
     const user = await this.usersService.findOne({
@@ -30,6 +31,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         `user with username ${userObj.username} is not found`,
       );
     }
-    return user;
+    const userResponse = this.usersService.userObjToPlain(user);
+    return userResponse;
   }
 }

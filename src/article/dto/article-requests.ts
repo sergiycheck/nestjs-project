@@ -13,6 +13,16 @@ export class ArticleSearchText {
 
   @IsOptional()
   @IsNotEmpty()
+  @IsString()
+  public limit: number;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsString()
+  public skip: number;
+
+  @IsOptional()
+  @IsNotEmpty()
   @IsDateString()
   public lessThanCreatedAt: string;
 
@@ -33,6 +43,8 @@ export class ArticleSearchText {
 }
 export const searchArticlePropsNames = {
   searchText: 'searchText',
+  limit: 'limit',
+  skip: 'skip',
   lessThanCreatedAt: 'lessThanCreatedAt',
   greaterThanCreatedAt: 'greaterThanCreatedAt',
   lessThanUpdatedAt: 'lessThanUpdatedAt',

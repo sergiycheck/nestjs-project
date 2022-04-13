@@ -25,7 +25,7 @@ import {
 } from './dto/response-user.dto';
 import { SALT_ROUNDS } from '../auth/constants';
 
-//all thrown exceptions is handled by global exception filter
+// all thrown exceptions is handled by global exception filter
 @Injectable()
 export class UsersService extends BaseService {
   constructor(
@@ -125,7 +125,7 @@ export class UsersService extends BaseService {
     return this.userModel.findOne(userProps);
   }
 
-  async findOne(userProps: UserToFindOne) {
+  async findOne(userProps: UserToFindOne): Promise<LeanDocument<User>> {
     const res = await this.findOneUserByProps(userProps);
     if (!res) return null;
     return this.queryToObj<User>(res);

@@ -15,7 +15,7 @@ export class CanUserManageUserGuard implements CanActivate {
   ): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest() as Request;
     const user = GetUserFromReqInner(context);
-    const userIdFromBearerToken = user._id.valueOf().toString();
+    const userIdFromBearerToken = user.id;
     const userId = request.params['id'] as string;
 
     if (userIdFromBearerToken !== userId) {
