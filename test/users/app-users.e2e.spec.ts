@@ -38,6 +38,7 @@ describe('app users (e2e)', () => {
   });
 
   afterAll(async () => {
+    await connection.db.dropDatabase();
     await app.close();
   });
 

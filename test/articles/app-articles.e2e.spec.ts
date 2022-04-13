@@ -45,6 +45,7 @@ describe('app articles (e2e)', () => {
   });
 
   afterAll(async () => {
+    await connection.db.dropDatabase();
     await app.close();
   });
 
