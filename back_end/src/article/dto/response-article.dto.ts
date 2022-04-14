@@ -58,14 +58,14 @@ export class MappedArticleResponseWithRelations extends ArticleNonChangeableData
   public owner: MappedUserResponse;
 }
 
-export type CreateArticleResponse = {
+export class CreateArticleResponse {
   updatedUser: MappedUserResponse;
   newArticle: MappedArticleResponse;
-};
+}
 
-export type ArticleDeleteResult = {
+export class ArticleDeleteResult {
   articleId: string;
   updatedUser: MappedUserResponse;
   acknowledged: boolean;
   deletedCount: number;
-};
+}

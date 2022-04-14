@@ -15,7 +15,7 @@ import { MyLogger } from '../../src/injecting-custom-logger/my-logger.service';
 import { DbInitializer } from '../../src/seedDb';
 import { Connection } from 'mongoose';
 import { UserLoginResponse } from '../../src/auth/responses/responses.dto';
-import { EndPointResponse } from '../../src/base/responses/response';
+import { EndPointResponse } from '../../src/base/responses/response.dto';
 import mongoose from 'mongoose';
 import { TIMEOUT_FOR_DEBUGGING } from './../constants';
 

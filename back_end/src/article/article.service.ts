@@ -23,9 +23,9 @@ import {
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { Article, ArticleDocument } from './entities/article.entity';
 import {
-  ArticleSearchText,
+  ArticleSearchQueryTextDto,
   searchArticlePropsNames,
-} from './dto/article-requests';
+} from './dto/article-requests.dto';
 import { MappedUserResponse } from '../users/dto/response-user.dto';
 
 // all thrown exceptions is handled by global exception filter
@@ -102,7 +102,7 @@ export class ArticleService extends BaseService {
     ) as MappedArticleResponse;
   }
 
-  private getFindArgsArr(requestQuery: ArticleSearchText) {
+  private getFindArgsArr(requestQuery: ArticleSearchQueryTextDto) {
     const query = {} as any;
     const projection = null;
     const options = {} as any;
@@ -138,7 +138,7 @@ export class ArticleService extends BaseService {
     return [query, projection, options];
   }
 
-  async findAll(requestQuery: ArticleSearchText) {
+  async findAll(requestQuery: ArticleSearchQueryTextDto) {
     let resQuery;
     if (requestQuery && Object.keys(requestQuery).length) {
       const findArgsArr = this.getFindArgsArr(requestQuery);

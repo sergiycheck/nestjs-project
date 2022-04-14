@@ -16,7 +16,7 @@ import {
   MappedArticleResponse,
   MappedArticleResponseWithRelations,
 } from '../../src/article/dto/response-article.dto';
-import { EndPointResponse } from '../../src/base/responses/response';
+import { EndPointResponse } from '../../src/base/responses/response.dto';
 import { TIMEOUT_FOR_DEBUGGING } from './../constants';
 
 describe('app articles (e2e)', () => {

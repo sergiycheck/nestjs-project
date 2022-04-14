@@ -6,11 +6,16 @@ import { AuthService } from './auth.service';
 import { GetUserFromReqDec } from '../base/decorators/get-user-from-req.decorator';
 import { UserLoginResponse } from './responses/responses.dto';
 import { MappedUserResponse } from '../users/dto/response-user.dto';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { LoginAuthDto } from './dto/auth.dto';
+import { AuthEndPoint } from '../api/endpoints';
 
-@Controller('auth')
+@ApiTags(AuthEndPoint)
+@Controller(AuthEndPoint)
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  @ApiBody({ type: LoginAuthDto })
   @Public()
   @UseGuards(LocalAuthGuard)
   @Post('login')

@@ -1,4 +1,4 @@
-import { EndPointResponse } from '../responses/response';
+import { EndPointResponse } from '../responses/response.dto';
 
 export class BaseController {
   protected getResponse<T>(

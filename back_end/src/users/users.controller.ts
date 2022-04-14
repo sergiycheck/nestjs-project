@@ -22,7 +22,9 @@ import {
 } from './dto/response-user.dto';
 import { BaseController } from '../base/controllers/base.controller';
 import { CanUserManageUserGuard } from './can-user-manage-user.guard';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags(UsersEndpoint)
 @Controller(UsersEndpoint)
 export class UsersController extends BaseController {
   constructor(private readonly usersService: UsersService) {

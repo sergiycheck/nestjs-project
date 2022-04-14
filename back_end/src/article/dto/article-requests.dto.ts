@@ -5,41 +5,41 @@ import {
   IsString,
 } from 'class-validator';
 
-export class ArticleSearchText {
+export class ArticleSearchQueryTextDto {
   @IsOptional()
   @IsNotEmpty()
   @IsString()
-  public searchText: string;
-
-  @IsOptional()
-  @IsNotEmpty()
-  @IsString()
-  public limit: number;
+  public searchText?: string;
 
   @IsOptional()
   @IsNotEmpty()
   @IsString()
-  public skip: number;
+  public limit?: number;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsString()
+  public skip?: number;
 
   @IsOptional()
   @IsNotEmpty()
   @IsDateString()
-  public lessThanCreatedAt: string;
+  public lessThanCreatedAt?: string;
 
   @IsOptional()
   @IsNotEmpty()
   @IsDateString()
-  public greaterThanCreatedAt: string;
+  public greaterThanCreatedAt?: string;
 
   @IsOptional()
   @IsNotEmpty()
   @IsDateString()
-  public lessThanUpdatedAt: string;
+  public lessThanUpdatedAt?: string;
 
   @IsOptional()
   @IsNotEmpty()
   @IsDateString()
-  public greaterThanUpdatedAt: string;
+  public greaterThanUpdatedAt?: string;
 }
 export const searchArticlePropsNames = {
   searchText: 'searchText',

@@ -16,7 +16,7 @@ import { UpdateArticleDto } from './dto/update-article.dto';
 import { ArticlesEndpoint } from '../api/endpoints';
 import { GetUserFromReqDec } from '../base/decorators/get-user-from-req.decorator';
 import { CustomParseObjectIdPipe } from '../pipes/custom-parse-objectid.pipe';
-import { ArticleSearchText } from './dto/article-requests';
+import { ArticleSearchQueryTextDto } from './dto/article-requests.dto';
 import { BaseController } from '../base/controllers/base.controller';
 import {
   ArticleDeleteResult,
@@ -26,16 +26,32 @@ import {
 } from './dto/response-article.dto';
 import { MappedUserResponse } from '../users/dto/response-user.dto';
 import { CanUserManageArticleGuard } from './can-user-manage-article.guard';
+import {
+  ApiHeader,
+  ApiNotFoundResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
+import { ApiCreateArticleDecorator } from './swagger_decorators/api-create-article.decorator';
 
 // JwtAuthGuard is bounded automatically to endpoint that is not marked with @Public decorator
 // because it is declared as a global guard
 // user is add to the req obj by passport
+
+@ApiTags(ArticlesEndpoint)
 @Controller(ArticlesEndpoint)
 export class ArticleController extends BaseController {
   constructor(private readonly articleService: ArticleService) {
     super();
   }
 
+  @ApiCreateArticleDecorator(CreateArticleResponse)
+  @ApiNotFoundResponse({ description: 'article was not created' })
+  @ApiUnauthorizedResponse()
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer token',
+  })
   @Post()
   async create(
     @Body() createArticleDto: CreateArticleDto,
@@ -52,7 +68,7 @@ export class ArticleController extends BaseController {
 
   @Public()
   @Get()
-  async findAll(@Query() query: ArticleSearchText) {
+  async findAll(@Query() query: ArticleSearchQueryTextDto) {
     const res = await this.articleService.findAll(query);
     return this.getResponse<MappedArticleResponseWithRelations[]>(
       'articles were found',
@@ -86,7 +102,6 @@ export class ArticleController extends BaseController {
     );
   }
 
-  // TODO: check if user is accessed to update article
   @UseGuards(CanUserManageArticleGuard)
   @Patch(':id')
   async update(
@@ -101,7 +116,6 @@ export class ArticleController extends BaseController {
     );
   }
 
-  // TODO: check if user is accessed to delete article
   @UseGuards(CanUserManageArticleGuard)
   @Delete(':id')
   async remove(
