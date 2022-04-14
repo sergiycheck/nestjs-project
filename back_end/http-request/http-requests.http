@@ -1,0 +1,74 @@
+@port = 3027
+
+###
+GET http://localhost:{{port}} HTTP/1.1
+
+###
+POST http://localhost:{{port}}/users HTTP/1.1
+content-type: application/json
+
+{
+	"username": "myUsername1",
+	"firstName": "Leanne",
+	"lastName": "Graham",
+	"password": "cft0id32"
+}
+###
+DELETE http://localhost:{{port}}/users/624d6be2e78ba81512644e31 HTTP/1.1
+
+###
+GET http://localhost:{{port}}/users HTTP/1.1
+
+###
+GET http://localhost:{{port}}/users/624d6af795e3fb95bdaef2c1 HTTP/1.1
+
+###
+PATCH http://localhost:{{port}}/users/624d6af795e3fb95bdaef2c1 HTTP/1.1
+content-type: application/json
+
+{
+	"firstName": "Janny",
+	"lastName": "Westfield"
+}
+
+###
+GET http://localhost:{{port}}/articles HTTP/1.1
+
+
+###
+//you have to send {username, password} object
+POST http://localhost:{{port}}/auth/login HTTP/1.1
+content-type: application/json
+
+{
+	"username": "Richardson1", 
+	"password": "cft0id32"
+}
+
+###
+GET http://localhost:{{port}}/articles/624b35053dc1c450ee59284c HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlJpY2hhcmRzb24xIiwic3ViIjoiNjI0YjM1MDMzZGMxYzQ1MGVlNTkyODQyIiwiaWF0IjoxNjQ5MjY0NjY1LCJleHAiOjE2NDkzNjQ2NjR9.lBmX4uU6IO3VIRfO3l-aTnuOZ10KGed7kKDV9ItlZ44
+
+###
+POST http://localhost:{{port}}/articles HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlJpY2hhcmRzb24xIiwic3ViIjoiNjI0YjM1MDMzZGMxYzQ1MGVlNTkyODQyIiwiaWF0IjoxNjQ5MjY4NTExLCJleHAiOjE2NDkzNjg1MTB9.a70xDFL8AJk0J2jrVQtLxotRKg_GEzHeV6HDkfMKb0o
+content-type: application/json
+
+{
+	"title": "article a",
+  "subtitle": "subtitle a",
+  "description": "description a",
+  "category": "history",
+	"ownerId": "624b35033dc1c450ee592842"
+}
+
+###
+PATCH http://localhost:{{port}}/articles/624ddbbc6d45a7f2176622b2 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlJpY2hhcmRzb24xIiwic3ViIjoiNjI0YjM1MDMzZGMxYzQ1MGVlNTkyODQyIiwiaWF0IjoxNjQ5MjY4NTExLCJleHAiOjE2NDkzNjg1MTB9.a70xDFL8AJk0J2jrVQtLxotRKg_GEzHeV6HDkfMKb0o
+content-type: application/json
+
+{
+	"id": "624ddbbc6d45a7f2176622b2",
+	"subtitle": "subtitle a (upt 1)",
+	"ownerId": "624b35033dc1c450ee592842"
+}
