@@ -32,7 +32,7 @@ import { MappedUserResponse } from '../users/dto/response-user.dto';
 @Injectable()
 export class ArticleService extends BaseService {
   constructor(
-    @InjectModel(Article.name) private articleModel: Model<ArticleDocument>,
+    @InjectModel(Article.name) public articleModel: Model<ArticleDocument>,
     private articleMapper: ArticleMapperService,
     @Inject(forwardRef(() => UsersService))
     private readonly usersService: UsersService,

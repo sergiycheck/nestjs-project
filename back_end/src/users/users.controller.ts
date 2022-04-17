@@ -24,6 +24,9 @@ import { BaseController } from '../base/controllers/base.controller';
 import { CanUserManageUserGuard } from './can-user-manage-user.guard';
 import { ApiTags } from '@nestjs/swagger';
 
+const sleep = (ms) => {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+};
 @ApiTags(UsersEndpoint)
 @Controller(UsersEndpoint)
 export class UsersController extends BaseController {
@@ -44,10 +47,21 @@ export class UsersController extends BaseController {
   }
 
   @Public()
+  @Get('with-relations')
+  async findAllWithRelations() {
+    const res = await this.usersService.findAlWithRelations();
+    return this.getResponse<MappedUserResponseWithRelations[]>(
+      'users were found',
+      'no users were found',
+      res,
+    );
+  }
+
+  @Public()
   @Get()
   async findAll() {
     const res = await this.usersService.findAll();
-    return this.getResponse<MappedUserResponseWithRelations[]>(
+    return this.getResponse<MappedUserResponse[]>(
       'users were found',
       'no users were found',
       res,
@@ -67,10 +81,23 @@ export class UsersController extends BaseController {
   }
 
   @Public()
-  @Get(':id')
-  async findOne(@Param('id', new CustomParseObjectIdPipe()) id: string) {
+  @Get('with-relations/:id')
+  async findOneWithRelations(
+    @Param('id', new CustomParseObjectIdPipe()) id: string,
+  ) {
     const user = await this.usersService.findOneWithRelations(id);
     return this.getResponse<MappedUserResponseWithRelations>(
+      'user was found',
+      `user was not found for id ${id}`,
+      user,
+    );
+  }
+
+  @Public()
+  @Get(':id')
+  async findOne(@Param('id', new CustomParseObjectIdPipe()) id: string) {
+    const user = await this.usersService.findByIdWithRelationsIds(id);
+    return this.getResponse<MappedUserResponse>(
       'user was found',
       `user was not found for id ${id}`,
       user,

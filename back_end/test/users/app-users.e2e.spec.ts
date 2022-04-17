@@ -59,10 +59,10 @@ describe('app users (e2e)', () => {
       .deleteMany({});
   });
 
-  it('/ (GET) users with populated articles (UsersController findAll)', () => {
+  it('/ (GET) users with populated articles (UsersController findAllWithRelations)', () => {
     expect.assertions(7);
     return request(app.getHttpServer())
-      .get(`/${UsersEndpoint}`)
+      .get(`/${UsersEndpoint}/with-relations`)
       .then((response) => {
         expect(response.statusCode).toBe(200);
 
@@ -170,7 +170,7 @@ describe('app users (e2e)', () => {
     return test;
   });
 
-  it('/ (GET) gets user by id with relations (UsersController findOne)', async () => {
+  it('/ (GET) gets user by id with relations (UsersController findOneWithRelations)', async () => {
     expect.assertions(5);
     const username = 'Samantha';
 
@@ -187,7 +187,9 @@ describe('app users (e2e)', () => {
 
     expect(mongoose.Types.ObjectId.isValid(id)).toBeTruthy();
 
-    response = await request(httpServer).get(`/${UsersEndpoint}/${id}`);
+    response = await request(httpServer).get(
+      `/${UsersEndpoint}/with-relations/${id}`,
+    );
 
     const resultUserResponseWithRelations =
       response.body as EndPointResponse<MappedUserResponseWithRelations>;
@@ -225,6 +227,7 @@ describe('app users (e2e)', () => {
         expect.assertions(6);
 
         const updateUserDto = {
+          id: userLoginResponse.userResponse.id,
           firstName: 'firstname changed 1',
           username: 'usernameChanged1',
         };
@@ -251,7 +254,7 @@ describe('app users (e2e)', () => {
     it(
       '/ (DELETE) deletes user (UsersController remove)',
       async () => {
-        expect.assertions(5);
+        expect.assertions(7);
         const updateUserUrl = `/${UsersEndpoint}/${userLoginResponse.userResponse.id}`;
 
         const response = await request(httpServer)
@@ -264,6 +267,8 @@ describe('app users (e2e)', () => {
         expect(result.message).toBe('user was deleted successfully');
         expect(result.data.deletedCount).toBe(1);
         expect(result.data.acknowledged).toBeTruthy();
+        expect(result.data.articlesUpdateResults.modifiedCount).toBe(2);
+        expect(result.data.articlesUpdateResults.matchedCount).toBe(2);
       },
       TIMEOUT_FOR_DEBUGGING,
     );

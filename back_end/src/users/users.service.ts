@@ -92,7 +92,7 @@ export class UsersService extends BaseService {
     ) as MappedUserResponseWithRelations;
   }
 
-  async findAll() {
+  async findAlWithRelations() {
     const resQuery = await this.userModel
       .find()
       .populate({ path: 'articles' })
@@ -100,6 +100,15 @@ export class UsersService extends BaseService {
 
     const resArr = resQuery.map((query) => {
       return this.getResponseWithRelations(query);
+    });
+    return resArr;
+  }
+
+  async findAll() {
+    const resQuery = await this.userModel.find().exec();
+
+    const resArr = resQuery.map((query) => {
+      return this.getResponse(query);
     });
     return resArr;
   }
@@ -138,17 +147,27 @@ export class UsersService extends BaseService {
 
   async update(id: string, updateUserDto: UpdateUserDto) {
     this.countUsername(updateUserDto?.username);
+    const { id: userId, ...data } = updateUserDto;
     const updatedUserQuery = await this.userModel.findOneAndUpdate(
       { _id: id },
-      { ...updateUserDto },
+      { ...data },
       { runValidators: true, new: true },
     );
     return this.getResponse(updatedUserQuery);
   }
 
   async remove(id: string) {
+    const updateArticleRes = await this.articleService.articleModel.updateMany(
+      { owner: id },
+      { owner: null },
+    );
+    const { upsertedCount, upsertedId, ...results } = updateArticleRes;
     const deleteRes = await this.userModel.deleteOne({ _id: id });
     if (!deleteRes.deletedCount) return null;
-    return { ...deleteRes, userId: id } as UserDeleteResult;
+    return {
+      ...deleteRes,
+      userId: id,
+      articlesUpdateResults: results,
+    } as UserDeleteResult;
   }
 }

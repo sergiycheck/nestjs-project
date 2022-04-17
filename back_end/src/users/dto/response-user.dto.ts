@@ -61,4 +61,9 @@ export class UserDeleteResult {
   userId: string;
   acknowledged: boolean;
   deletedCount: number;
+  articlesUpdateResults: {
+    matchedCount: number;
+    modifiedCount: number;
+    acknowledged: boolean;
+  };
 }
