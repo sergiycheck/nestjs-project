@@ -1,9 +1,9 @@
 import { apiSlice } from "../../app/apiSlice";
 import { usersEndPointName } from "../../app/api-endpoints";
-import { EndPointResponse } from "../../app/web-api.types";
-import { CreateUserDto, UserDeleteResult, UserWithRelationsIds } from "./types";
+import { CreateUserDto, UpdateUserDto, UserDeleteResult, UserWithRelationsIds } from "./types";
 import { createEntityAdapter, createSelector, EntityState } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
+import { EndPointResponse } from "../../app/web-api.types";
 
 const usersAdapter = createEntityAdapter<UserWithRelationsIds>();
 
@@ -29,7 +29,7 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
           : // error occurred
             [{ type: "User", id: "LIST" }],
     }),
-    addUser: builder.mutation<UserWithRelationsIds, CreateUserDto>({
+    addUser: builder.mutation<EndPointResponse<UserWithRelationsIds>, CreateUserDto>({
       query: (body) => ({
         url: `/${usersEndPointName}`,
         method: "POST",
@@ -49,25 +49,23 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
       providesTags: (result, error, id) => [{ type: "User", id }],
     }),
 
-    updateUser: builder.mutation<UserWithRelationsIds, Partial<UserWithRelationsIds>>({
+    updateUser: builder.mutation<EndPointResponse<UserWithRelationsIds>, UpdateUserDto>({
       query: (data) => {
-        const { numberOfArticles, articleIds, createdAt, role, ...body } = data;
-
         return {
           url: `/${usersEndPointName}/${data.id}`,
           method: "PATCH",
-          body,
+          body: data,
         };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: "User", id }],
+      invalidatesTags: (result, error, { id }) => [{ type: "User", id: "LIST" }],
     }),
 
-    deleteUser: builder.mutation<UserDeleteResult, string>({
+    deleteUser: builder.mutation<EndPointResponse<UserDeleteResult>, string>({
       query: (userId) => ({
         url: `/${usersEndPointName}/${userId}`,
         method: "DELETE",
       }),
-      invalidatesTags: (result, error, id) => [{ type: "User", id }],
+      invalidatesTags: (result, error, id) => [{ type: "User", id: "LIST" }],
     }),
   }),
 });
