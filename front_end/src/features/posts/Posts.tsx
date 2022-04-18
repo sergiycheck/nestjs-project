@@ -1,7 +1,7 @@
 import { useAppSelector } from "../../app/hooks";
 
 export const Posts = () => {
-  return <div>groups will be here</div>;
+  return <div>posts will be here</div>;
 };
 
 const PostExcerpt = () => {

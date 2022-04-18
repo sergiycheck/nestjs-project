@@ -1,10 +1,13 @@
 export const usersSliceName = "users";
 
-export type UserRootData = {
-  id: string;
+type UserRootNonChangeable = {
   username: string;
   firstName: string;
   lastName: string;
+};
+
+export type UserRootData = UserRootNonChangeable & {
+  id: string;
   role: string;
   numberOfArticles: number;
   createdAt: string;
@@ -18,12 +21,11 @@ export type UserWithRelationsIds = UserRootData & {
   articleIds: string[];
 };
 
-export type CreateUserDto = {
-  username: string;
-  firstName: string;
-  lastName: string;
+export type CreateUserDto = UserRootNonChangeable & {
   password: string;
 };
+
+export type UpdateUserDto = Partial<UserRootNonChangeable> & Pick<UserRootData, "id">;
 
 export type UserDeleteResult = {
   userId: string;

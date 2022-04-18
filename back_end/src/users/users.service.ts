@@ -38,11 +38,15 @@ export class UsersService extends BaseService {
     super();
   }
 
-  private async countUsername(username?: string) {
-    if (!username) return;
-    const usernameCount = await this.userModel.count({
-      username: username,
-    });
+  private async countUsername(username: string, id?: string) {
+    let usernameCount;
+    if (id) {
+      usernameCount = await this.userModel.count({
+        $and: [{ username: { $eq: username } }, { _id: { $ne: id } }],
+      });
+    } else {
+      usernameCount = await this.userModel.count({ username });
+    }
 
     if (usernameCount) {
       throw new BadRequestException(
@@ -146,7 +150,7 @@ export class UsersService extends BaseService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
-    this.countUsername(updateUserDto?.username);
+    this.countUsername(updateUserDto?.username, id);
     const { id: userId, ...data } = updateUserDto;
     const updatedUserQuery = await this.userModel.findOneAndUpdate(
       { _id: id },
