@@ -23,10 +23,14 @@ import {
 import { BaseController } from '../base/controllers/base.controller';
 import { CanUserManageUserGuard } from './can-user-manage-user.guard';
 import { ApiTags } from '@nestjs/swagger';
+import { PaginatedRequestDto } from '../base/requests/requests.dto';
+import { PaginatedResponseDto } from '../base/responses/response.dto';
 
+// TODO: remove for testing
 const sleep = (ms) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
+
 @ApiTags(UsersEndpoint)
 @Controller(UsersEndpoint)
 export class UsersController extends BaseController {
@@ -59,9 +63,10 @@ export class UsersController extends BaseController {
 
   @Public()
   @Get()
-  async findAll() {
-    const res = await this.usersService.findAll();
-    return this.getResponse<MappedUserResponse[]>(
+  async findAll(@Query() query: PaginatedRequestDto) {
+    const res = await this.usersService.findAll(query);
+
+    return this.getResponse<PaginatedResponseDto<MappedUserResponse[]>>(
       'users were found',
       'no users were found',
       res,
@@ -86,6 +91,7 @@ export class UsersController extends BaseController {
     @Param('id', new CustomParseObjectIdPipe()) id: string,
   ) {
     const user = await this.usersService.findOneWithRelations(id);
+
     return this.getResponse<MappedUserResponseWithRelations>(
       'user was found',
       `user was not found for id ${id}`,

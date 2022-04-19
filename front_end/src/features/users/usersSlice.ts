@@ -4,6 +4,7 @@ import { CreateUserDto, UpdateUserDto, UserDeleteResult, UserWithRelationsIds } 
 import { createEntityAdapter, createSelector, EntityState } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 import { EndPointResponse } from "../../app/web-api.types";
+import { providesList } from "../../app/rtk-query-utils";
 
 const usersAdapter = createEntityAdapter<UserWithRelationsIds>();
 
@@ -20,14 +21,10 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
         return usersAdapter.upsertMany(initialState, response.data);
       },
       providesTags: (result, error, id) =>
-        result
-          ? //successful query
-            [
-              ...Object.values(result).map(({ id }) => ({ type: "User" as const, id })),
-              { type: "User", id: "LIST" },
-            ]
-          : // error occurred
-            [{ type: "User", id: "LIST" }],
+        providesList(
+          result?.ids.map((id) => ({ id })),
+          "User"
+        ),
     }),
     addUser: builder.mutation<EndPointResponse<UserWithRelationsIds>, CreateUserDto>({
       query: (body) => ({

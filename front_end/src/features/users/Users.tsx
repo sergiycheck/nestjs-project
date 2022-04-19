@@ -22,14 +22,19 @@ export const Users = () => {
 };
 
 export const UsersList = () => {
-  const { isLoading, isFetching, isSuccess, isError, error } = useGetUsersQuery();
+  const { isLoading, isSuccess, isError, error } = useGetUsersQuery();
   const userIds = useAppSelector(selectUserIds);
 
   const users = userIds.map((userId, index) => (
     <UserExcerpt key={index} userId={userId.toString()}></UserExcerpt>
   ));
   if (isLoading) return <div>...loading</div>;
-  return <div className="row gy-2">{users}</div>;
+
+  if (isSuccess) return <div className="row gy-2">{users}</div>;
+
+  if (isError) return <div>Error occurred {error}</div>;
+
+  return <div>unknown response</div>;
 };
 
 export const UserExcerpt = ({ userId }: { userId: string }) => {

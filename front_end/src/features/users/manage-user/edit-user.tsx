@@ -47,21 +47,13 @@ export const UpdateUserContainer = () => {
 };
 
 export const UpdateUserInner = ({ user }: { user: UpdateUserDto }) => {
-  const {
-    control,
-    handleSubmit,
-    watch,
-    formState: { isSubmitSuccessful, errors },
-  } = useForm<UpdateUserDto>({
+  const { control, handleSubmit, watch } = useForm<UpdateUserDto>({
     resolver: joiResolver(userUpdateSchema),
     defaultValues: user,
   });
 
   const [updateUserMutation, { isLoading, isError, isSuccess }] = useUpdateUserMutation();
-  const [
-    deleteUserMutation,
-    { isLoading: isLoadingDelete, isError: isErrorDelete, isSuccess: isSuccessDelete },
-  ] = useDeleteUserMutation();
+  const [deleteUserMutation] = useDeleteUserMutation();
 
   const navigate = useNavigate();
 

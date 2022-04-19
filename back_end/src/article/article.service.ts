@@ -22,11 +22,9 @@ import {
 } from './dto/response-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { Article, ArticleDocument } from './entities/article.entity';
-import {
-  ArticleSearchQueryTextDto,
-  searchArticlePropsNames,
-} from './dto/article-requests.dto';
+import { ArticleSearchQueryTextDto } from './dto/article-requests.dto';
 import { MappedUserResponse } from '../users/dto/response-user.dto';
+import { PaginatedResponseDto } from '../base/responses/response.dto';
 
 // all thrown exceptions is handled by global exception filter
 @Injectable()
@@ -102,43 +100,9 @@ export class ArticleService extends BaseService {
     ) as MappedArticleResponse;
   }
 
-  private getFindArgsArr(requestQuery: ArticleSearchQueryTextDto) {
-    const query = {} as any;
-    const projection = null;
-    const options = {} as any;
-
-    for (const queryProp in requestQuery) {
-      switch (queryProp) {
-        case searchArticlePropsNames.searchText:
-          query['$text'] = { $search: requestQuery[queryProp] };
-          break;
-        case searchArticlePropsNames.lessThanCreatedAt:
-          query['createdAt'] = { $lte: requestQuery[queryProp] };
-          break;
-        case searchArticlePropsNames.greaterThanCreatedAt:
-          query['createdAt'] = { $gte: requestQuery[queryProp] };
-          break;
-        case searchArticlePropsNames.lessThanUpdatedAt:
-          query['updatedAt'] = { $lte: requestQuery[queryProp] };
-          break;
-        case searchArticlePropsNames.greaterThanUpdatedAt:
-          query['updatedAt'] = { $gte: requestQuery[queryProp] };
-          break;
-        case searchArticlePropsNames.limit:
-          options['limit'] = requestQuery[queryProp];
-          break;
-        case searchArticlePropsNames.skip:
-          options['skip'] = requestQuery[queryProp];
-          break;
-
-        default:
-          break;
-      }
-    }
-    return [query, projection, options];
-  }
-
-  async findAll(requestQuery: ArticleSearchQueryTextDto) {
+  async findAll(
+    requestQuery: ArticleSearchQueryTextDto,
+  ): Promise<PaginatedResponseDto<MappedArticleResponseWithRelations[]>> {
     let resQuery;
     if (requestQuery && Object.keys(requestQuery).length) {
       const findArgsArr = this.getFindArgsArr(requestQuery);
@@ -162,10 +126,26 @@ export class ArticleService extends BaseService {
         .populate({ path: 'owner' })
         .exec();
     }
+    const totalDocsInDbForQuery =
+      await this.articleModel.estimatedDocumentCount();
+
+    const { total_pages, per_page, page, total } = this.getPaginatedProps(
+      totalDocsInDbForQuery,
+      requestQuery,
+    );
 
     // losing this if we pass only method call
-    const resArr = resQuery.map(this.getResponseWithRelations.bind(this));
-    return resArr;
+    const resArr = resQuery.map(
+      this.getResponseWithRelations.bind(this),
+    ) as MappedArticleResponseWithRelations[];
+
+    return {
+      page,
+      per_page,
+      total,
+      total_pages,
+      data: resArr,
+    };
   }
 
   async findOne(id: string) {

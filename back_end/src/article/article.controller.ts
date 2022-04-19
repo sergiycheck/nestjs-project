@@ -33,6 +33,7 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { ApiCreateArticleDecorator } from './swagger_decorators/api-create-article.decorator';
+import { PaginatedResponseDto } from '../base/responses/response.dto';
 
 // JwtAuthGuard is bounded automatically to endpoint that is not marked with @Public decorator
 // because it is declared as a global guard
@@ -70,11 +71,10 @@ export class ArticleController extends BaseController {
   @Get()
   async findAll(@Query() query: ArticleSearchQueryTextDto) {
     const res = await this.articleService.findAll(query);
-    return this.getResponse<MappedArticleResponseWithRelations[]>(
-      'articles were found',
-      'no articles was found',
-      res,
-    );
+
+    return this.getResponse<
+      PaginatedResponseDto<MappedArticleResponseWithRelations[]>
+    >('articles were found', 'no articles was found', res);
   }
 
   @Public()

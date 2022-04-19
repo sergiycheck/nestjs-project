@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { StyledEngineProvider } from "@mui/material/styles";
-import { Routes, Route, Outlet, useNavigate, useLocation, Link } from "react-router-dom";
+import { Routes, Route, Outlet, Link } from "react-router-dom";
 import "./App.scss";
 import { Posts } from "../features/posts/Posts";
 import { Users, UsersList } from "../features/users/Users";
@@ -31,7 +31,7 @@ const AppContent = () => {
     <StyledEngineProvider injectFirst>
       <div data-testid="app-root" className="page">
         <header className="page__header">
-          <NavBarWrapper />
+          <NavBar />
         </header>
         <main className="page__body">
           <Outlet></Outlet>
@@ -42,26 +42,7 @@ const AppContent = () => {
   );
 };
 
-function NavBarWrapper() {
-  const location = useLocation();
-  const [activeLocationPath, setActiveLocation] = useState("");
-  useEffect(() => {
-    if (location.pathname === "/") {
-      setActiveLocation(location.pathname);
-    } else {
-      setActiveLocation(location.pathname.replace("/", ""));
-    }
-  }, [location]);
-
-  if (!activeLocationPath) return null;
-
-  return <NavBar activeLocPath={activeLocationPath}></NavBar>;
-}
-
-function NavBar({ activeLocPath }: { activeLocPath: string }) {
-  const [key, setKey] = useState<string>(activeLocPath);
-  const navigate = useNavigate();
-
+function NavBar() {
   return (
     <nav className="border-bottom d-flex justify-content-around">
       <Link to="/">users</Link>

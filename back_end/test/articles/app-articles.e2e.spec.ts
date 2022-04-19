@@ -7,7 +7,7 @@ import { LoginEndPoint, ArticlesEndpoint } from '../../src/api/endpoints';
 import { CustomConnectionService } from '../../src/custom-conn.service';
 import { ConfigService } from '@nestjs/config';
 import { MyLogger } from '../../src/injecting-custom-logger/my-logger.service';
-import { DbInitializer } from '../../src/seedDb';
+import { DbInitializer } from '../../src/seed-db-config/seedDb';
 import { Connection } from 'mongoose';
 import { UserLoginResponse } from '../../src/auth/responses/responses.dto';
 import {

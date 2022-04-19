@@ -24,6 +24,8 @@ import {
   UserDeleteResult,
 } from './dto/response-user.dto';
 import { SALT_ROUNDS } from '../auth/constants';
+import { PaginatedRequestDto } from '../base/requests/requests.dto';
+import { PaginatedResponseDto } from '../base/responses/response.dto';
 
 // all thrown exceptions is handled by global exception filter
 @Injectable()
@@ -108,13 +110,35 @@ export class UsersService extends BaseService {
     return resArr;
   }
 
-  async findAll() {
-    const resQuery = await this.userModel.find().exec();
+  async findAll(
+    requestQuery: PaginatedRequestDto,
+  ): Promise<PaginatedResponseDto<MappedUserResponse[]>> {
+    let resQuery;
+
+    if (requestQuery && Object.keys(requestQuery).length) {
+      const findArgsArr = this.getFindArgsArrUsers(requestQuery);
+      resQuery = await this.userModel.find(...findArgsArr).exec();
+    } else {
+      resQuery = await this.userModel.find({}).exec();
+    }
+    const totalDocsInDbForQuery = await this.userModel.estimatedDocumentCount();
+
+    const { total_pages, per_page, page, total } = this.getPaginatedProps(
+      totalDocsInDbForQuery,
+      requestQuery,
+    );
 
     const resArr = resQuery.map((query) => {
       return this.getResponse(query);
-    });
-    return resArr;
+    }) as MappedUserResponse[];
+
+    return {
+      page,
+      per_page,
+      total,
+      total_pages,
+      data: resArr,
+    };
   }
 
   async findOneWithRelations(id: string) {

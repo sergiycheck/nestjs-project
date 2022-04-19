@@ -13,3 +13,24 @@ export class EndPointResponse<T> extends BaseEntity {
   @IsNotEmpty()
   public data?: T;
 }
+
+export class PaginatedResponseDto<T> {
+  @IsNotEmpty()
+  @IsString()
+  public page: number;
+
+  @IsNotEmpty()
+  @IsString()
+  public per_page: number;
+
+  @IsNotEmpty()
+  @IsString()
+  public total: number;
+
+  @IsNotEmpty()
+  @IsString()
+  public total_pages: number;
+
+  @IsNotEmpty()
+  public data: T;
+}

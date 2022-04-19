@@ -5,21 +5,16 @@ import {
   IsString,
 } from 'class-validator';
 
-export class ArticleSearchQueryTextDto {
+import {
+  PaginatedRequestDto,
+  paginatedRequestPropsNames,
+} from 'src/base/requests/requests.dto';
+
+export class ArticleSearchQueryTextDto extends PaginatedRequestDto {
   @IsOptional()
   @IsNotEmpty()
   @IsString()
   public searchText?: string;
-
-  @IsOptional()
-  @IsNotEmpty()
-  @IsString()
-  public limit?: number;
-
-  @IsOptional()
-  @IsNotEmpty()
-  @IsString()
-  public skip?: number;
 
   @IsOptional()
   @IsNotEmpty()
@@ -41,12 +36,13 @@ export class ArticleSearchQueryTextDto {
   @IsDateString()
   public greaterThanUpdatedAt?: string;
 }
-export const searchArticlePropsNames = {
-  searchText: 'searchText',
-  limit: 'limit',
-  skip: 'skip',
-  lessThanCreatedAt: 'lessThanCreatedAt',
-  greaterThanCreatedAt: 'greaterThanCreatedAt',
-  lessThanUpdatedAt: 'lessThanUpdatedAt',
-  greaterThanUpdatedAt: 'greaterThanUpdatedAt',
-};
+export const searchArticlePropsNames = Object.assign(
+  {
+    searchText: 'searchText',
+    lessThanCreatedAt: 'lessThanCreatedAt',
+    greaterThanCreatedAt: 'greaterThanCreatedAt',
+    lessThanUpdatedAt: 'lessThanUpdatedAt',
+    greaterThanUpdatedAt: 'greaterThanUpdatedAt',
+  },
+  paginatedRequestPropsNames,
+);
