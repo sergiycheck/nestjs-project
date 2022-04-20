@@ -8,7 +8,7 @@ import {
 import {
   PaginatedRequestDto,
   paginatedRequestPropsNames,
-} from 'src/base/requests/requests.dto';
+} from '../../base/requests/requests.dto';
 
 export class ArticleSearchQueryTextDto extends PaginatedRequestDto {
   @IsOptional()
@@ -36,13 +36,16 @@ export class ArticleSearchQueryTextDto extends PaginatedRequestDto {
   @IsDateString()
   public greaterThanUpdatedAt?: string;
 }
-export const searchArticlePropsNames = Object.assign(
-  {
-    searchText: 'searchText',
-    lessThanCreatedAt: 'lessThanCreatedAt',
-    greaterThanCreatedAt: 'greaterThanCreatedAt',
-    lessThanUpdatedAt: 'lessThanUpdatedAt',
-    greaterThanUpdatedAt: 'greaterThanUpdatedAt',
-  },
-  paginatedRequestPropsNames,
-);
+
+export const searchArticleFilterProps = {
+  searchText: 'searchText',
+  lessThanCreatedAt: 'lessThanCreatedAt',
+  greaterThanCreatedAt: 'greaterThanCreatedAt',
+  lessThanUpdatedAt: 'lessThanUpdatedAt',
+  greaterThanUpdatedAt: 'greaterThanUpdatedAt',
+};
+
+export const searchArticleQueryPropsNames = {
+  ...searchArticleFilterProps,
+  ...paginatedRequestPropsNames,
+};

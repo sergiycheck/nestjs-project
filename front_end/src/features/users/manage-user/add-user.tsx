@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useAddUserMutation } from "../usersSlice";
+import { useAddUserMutation } from "../usersApi";
 import TextField from "@mui/material/TextField";
 import { Alert, Button } from "@mui/material";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";

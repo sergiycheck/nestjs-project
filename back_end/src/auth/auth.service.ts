@@ -33,7 +33,7 @@ export class AuthService {
   }
 
   getResponseForUser(user: LeanDocument<User>) {
-    return this.usersService.userObjToPlain(user);
+    return this.usersService.usersResponseGetterService.userObjToPlain(user);
   }
 
   async login(user: MappedUserResponse) {

@@ -31,7 +31,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         `user with username ${userObj.username} is not found`,
       );
     }
-    const userResponse = this.usersService.userObjToPlain(user);
+    const userResponse =
+      this.usersService.usersResponseGetterService.userObjToPlain(user);
     return userResponse;
   }
 }

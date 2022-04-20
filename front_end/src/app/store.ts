@@ -1,9 +1,11 @@
 import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
 import { loggerMiddleware } from "./middewares";
 import { apiSlice } from "./apiSlice";
+import usersQueryPropsReducer from "../features/users/usersApi";
 
 export const store = configureStore({
   reducer: {
+    usersQueryProps: usersQueryPropsReducer,
     [apiSlice.reducerPath]: apiSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>

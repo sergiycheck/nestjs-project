@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useDeleteUserMutation, useGetUserQuery, useUpdateUserMutation } from "../usersSlice";
+import { useDeleteUserMutation, useGetUserQuery, useUpdateUserMutation } from "../usersApi";
 import TextField from "@mui/material/TextField";
 import { Alert, Button } from "@mui/material";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";

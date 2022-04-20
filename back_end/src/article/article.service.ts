@@ -7,31 +7,25 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 import { Model } from 'mongoose';
-import {
-  BaseService,
-  ToObjectContainingQuery,
-} from '../base/services/base.service';
+import { BaseService } from '../base/services/base.service';
 import { UsersService } from '../users/users.service';
-import { ArticleMapperService } from './article-mapper.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import {
   ArticleDeleteResult,
   CreateArticleResponse,
-  MappedArticleResponse,
   MappedArticleResponseWithRelations,
 } from './dto/response-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { Article, ArticleDocument } from './entities/article.entity';
-import { ArticleSearchQueryTextDto } from './dto/article-requests.dto';
 import { MappedUserResponse } from '../users/dto/response-user.dto';
-import { PaginatedResponseDto } from '../base/responses/response.dto';
+import { ArticleResponseGetterService } from './article-response-getter.service';
 
 // all thrown exceptions is handled by global exception filter
 @Injectable()
 export class ArticleService extends BaseService {
   constructor(
     @InjectModel(Article.name) public articleModel: Model<ArticleDocument>,
-    private articleMapper: ArticleMapperService,
+    private articleResponseGetterService: ArticleResponseGetterService,
     @Inject(forwardRef(() => UsersService))
     private readonly usersService: UsersService,
   ) {
@@ -64,88 +58,19 @@ export class ArticleService extends BaseService {
       { new: true },
     );
 
-    const userResp = this.usersService.getResponse(updatedUserQuery);
+    const userResp =
+      this.usersService.usersResponseGetterService.getResponse(
+        updatedUserQuery,
+      );
     const articleResp =
-      this.getResponseWithExcludedRelations(createdArticleQuery);
+      this.articleResponseGetterService.getResponseWithExcludedRelations(
+        createdArticleQuery,
+      );
 
     return {
       updatedUser: userResp,
       newArticle: articleResp,
     } as CreateArticleResponse;
-  }
-
-  public getResponse(articleQuery: ToObjectContainingQuery<Article>) {
-    const articleDoc = super.queryToObj(articleQuery);
-    return this.articleMapper.articleToArticleResponse(
-      articleDoc,
-    ) as MappedArticleResponse;
-  }
-
-  private getResponseWithRelations(
-    articleQuery: ToObjectContainingQuery<Article>,
-  ) {
-    const articleDoc = super.queryToObj(articleQuery);
-    return this.articleMapper.articleToArticleResponseWithRelations(
-      articleDoc,
-    ) as MappedArticleResponseWithRelations;
-  }
-
-  private getResponseWithExcludedRelations(
-    articleQuery: ToObjectContainingQuery<Article>,
-  ) {
-    const articleDoc = super.queryToObj(articleQuery);
-
-    return this.articleMapper.articleToArticleResponseWithExcludedRelations(
-      articleDoc,
-    ) as MappedArticleResponse;
-  }
-
-  async findAll(
-    requestQuery: ArticleSearchQueryTextDto,
-  ): Promise<PaginatedResponseDto<MappedArticleResponseWithRelations[]>> {
-    let resQuery;
-    if (requestQuery && Object.keys(requestQuery).length) {
-      const findArgsArr = this.getFindArgsArr(requestQuery);
-      const { searchText } = requestQuery;
-
-      if (searchText) {
-        resQuery = await this.articleModel
-          .find(...findArgsArr)
-          .sort({ score: { $meta: 'textScore' } })
-          .populate({ path: 'owner' })
-          .exec();
-      } else {
-        resQuery = await this.articleModel
-          .find(...findArgsArr)
-          .populate({ path: 'owner' })
-          .exec();
-      }
-    } else {
-      resQuery = await this.articleModel
-        .find({})
-        .populate({ path: 'owner' })
-        .exec();
-    }
-    const totalDocsInDbForQuery =
-      await this.articleModel.estimatedDocumentCount();
-
-    const { total_pages, per_page, page, total } = this.getPaginatedProps(
-      totalDocsInDbForQuery,
-      requestQuery,
-    );
-
-    // losing this if we pass only method call
-    const resArr = resQuery.map(
-      this.getResponseWithRelations.bind(this),
-    ) as MappedArticleResponseWithRelations[];
-
-    return {
-      page,
-      per_page,
-      total,
-      total_pages,
-      data: resArr,
-    };
   }
 
   async findOne(id: string) {
@@ -155,14 +80,14 @@ export class ArticleService extends BaseService {
       .exec();
     if (!resQuery)
       throw new BadRequestException(`cannot find article with id ${id}`);
-    return this.getResponseWithRelations(resQuery);
+    return this.articleResponseGetterService.getResponseWithRelations(resQuery);
   }
 
   async findByIdWithRelationsIds(id: string) {
     const res = await this.articleModel.findById(id);
     if (!res)
       throw new BadRequestException(`cannot find article with id ${id}`);
-    return this.getResponse(res);
+    return this.articleResponseGetterService.getResponse(res);
   }
 
   async update(id: string, updateArticleDto: UpdateArticleDto) {
@@ -173,7 +98,7 @@ export class ArticleService extends BaseService {
       { ...updateArticleData },
       { runValidators: true, new: true },
     );
-    return this.getResponse(updatedArticleQuery);
+    return this.articleResponseGetterService.getResponse(updatedArticleQuery);
   }
 
   async remove(id: string, user: MappedUserResponse) {
@@ -186,7 +111,10 @@ export class ArticleService extends BaseService {
       { new: true },
     );
 
-    const userResp = this.usersService.getResponse(updatedUserQuery);
+    const userResp =
+      this.usersService.usersResponseGetterService.getResponse(
+        updatedUserQuery,
+      );
 
     const deleteRes = await this.articleModel.deleteOne({ _id: id });
     return {
@@ -202,8 +130,8 @@ export class ArticleService extends BaseService {
       .equals(userId)
       .populate({ path: 'owner' });
 
-    const resArr = articlesQuery.map(
-      this.getResponseWithRelations.bind(this),
+    const resArr = articlesQuery.map((query) =>
+      this.articleResponseGetterService.getResponseWithRelations(query),
     ) as MappedArticleResponseWithRelations[];
     return resArr;
   }

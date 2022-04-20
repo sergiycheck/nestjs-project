@@ -2,7 +2,7 @@ import { InternalServerErrorException } from '@nestjs/common';
 import mongoose from 'mongoose';
 import {
   ArticleSearchQueryTextDto,
-  searchArticlePropsNames,
+  searchArticleQueryPropsNames,
 } from '../../article/dto/article-requests.dto';
 import {
   PaginatedRequestDto,
@@ -54,27 +54,26 @@ export class BaseService {
     const { query, projection, options } = this.getInitialFindArgs();
     for (const queryProp in requestQuery) {
       switch (queryProp) {
-        case searchArticlePropsNames.searchText:
+        case searchArticleQueryPropsNames.searchText:
           query['$text'] = { $search: requestQuery[queryProp] };
           break;
-        case searchArticlePropsNames.lessThanCreatedAt:
+        case searchArticleQueryPropsNames.lessThanCreatedAt:
           query['createdAt'] = { $lte: requestQuery[queryProp] };
           break;
-        case searchArticlePropsNames.greaterThanCreatedAt:
+        case searchArticleQueryPropsNames.greaterThanCreatedAt:
           query['createdAt'] = { $gte: requestQuery[queryProp] };
           break;
-        case searchArticlePropsNames.lessThanUpdatedAt:
+        case searchArticleQueryPropsNames.lessThanUpdatedAt:
           query['updatedAt'] = { $lte: requestQuery[queryProp] };
           break;
-        case searchArticlePropsNames.greaterThanUpdatedAt:
+        case searchArticleQueryPropsNames.greaterThanUpdatedAt:
           query['updatedAt'] = { $gte: requestQuery[queryProp] };
           break;
-        // TODO: at first count how many docs that satisfies provided filters and then paginate them
-        case searchArticlePropsNames.limit:
+        case searchArticleQueryPropsNames.limit:
           const resultLimit = this.getComputedLimit(requestQuery, queryProp);
           options['limit'] = resultLimit;
           break;
-        case searchArticlePropsNames.skip:
+        case searchArticleQueryPropsNames.skip:
           options['skip'] = requestQuery[queryProp];
           break;
 
@@ -114,8 +113,8 @@ export class BaseService {
     );
 
     const total_pages = requestQuery.limit
-      ? Math.floor(total / requestQuery.limit)
-      : Math.floor(total / defaultLimitValue);
+      ? Math.ceil(total / requestQuery.limit)
+      : Math.ceil(total / defaultLimitValue);
 
     const per_page = requestQuery.limit
       ? requestQuery.limit

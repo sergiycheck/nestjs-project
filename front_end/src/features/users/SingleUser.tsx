@@ -1,5 +1,5 @@
 import { Link, useParams } from "react-router-dom";
-import { useGetUserQuery } from "./usersSlice";
+import { useGetUserQuery } from "./usersApi";
 import { CircularIndeterminate } from "./mui-components/Loader";
 import { TimeAgo } from "../shared/TimeAgo";
 import { Typography } from "@mui/material";
