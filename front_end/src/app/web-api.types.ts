@@ -3,10 +3,13 @@ export interface EndPointResponse<T> {
   data: T;
 }
 
-export interface ListResponse<T> {
+export type PaginationData = {
   page: number;
   per_page: number;
   total: number;
   total_pages: number;
+};
+
+export type ListResponse<T> = PaginationData & {
   data: T[];
-}
+};

@@ -1,44 +1,9 @@
 import { apiSlice } from "../../app/apiSlice";
 import { usersEndPointName } from "../../app/api-endpoints";
 import { CreateUserDto, UpdateUserDto, UserDeleteResult, UserWithRelationsIds } from "./types";
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "../../app/store";
 import { EndPointResponse, ListResponse } from "../../app/web-api.types";
 import { providesList } from "../../app/rtk-query-utils";
-
-type QueryGetUsersType = { limit: number | null; skip: number | null };
-type UsersQueryPropsInitialStateType = { name: string } & {
-  getUsersQueryParams: QueryGetUsersType;
-};
-
-const increment = 5;
-const initialSkip = 0;
-
-export const usersQueryPropsInitialState: UsersQueryPropsInitialStateType = {
-  name: "usersQueryProps",
-  getUsersQueryParams: { limit: increment, skip: initialSkip },
-};
-
-export const usersQueryPropsReducer = createSlice({
-  name: usersQueryPropsInitialState.name,
-  initialState: usersQueryPropsInitialState,
-  reducers: {
-    setGetUsersQueryParams: (
-      state: UsersQueryPropsInitialStateType,
-      action: PayloadAction<QueryGetUsersType>
-    ) => {
-      state.getUsersQueryParams = {
-        ...state.getUsersQueryParams,
-        ...action.payload,
-      };
-    },
-  },
-});
-
-export default usersQueryPropsReducer.reducer;
-export const { setGetUsersQueryParams } = usersQueryPropsReducer.actions;
-export const selectGetUsersQueryParams = (state: RootState) =>
-  state.usersQueryProps.getUsersQueryParams;
+import { QueryGetUsersType } from "./types";
 
 export const extendedApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({

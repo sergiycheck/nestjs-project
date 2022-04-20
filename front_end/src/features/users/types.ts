@@ -1,5 +1,7 @@
 export const usersSliceName = "users";
 
+export type QueryGetUsersType = { limit: number | null; skip: number | null };
+
 type UserRootNonChangeable = {
   username: string;
   firstName: string;
