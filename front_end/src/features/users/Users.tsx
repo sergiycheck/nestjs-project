@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useSearchParams } from "react-router-dom";
 import { TimeAgo } from "../shared/TimeAgo";
 import { useGetUsersQuery } from "./usersApi";
 import { AddUser } from "./manage-user/add-user";
@@ -10,10 +10,24 @@ import {
   willBePassedToPaginationData,
 } from "./pagination-context";
 
+const availableSearchParams = "page";
+
 export const Users = () => {
+  const [searchParams] = useSearchParams();
+  const page = searchParams.get(availableSearchParams);
+
   const [initialPaginationData, setPaginationContextData] = useState<PaginationContextType>(
     willBePassedToPaginationData
   );
+  const { limit } = initialPaginationData;
+
+  useEffect(() => {
+    const numPage = Number(page);
+    if (Number.isInteger(numPage) && numPage > 0 && numPage < 1000) {
+      const skip = numPage * limit - limit;
+      setPaginationContextData((prev) => ({ ...prev, page: numPage, skip }));
+    }
+  }, [page, limit]);
 
   const passedValued = { initialPaginationData, setPaginationContextData };
 
@@ -39,6 +53,7 @@ export const Users = () => {
 
 const increment = 5;
 export const PaginationComponent = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const { initialPaginationData, setPaginationContextData } = useContext(PaginationContext);
   const { limit, skip, page, per_page, total, total_pages, isFetching } = initialPaginationData;
 
@@ -61,6 +76,9 @@ export const PaginationComponent = () => {
           onClick={() => {
             if (page - 1 <= 0) return;
             const previousPage = { page: page - 1 };
+            const searchParamObj = { [availableSearchParams]: `${previousPage.page}` };
+            setSearchParams(searchParamObj);
+
             const previousParams = { limit: increment, skip: previousPage.page * limit - limit };
             setPaginationContextData((prev) => ({
               ...prev,
@@ -81,6 +99,8 @@ export const PaginationComponent = () => {
           disabled={Boolean(page === total_pages)}
           onClick={() => {
             const nextPage = { page: page + 1 };
+            const searchParamObj = { [availableSearchParams]: `${nextPage.page}` };
+            setSearchParams(searchParamObj);
             const nextParams = { limit: increment, skip: nextPage.page * limit - limit };
             setPaginationContextData((prev) => ({
               ...prev,

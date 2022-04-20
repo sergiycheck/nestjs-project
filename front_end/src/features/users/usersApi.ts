@@ -17,7 +17,6 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
           urlParams.set("skip", `${skip}`);
           urlSearchParams = urlParams.toString();
         }
-
         const resultUrl = urlSearchParams
           ? `/${usersEndPointName}?`.concat(urlSearchParams)
           : `/${usersEndPointName}`;

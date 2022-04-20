@@ -22,6 +22,7 @@ function App() {
         </Route>
         <Route path="posts" element={<Posts />}></Route>
       </Route>
+      <Route path="*" element={<NoMatch />}></Route>
     </Routes>
   );
 }
@@ -48,6 +49,17 @@ function NavBar() {
       <Link to="/">users</Link>
       <Link to="posts">posts</Link>
     </nav>
+  );
+}
+
+function NoMatch() {
+  return (
+    <div>
+      <h2>Nothing to see here!</h2>
+      <p>
+        <Link to="/">Go to the home page</Link>
+      </p>
+    </div>
   );
 }
 
