@@ -1,66 +1,51 @@
 import React from "react";
-import { StyledEngineProvider } from "@mui/material/styles";
-import { Routes, Route, Outlet, Link } from "react-router-dom";
+import { ThemeProvider } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import { ColorModeContext } from "./color-mode-context";
+import { AppRouting } from "./AppRouting";
 import "./App.scss";
-import { Posts } from "../features/posts/Posts";
-import { Users, UsersList } from "../features/users/Users";
-import { SingleUser } from "../features/users/SingleUser";
-import { UpdateUser, UpdateUserContainer } from "../features/users/manage-user/edit-user";
-import { UserInfoDeleteResultComponent } from "../features/users/manage-user/user-delete-result";
+import {
+  getThemeMode,
+  ColorThemeType,
+  BG_COLOR,
+  createThemeFromMode,
+  colorsThemesAvailable,
+} from "./default-theme";
+import { useMediaQuery } from "@mui/material";
 
-function App() {
+export default function App() {
+  const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
+  const memoizedThemeMode = React.useMemo(() => {
+    const gotTheme = getThemeMode();
+    if (prefersDarkMode) return colorsThemesAvailable.dark;
+    return gotTheme;
+  }, [prefersDarkMode]);
+  const [mode, setMode] = React.useState<ColorThemeType>(memoizedThemeMode as ColorThemeType);
+
+  const colorModeManager = React.useMemo(
+    () => ({
+      toggleColorMode: () => {
+        setMode((prevMode) => {
+          const colorToSet =
+            prevMode === colorsThemesAvailable.light
+              ? colorsThemesAvailable.dark
+              : colorsThemesAvailable.light;
+          window.localStorage.setItem(BG_COLOR, colorToSet);
+          return colorToSet as ColorThemeType;
+        });
+      },
+    }),
+    []
+  );
+
+  const theme = React.useMemo(() => createThemeFromMode(mode), [mode]);
+
   return (
-    <Routes>
-      <Route path="/" element={<AppContent />}>
-        <Route element={<Users />}>
-          <Route index element={<UsersList />}></Route>
-        </Route>
-        <Route path="users/:userId" element={<SingleUser />}></Route>
-        <Route path="users/edit/:userId" element={<UpdateUser />}>
-          <Route path="deleteResult" element={<UserInfoDeleteResultComponent />}></Route>
-          <Route index element={<UpdateUserContainer />}></Route>
-        </Route>
-        <Route path="posts" element={<Posts />}></Route>
-      </Route>
-      <Route path="*" element={<NoMatch />}></Route>
-    </Routes>
+    <ColorModeContext.Provider value={colorModeManager}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <AppRouting />
+      </ThemeProvider>
+    </ColorModeContext.Provider>
   );
 }
-
-const AppContent = () => {
-  return (
-    <StyledEngineProvider injectFirst>
-      <div data-testid="app-root" className="page">
-        <header className="page__header">
-          <NavBar />
-        </header>
-        <main className="page__body">
-          <Outlet></Outlet>
-        </main>
-        <footer className="page__footer border-top">footer</footer>
-      </div>
-    </StyledEngineProvider>
-  );
-};
-
-function NavBar() {
-  return (
-    <nav className="border-bottom d-flex justify-content-around">
-      <Link to="/">users</Link>
-      <Link to="posts">posts</Link>
-    </nav>
-  );
-}
-
-function NoMatch() {
-  return (
-    <div>
-      <h2>Nothing to see here!</h2>
-      <p>
-        <Link to="/">Go to the home page</Link>
-      </p>
-    </div>
-  );
-}
-
-export default App;

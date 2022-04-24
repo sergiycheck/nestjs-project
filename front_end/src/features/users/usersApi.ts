@@ -3,23 +3,14 @@ import { usersEndPointName } from "../../app/api-endpoints";
 import { CreateUserDto, UpdateUserDto, UserDeleteResult, UserWithRelationsIds } from "./types";
 import { EndPointResponse, ListResponse } from "../../app/web-api.types";
 import { providesList } from "../../app/rtk-query-utils";
-import { QueryGetUsersType } from "./types";
+import { QueryGetPaginationListType } from "../shared/types";
+import { getResultUrlWithParams } from "../shared/pagination/query-utils";
 
 export const extendedApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getUsers: builder.query<ListResponse<UserWithRelationsIds>, QueryGetUsersType>({
-      query: (queryParams: QueryGetUsersType) => {
-        let urlSearchParams = "";
-        if (queryParams) {
-          const { limit, skip } = queryParams;
-          const urlParams = new URLSearchParams();
-          urlParams.set("limit", `${limit}`);
-          urlParams.set("skip", `${skip}`);
-          urlSearchParams = urlParams.toString();
-        }
-        const resultUrl = urlSearchParams
-          ? `/${usersEndPointName}?`.concat(urlSearchParams)
-          : `/${usersEndPointName}`;
+    getUsers: builder.query<ListResponse<UserWithRelationsIds>, QueryGetPaginationListType>({
+      query: (queryParams: QueryGetPaginationListType) => {
+        const resultUrl = getResultUrlWithParams(usersEndPointName, queryParams);
         return {
           url: resultUrl,
           method: "GET",

@@ -1,38 +1,25 @@
-import React, { useEffect, useState, useContext } from "react";
-import { Link, Outlet, useSearchParams } from "react-router-dom";
+import React, { useEffect, useContext } from "react";
+import { Link as RouterLink, Outlet } from "react-router-dom";
 import { TimeAgo } from "../shared/TimeAgo";
 import { useGetUsersQuery } from "./usersApi";
 import { AddUser } from "./manage-user/add-user";
-import LoadingButton from "@mui/lab/LoadingButton";
 import {
   PaginationContext,
-  PaginationContextType,
-  willBePassedToPaginationData,
-} from "./pagination-context";
+  useSearchParamsToPassInAndPaginationContext,
+  availableSearchParams,
+} from "../shared/pagination/pagination-context";
 
-const availableSearchParams = "page";
+import { PaginationComponent } from "../shared/pagination/PaginationComponent";
+import { Button, Link } from "@mui/material";
+import { CircularIndeterminate } from "../shared/mui-components/Loader";
 
 export const Users = () => {
-  const [searchParams] = useSearchParams();
-  const page = searchParams.get(availableSearchParams);
-
-  const [initialPaginationData, setPaginationContextData] = useState<PaginationContextType>(
-    willBePassedToPaginationData
-  );
-  const { limit } = initialPaginationData;
-
-  useEffect(() => {
-    const numPage = Number(page);
-    if (Number.isInteger(numPage) && numPage > 0 && numPage < 1000) {
-      const skip = numPage * limit - limit;
-      setPaginationContextData((prev) => ({ ...prev, page: numPage, skip }));
-    }
-  }, [page, limit]);
-
-  const passedValued = { initialPaginationData, setPaginationContextData };
+  const { contextDataAndHandler } = useSearchParamsToPassInAndPaginationContext({
+    searchParamsNames: availableSearchParams,
+  });
 
   return (
-    <PaginationContext.Provider value={passedValued}>
+    <PaginationContext.Provider value={contextDataAndHandler}>
       <div className="container-md d-flex flex-column flex-grow-1">
         <div className="row flex-grow-1">
           <div className="col-8">
@@ -51,72 +38,7 @@ export const Users = () => {
   );
 };
 
-const increment = 5;
-export const PaginationComponent = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const { initialPaginationData, setPaginationContextData } = useContext(PaginationContext);
-  const { limit, skip, page, per_page, total, total_pages, isFetching } = initialPaginationData;
-
-  return (
-    <div className="row justify-content-center">
-      <div className="col">
-        <div className="row">
-          <div className="col-auto">page: {page}</div>
-          <div className="col-auto">per_page: {per_page}</div>
-          <div className="col-auto">total: {total}</div>
-          <div className="col-auto">total_pages:{total_pages}</div>
-          <div className="col-auto">limit:{limit}</div>
-          <div className="col-auto">skip:{skip}</div>
-        </div>
-      </div>
-      <div className="col-auto">
-        <LoadingButton
-          size="small"
-          disabled={Boolean(page - 1 <= 0)}
-          onClick={() => {
-            if (page - 1 <= 0) return;
-            const previousPage = { page: page - 1 };
-            const searchParamObj = { [availableSearchParams]: `${previousPage.page}` };
-            setSearchParams(searchParamObj);
-
-            const previousParams = { limit: increment, skip: previousPage.page * limit - limit };
-            setPaginationContextData((prev) => ({
-              ...prev,
-              ...previousPage,
-              ...previousParams,
-            }));
-          }}
-          loading={isFetching}
-          variant="outlined"
-        >
-          previous
-        </LoadingButton>
-      </div>
-      <div className="col-auto">
-        {" "}
-        <LoadingButton
-          size="small"
-          disabled={Boolean(page === total_pages)}
-          onClick={() => {
-            const nextPage = { page: page + 1 };
-            const searchParamObj = { [availableSearchParams]: `${nextPage.page}` };
-            setSearchParams(searchParamObj);
-            const nextParams = { limit: increment, skip: nextPage.page * limit - limit };
-            setPaginationContextData((prev) => ({
-              ...prev,
-              ...nextPage,
-              ...nextParams,
-            }));
-          }}
-          loading={isFetching}
-          variant="outlined"
-        >
-          next
-        </LoadingButton>
-      </div>
-    </div>
-  );
-};
+export const usePaginationContextAndGetDataQuery = () => {};
 
 export const UsersList = () => {
   const { initialPaginationData, setPaginationContextData } = useContext(PaginationContext);
@@ -150,7 +72,8 @@ export const UsersList = () => {
     <UserExcerpt key={index} userId={user.id}></UserExcerpt>
   ));
 
-  if (isLoading) return <div>...loading</div>;
+  if (isLoading) return <CircularIndeterminate />;
+
   if (isError) return <div>Error occurred {error}</div>;
   if (!usersResponse || !Object.keys(usersResponse).length) return <div>No users found</div>;
 
@@ -175,7 +98,7 @@ export const UserExcerpt = ({ userId }: { userId: string }) => {
     <div className="col-12 justify-content-center ">
       <div className="row gx-3">
         <div className="col-5">
-          <Link className="text-dark text-decoration-none" to={`users/${userId}`}>
+          <Link href={`users/${userId}`}>
             {user?.firstName} {user?.lastName} <br />({user?.username})
           </Link>
         </div>
@@ -184,11 +107,14 @@ export const UserExcerpt = ({ userId }: { userId: string }) => {
           <TimeAgo timeStamp={user?.createdAt}></TimeAgo>
         </div>
         <div className="col-auto d-flex justify-content-center">
-          <button className="btn btn-primary  align-self-start flex-shrink-0">
-            <Link className="text-white" to={`users/edit/${user?.id}`}>
-              edit user
-            </Link>
-          </button>
+          <Button
+            component={RouterLink}
+            className="align-self-start flex-shrink-0"
+            to={`users/edit/${user?.id}`}
+            variant="outlined"
+          >
+            edit user
+          </Button>
         </div>
       </div>
     </div>

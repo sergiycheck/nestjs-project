@@ -1,16 +1,11 @@
-@import "src/app-component/_variables.scss";
-
-html {
-  height: 100%;
-  body {
-    height: 100%;
-    #root {
-      height: 100%;
-    }
-  }
-}
+html,
+body,
+#root,
 .page {
-  height: 100%;
+  min-height: 100vh;
+}
+
+.page {
   display: flex;
   flex-direction: column;
 

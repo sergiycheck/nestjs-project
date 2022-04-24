@@ -1,8 +1,8 @@
-import { Link, useParams } from "react-router-dom";
+import { Link as RouterLink, useParams } from "react-router-dom";
 import { useGetUserQuery } from "./usersApi";
-import { CircularIndeterminate } from "./mui-components/Loader";
+import { CircularIndeterminate } from "../shared/mui-components/Loader";
 import { TimeAgo } from "../shared/TimeAgo";
-import { Typography } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 
 export const SingleUser = () => {
   const { userId } = useParams();
@@ -39,11 +39,14 @@ export const SingleUser = () => {
       </section>
       <div className="row">
         <div className="col-auto">
-          <button className="btn btn-primary  align-self-start flex-shrink-0">
-            <Link className="text-white" to={`/users/edit/${user?.id}`}>
-              edit user
-            </Link>
-          </button>
+          <Button
+            component={RouterLink}
+            variant="outlined"
+            className="align-self-start flex-shrink-0"
+            to={`/users/edit/${user?.id}`}
+          >
+            edit user
+          </Button>
         </div>
       </div>
     </div>
