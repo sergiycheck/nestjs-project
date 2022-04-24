@@ -20,7 +20,7 @@ export const Users = () => {
 
   return (
     <PaginationContext.Provider value={contextDataAndHandler}>
-      <div className="container-md d-flex flex-column flex-grow-1">
+      <div className="container-lg d-flex flex-column flex-grow-1">
         <div className="row flex-grow-1">
           <div className="col-8">
             <h4>Users</h4>

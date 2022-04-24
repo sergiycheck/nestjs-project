@@ -1,3 +1,5 @@
+import { ArticleResponse, ArticleResponseWithRelations } from "../posts/types";
+
 export const usersSliceName = "users";
 
 type UserRootNonChangeable = {
@@ -14,7 +16,11 @@ export type UserRootData = UserRootNonChangeable & {
 };
 
 export type UserWithIncludedRelations = UserRootData & {
-  articles: any[];
+  articles: ArticleResponse[];
+};
+
+export type UserWithIncludedAndPopulatedRelations = UserRootData & {
+  articles: ArticleResponseWithRelations[];
 };
 
 export type UserWithRelationsIds = UserRootData & {
@@ -24,6 +30,8 @@ export type UserWithRelationsIds = UserRootData & {
 export type CreateUserDto = UserRootNonChangeable & {
   password: string;
 };
+
+export type LoginUserDto = Pick<CreateUserDto, "username" | "password">;
 
 export type UpdateUserDto = Partial<UserRootNonChangeable> & Pick<UserRootData, "id">;
 

@@ -4,12 +4,13 @@ import { Divider, Typography } from "@mui/material";
 import { Routes, Route, Outlet } from "react-router-dom";
 import { Posts } from "../features/posts/Posts";
 import { Users, UsersList } from "../features/users/Users";
-import { SingleUser } from "../features/users/SingleUser";
+import { SingleUser } from "../features/users/sigle-user/SingleUser";
 import { UpdateUser, UpdateUserContainer } from "../features/users/manage-user/edit-user";
 import { UserInfoDeleteResultComponent } from "../features/users/manage-user/user-delete-result";
 import Link from "@mui/material/Link";
 import Box from "@mui/material/Box";
 import { NavBar } from "./nav-bar/NavBar";
+import { LoginUser } from "../features/users/sigle-user/login-user";
 
 export const AppRouting = () => {
   return (
@@ -24,6 +25,7 @@ export const AppRouting = () => {
             <Route path="deleteResult" element={<UserInfoDeleteResultComponent />}></Route>
             <Route index element={<UpdateUserContainer />}></Route>
           </Route>
+          <Route path="login" element={<LoginUser />}></Route>
           <Route path="posts" element={<Posts />}></Route>
         </Route>
         <Route path="*" element={<NoMatch />}></Route>

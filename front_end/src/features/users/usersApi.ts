@@ -1,7 +1,14 @@
 import { apiSlice } from "../../app/apiSlice";
-import { usersEndPointName } from "../../app/api-endpoints";
-import { CreateUserDto, UpdateUserDto, UserDeleteResult, UserWithRelationsIds } from "./types";
-import { EndPointResponse, ListResponse } from "../../app/web-api.types";
+import { authEndPointName, usersEndPointName } from "../../app/api-endpoints";
+import {
+  CreateUserDto,
+  LoginUserDto,
+  UpdateUserDto,
+  UserDeleteResult,
+  UserWithIncludedRelations,
+  UserWithRelationsIds,
+} from "./types";
+import { EndPointResponse, ListResponse, LoginResponse } from "../../app/web-api.types";
 import { providesList } from "../../app/rtk-query-utils";
 import { QueryGetPaginationListType } from "../shared/types";
 import { getResultUrlWithParams } from "../shared/pagination/query-utils";
@@ -34,12 +41,31 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
       invalidatesTags: [{ type: "User", id: "LIST" }],
     }),
 
+    loginUser: builder.mutation<LoginResponse<UserWithRelationsIds>, LoginUserDto>({
+      query: (body) => ({
+        url: `/${authEndPointName}/login`,
+        method: "POST",
+        body,
+      }),
+    }),
+
     getUser: builder.query<UserWithRelationsIds, string>({
       query: (userId) => ({
         url: `/${usersEndPointName}/${userId}`,
         method: "GET",
       }),
       transformResponse: (response: { data: UserWithRelationsIds }, meta, arg) => {
+        return response.data;
+      },
+      providesTags: (result, error, id) => [{ type: "User", id }],
+    }),
+
+    getUserWithRelations: builder.query<UserWithIncludedRelations, string>({
+      query: (userId) => ({
+        url: `/${usersEndPointName}/with-relations/${userId}`,
+        method: "GET",
+      }),
+      transformResponse: (response: { data: UserWithIncludedRelations }, meta, arg) => {
         return response.data;
       },
       providesTags: (result, error, id) => [{ type: "User", id }],
@@ -69,6 +95,8 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
 export const {
   useGetUsersQuery,
   useGetUserQuery,
+  useGetUserWithRelationsQuery,
+  useLoginUserMutation,
   useAddUserMutation,
   useUpdateUserMutation,
   useDeleteUserMutation,

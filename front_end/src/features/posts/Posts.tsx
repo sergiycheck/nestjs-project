@@ -1,17 +1,14 @@
 import React, { useEffect, useContext, Suspense } from "react";
-import { Link as RouterLink } from "react-router-dom";
-import { TimeAgo } from "../shared/TimeAgo";
 import {
   PaginationContext,
   useSearchParamsToPassInAndPaginationContext,
   availableSearchParams,
 } from "../shared/pagination/pagination-context";
-
 import { PaginationComponent } from "../shared/pagination/PaginationComponent";
-import { Divider, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import { useGetPostsQuery } from "./postsApi";
-import Link from "@mui/material/Link";
 import { CircularIndeterminate } from "../shared/mui-components/Loader";
+import { PostsListContent, PostExcerptContent } from "./PostsContent";
 
 export const Posts = () => {
   const { contextDataAndHandler } = useSearchParamsToPassInAndPaginationContext({
@@ -37,17 +34,17 @@ export const Posts = () => {
   );
 };
 
-const PostsList = () => {
+export const PostsList = () => {
   const { initialPaginationData, setPaginationContextData } = useContext(PaginationContext);
   const { limit, skip } = initialPaginationData;
 
   const {
     data: itemsResponse,
+    isFetching,
     isLoading,
     isSuccess,
     isError,
     error,
-    isFetching,
   } = useGetPostsQuery({ limit, skip });
 
   useEffect(() => {
@@ -65,20 +62,18 @@ const PostsList = () => {
     }
   }, [isFetching, setPaginationContextData, itemsResponse]);
 
-  const items = itemsResponse?.data.map((item) => (
-    <PostExcerpt key={item.id} itemId={item.id}></PostExcerpt>
-  ));
-
-  if (isLoading) return <CircularIndeterminate />;
-  if (isError) return <div>Error occurred {error}</div>;
-  if (!itemsResponse || !Object.keys(itemsResponse).length) return <div>No posts found</div>;
-
-  if (isSuccess) return <div className="row gy-2">{items}</div>;
-
-  return <div>unknown response</div>;
+  return (
+    <PostsListContent
+      data={itemsResponse?.data}
+      isLoading={isLoading}
+      isError={isError}
+      isSuccess={isSuccess}
+      error={error}
+    />
+  );
 };
 
-const PostExcerpt = ({ itemId }: { itemId: string }) => {
+export const PostExcerpt = ({ itemId }: { itemId: string }) => {
   const { initialPaginationData } = useContext(PaginationContext);
   const { limit, skip } = initialPaginationData;
   const { item } = useGetPostsQuery(
@@ -90,41 +85,5 @@ const PostExcerpt = ({ itemId }: { itemId: string }) => {
     }
   );
 
-  return (
-    <div className="col-12 border rounded">
-      <div className="row g-3">
-        <div className="col-12">
-          <Typography variant="h5">{item?.title}</Typography>
-        </div>
-        <div className="col-12">
-          <Typography variant="h6">subtitle: {item?.subtitle}</Typography>
-        </div>
-        <div className="col-12">
-          <Typography variant="body2">
-            created: <TimeAgo timeStamp={item?.createdAt}></TimeAgo>
-          </Typography>
-        </div>
-        <div className="col-12">category: {item?.category}</div>
-      </div>
-      <div className="row">
-        <div className="col">
-          <Typography variant="body1">{item?.description}</Typography>
-        </div>
-      </div>
-      <div className="row">
-        <div className="col-auto">
-          <Typography variant="overline">
-            <Link href={`/users/${item?.owner.id}`}>
-              author: {item?.owner.firstName} {item?.owner.lastName}
-            </Link>
-          </Typography>
-        </div>
-      </div>
-      <div className="row">
-        <div className="col">
-          <Divider></Divider>
-        </div>
-      </div>
-    </div>
-  );
+  return <PostExcerptContent item={item} />;
 };

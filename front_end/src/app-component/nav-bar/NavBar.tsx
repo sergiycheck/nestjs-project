@@ -19,6 +19,9 @@ export function NavBar() {
           <Link href="posts">posts</Link>
         </Grid>
         <Grid className="col-auto" item component={ListItem}>
+          <Link href="login">login</Link>
+        </Grid>
+        <Grid className="col-auto" item component={ListItem}>
           <IconButton sx={{ ml: 1 }} onClick={colorModeManager.toggleColorMode}>
             {theme.palette.mode === "dark" ? <Brightness7Icon /> : <Brightness4Icon />}
           </IconButton>
