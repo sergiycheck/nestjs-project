@@ -18,4 +18,5 @@ export type LoginResponse<T> = {
   message: string;
   user_jwt: string;
   userResponse: T;
+  successfulAuth: boolean;
 };
