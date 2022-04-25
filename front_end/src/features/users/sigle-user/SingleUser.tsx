@@ -7,6 +7,7 @@ import { UserRootData } from "../types";
 import { ArticleResponseWithRelations } from "../../posts/types";
 import { PostExcerptContent } from "../../posts/PostsContent";
 import { useGetUserWithRelationsQueryAndPopulateUserArticlesWithUser } from "./sigle-user.hooks";
+import { useDeletePostMutation } from "./manage-posts/user-manage-posts.api";
 
 export const SingleUser = () => {
   const { userId } = useParams();
@@ -108,26 +109,45 @@ const PostsForUser = ({
   userId: string;
   articles: ArticleResponseWithRelations[];
 }) => {
+  const [deletePostMutation, { isLoading, isError, isSuccess: isFetchDeleteSuccessful }] =
+    useDeletePostMutation();
+  const [deleteSuccessful, setDelRes] = React.useState<boolean | null>(null);
+
   const renderedArticles = articles.map((article) => (
     <div key={article.id} className="row">
-      <div className="col-9">
-        <div className="row">
-          <PostExcerptContent item={article} />
+      <div className="row">
+        <div className="col-9">
+          <div className="row">
+            <PostExcerptContent item={article} />
+          </div>
+        </div>
+        <div className="col-3 ">
+          <Button
+            variant="outlined"
+            color="warning"
+            onClick={async () => {
+              const res = await deletePostMutation({
+                postId: article.id,
+                ownerId: userId,
+              }).unwrap();
+              if (res.data.deletedCount === 1 && res.data.updatedUser) {
+                setDelRes(true);
+              }
+            }}
+          >
+            {/* pop up with message asking if you really want to delete this post */}X
+          </Button>
+          <Button
+            component={RouterLink}
+            variant="outlined"
+            color="info"
+            to={`/user/edit-post/${userId}`}
+          >
+            edit
+          </Button>
         </div>
       </div>
-      <div className="col-3 ">
-        <Button variant="outlined" color="warning">
-          {/* pop up with message asking if you really want to delete this post */}X
-        </Button>
-        <Button
-          component={RouterLink}
-          variant="outlined"
-          color="info"
-          to={`/user/edit-post/${userId}`}
-        >
-          edit
-        </Button>
-      </div>
+      {isFetchDeleteSuccessful && deleteSuccessful && <div>post was deleted</div>}
     </div>
   ));
 

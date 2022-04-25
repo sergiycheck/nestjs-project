@@ -18,7 +18,7 @@ import { providesList } from "../../app/rtk-query-utils";
 import { QueryGetPaginationListType } from "../shared/types";
 import { getResultUrlWithParams } from "../shared/pagination/query-utils";
 
-export const extendedApiSlice = apiSlice.injectEndpoints({
+export const extendedUserApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getUsers: builder.query<ListResponse<UserWithRelationsIds>, QueryGetPaginationListType>({
       query: (queryParams: QueryGetPaginationListType) => {
@@ -54,17 +54,11 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
       }),
     }),
 
-    getUserFromJwt: builder.mutation<GetUserFromJwtResponse<UserWithRelationsIds>, string>({
-      query: (jwt_token) => {
-        const headersProvided: Record<string, string> = {
-          Authorization: `Bearer ${jwt_token}`,
-        };
-        return {
-          headers: headersProvided,
-          url: `/${authEndPointName}/get-user-from-jwt`,
-          method: "GET",
-        };
-      },
+    getUserFromJwt: builder.mutation<GetUserFromJwtResponse<UserWithRelationsIds>, void>({
+      query: () => ({
+        url: `/${authEndPointName}/get-user-from-jwt`,
+        method: "GET",
+      }),
     }),
 
     getUser: builder.query<UserWithRelationsIds, string>({
@@ -119,4 +113,4 @@ export const {
   useAddUserMutation,
   useUpdateUserMutation,
   useDeleteUserMutation,
-} = extendedApiSlice;
+} = extendedUserApiSlice;

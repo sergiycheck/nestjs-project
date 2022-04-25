@@ -11,6 +11,8 @@ import Box from "@mui/material/Box";
 import { NavBar } from "./nav-bar/NavBar";
 import { LoginUser } from "../features/users/sigle-user/login-user";
 import { AuthContext, AuthProvider } from "./auth-provider/auth-provider";
+import AddPostForUser from "../features/users/sigle-user/manage-posts/add-posts";
+import EditPostForUser from "../features/users/sigle-user/manage-posts/edit-post";
 
 export const AppRouting = () => {
   return (
@@ -34,17 +36,28 @@ export const AppRouting = () => {
               <Route index element={<UsersList />}></Route>
             </Route>
             <Route path="users/:userId" element={<SingleUser />}></Route>
+
             <Route path="users/edit/:userId" element={<UpdateUser />}>
               <Route path="deleteResult" element={<UserInfoDeleteResultComponent />}></Route>
               <Route index element={<UpdateUserContainer />}></Route>
             </Route>
+
             <Route path="login" element={<LoginUser />}></Route>
             <Route path="posts" element={<Posts />}></Route>
+
             <Route
-              path="/protected/user"
+              path="user/add-post/:userId"
               element={
                 <RequireAuth>
-                  <UserProtectedPage />
+                  <AddPostForUser />
+                </RequireAuth>
+              }
+            ></Route>
+            <Route
+              path="user/edit-post/:userId"
+              element={
+                <RequireAuth>
+                  <EditPostForUser />
                 </RequireAuth>
               }
             ></Route>
@@ -94,14 +107,4 @@ function RequireAuth({ children }: { children: JSX.Element }) {
   }
 
   return children;
-}
-
-function UserProtectedPage() {
-  const auth = React.useContext(AuthContext);
-
-  return (
-    <div>
-      <Typography>user {auth.user?.userResponse.username} protected page</Typography>
-    </div>
-  );
 }

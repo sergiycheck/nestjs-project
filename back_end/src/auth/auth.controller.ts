@@ -11,6 +11,11 @@ import { LoginAuthDto } from './dto/auth.dto';
 import { AuthEndPoint } from '../api/endpoints';
 import { FailedToAuthExceptionFilter } from './filters/failed-to-auth.filter';
 
+// TODO: remove for testing
+const sleep = (ms) => {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+};
+
 @UseFilters(FailedToAuthExceptionFilter)
 @ApiTags(AuthEndPoint)
 @Controller(AuthEndPoint)
@@ -33,7 +38,8 @@ export class AuthController {
 
   @ApiBearerAuth()
   @Get('get-user-from-jwt')
-  getUserFromJwt(@GetUserFromReqDec() user: MappedUserResponse) {
+  async getUserFromJwt(@GetUserFromReqDec() user: MappedUserResponse) {
+    await sleep(1000);
     return new UserAuthResponse({
       message: 'user was found from jwt',
       successfulAuth: true,

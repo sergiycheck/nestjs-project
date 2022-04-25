@@ -5,10 +5,11 @@ import Link from "@mui/material/Link";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
 import { ColorModeContext } from "../color-mode-context";
-import { AuthContext, schemaTokenValidation } from "../auth-provider/auth-provider";
+import { AuthContext } from "../auth-provider/auth-provider";
 import { useNavigate } from "react-router-dom";
 import { useGetUserFromJwtMutation } from "../../features/users/usersApi";
 import { CircularIndeterminate } from "../../features/shared/mui-components/Loader";
+import { schemaTokenValidation } from "./../../features/shared/token_validator";
 
 export function NavBar() {
   const theme = useTheme();
@@ -24,15 +25,10 @@ export function NavBar() {
     if (auth.user) return;
 
     async function getUserFromJwtRequest(token: string) {
-      const { error } = schemaTokenValidation.validate(token);
-      if (!Boolean(error)) {
-        const result = await getUserFromJwtMutation(token!).unwrap();
-        const { message, ...currentUser } = result;
-        if (currentUser.successfulAuth) {
-          auth.setUserFromJwt(currentUser);
-        } else {
-          auth.setUserFromJwt(null);
-        }
+      const result = await getUserFromJwtMutation().unwrap();
+      const { message, ...currentUser } = result;
+      if (currentUser.successfulAuth) {
+        auth.setUserFromJwt(currentUser);
       } else {
         auth.setUserFromJwt(null);
       }

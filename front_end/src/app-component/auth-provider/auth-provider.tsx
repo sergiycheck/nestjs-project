@@ -1,4 +1,3 @@
-import Joi from "joi";
 import React from "react";
 import { LoginResponse } from "../../app/web-api.types";
 import { UserWithRelationsIds } from "../../features/users/types";
@@ -12,10 +11,6 @@ type AuthContextType = {
   signOut: (callback: VoidFunction) => void;
   setUserFromJwt: (user: CurrentUser | null) => void;
 };
-
-export const schemaTokenValidation = Joi.string()
-  .regex(/^[\w\-_]+\.[\w\-_]+\.[\w\-_.+/=]*$/)
-  .required();
 
 export const AuthContext = React.createContext<AuthContextType>(null!);
 export function AuthProvider({ children }: { children: React.ReactNode }) {

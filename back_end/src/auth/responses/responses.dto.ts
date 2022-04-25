@@ -19,7 +19,7 @@ export class UserAuthResponse extends BaseEntity {
 
   @IsOptional()
   @IsNotEmpty()
-  userResponse: MappedUserResponse;
+  public userResponse: MappedUserResponse;
 }
 
 export class UserLoginResponse extends UserAuthResponse {
