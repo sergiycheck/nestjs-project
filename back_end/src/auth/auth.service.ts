@@ -5,6 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { User } from '../users/entities/user.entity';
 import { MappedUserResponse } from '../users/dto/response-user.dto';
+import { FailedAuthException } from './responses/response.exceptions';
 
 @Injectable()
 export class AuthService {
@@ -20,16 +21,18 @@ export class AuthService {
     const user = await this.usersService.findOne({ username });
 
     if (!user)
-      throw new UnauthorizedException({
-        message: 'user was not found for props',
-        props: { username },
-      });
+      throw new FailedAuthException(
+        `user was not found for username ${username}`,
+      );
 
     const isMatch = await bcrypt.compare(pass, user.passwordHash);
     if (user && isMatch) {
       return this.getResponseForUser(user);
     }
-    return null;
+
+    throw new FailedAuthException(
+      `password is incorrect for username ${username}`,
+    );
   }
 
   getResponseForUser(user: LeanDocument<User>) {

@@ -65,7 +65,7 @@ export class UsersController extends BaseController {
   @Get()
   async findAll(@Query() query: PaginatedRequestDto) {
     const res = await this.usersService.findAll(query);
-
+    await sleep(1000);
     return this.getResponse<PaginatedResponseDto<MappedUserResponse[]>>(
       'users were found',
       'no users were found',
@@ -91,7 +91,6 @@ export class UsersController extends BaseController {
     @Param('id', new CustomParseObjectIdPipe()) id: string,
   ) {
     const user = await this.usersService.findOneWithRelations(id);
-
     return this.getResponse<MappedUserResponseWithRelations>(
       'user was found',
       `user was not found for id ${id}`,

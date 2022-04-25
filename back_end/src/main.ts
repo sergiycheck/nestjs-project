@@ -13,6 +13,8 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const port = +configService.get('WEB_API_APP_PORT');
 
-  await app.listen(port);
+  await app
+    .listen(port)
+    .then((v) => console.log('app is running...', v['_connectionKey']));
 }
 bootstrap();

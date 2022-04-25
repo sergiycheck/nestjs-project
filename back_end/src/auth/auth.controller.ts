@@ -1,4 +1,4 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, UseFilters } from '@nestjs/common';
 import { UseGuards } from '@nestjs/common';
 import { Public } from './metadata.decorators';
 import { LocalAuthGuard } from './local-auth.guard';
@@ -9,7 +9,9 @@ import { MappedUserResponse } from '../users/dto/response-user.dto';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { LoginAuthDto } from './dto/auth.dto';
 import { AuthEndPoint } from '../api/endpoints';
+import { FailedToAuthExceptionFilter } from './filters/failed-to-auth.filter';
 
+@UseFilters(FailedToAuthExceptionFilter)
 @ApiTags(AuthEndPoint)
 @Controller(AuthEndPoint)
 export class AuthController {
@@ -25,6 +27,7 @@ export class AuthController {
       message: 'successfully logged in',
       user_jwt: access_token,
       userResponse,
+      successfulAuth: true,
     });
   }
 }

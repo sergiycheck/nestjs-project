@@ -55,6 +55,7 @@ export class ArticleSearchService extends BaseService {
       } else if (requestQueryIncludesAnyFilterProp) {
         resultQueryFromDb = await this.articleModel
           .find(...findArgsArr)
+          .sort({ _id: 'desc' })
           .populate({ path: 'owner' })
           .exec();
         totalDocsInDbForQuery = await this.articleModel.count(query);
@@ -62,6 +63,7 @@ export class ArticleSearchService extends BaseService {
         //request query does not include any filter prop only options
         resultQueryFromDb = await this.articleModel
           .find(...findArgsArr)
+          .sort({ _id: 'desc' })
           .populate({ path: 'owner' })
           .exec();
         totalDocsInDbForQuery =
@@ -70,6 +72,7 @@ export class ArticleSearchService extends BaseService {
     } else {
       resultQueryFromDb = await this.articleModel
         .find({})
+        .sort({ _id: 'desc' })
         .populate({ path: 'owner' })
         .exec();
       totalDocsInDbForQuery = await this.articleModel.estimatedDocumentCount();

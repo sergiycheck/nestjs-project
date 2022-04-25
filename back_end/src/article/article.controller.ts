@@ -36,6 +36,11 @@ import { ApiCreateArticleDecorator } from './swagger_decorators/api-create-artic
 import { PaginatedResponseDto } from '../base/responses/response.dto';
 import { ArticleSearchService } from './article-search.service';
 
+// TODO: remove for testing
+const sleep = (ms) => {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+};
+
 // JwtAuthGuard is bounded automatically to endpoint that is not marked with @Public decorator
 // because it is declared as a global guard
 // user is add to the req obj by passport
@@ -75,7 +80,7 @@ export class ArticleController extends BaseController {
   @Get()
   async findAll(@Query() query: ArticleSearchQueryTextDto) {
     const res = await this.articleSearchService.findAll(query);
-
+    await sleep(1000);
     return this.getResponse<
       PaginatedResponseDto<MappedArticleResponseWithRelations[]>
     >('articles were found', 'no articles was found', res);
@@ -88,7 +93,7 @@ export class ArticleController extends BaseController {
   ) {
     const res = await this.articleService.getArticlesByUserId(userId);
     return this.getResponse<MappedArticleResponseWithRelations[]>(
-      `articles were found four user`,
+      `articles were found for user`,
       'no articles were found',
       res,
     );
