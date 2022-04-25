@@ -1,22 +1,31 @@
+import Joi from "joi";
 import React from "react";
 import { LoginResponse } from "../../app/web-api.types";
 import { UserWithRelationsIds } from "../../features/users/types";
 
 type UserLogin = Omit<LoginResponse<UserWithRelationsIds>, "message">;
+type CurrentUser = Omit<UserLogin, "user_jwt">;
+
 type AuthContextType = {
-  user: UserLogin | null;
+  user: CurrentUser | null;
   signIn: (user: UserLogin, callback: VoidFunction) => void;
   signOut: (callback: VoidFunction) => void;
+  setUserFromJwt: (user: CurrentUser | null) => void;
 };
 
-const AuthContext = React.createContext<AuthContextType>(null!);
+export const schemaTokenValidation = Joi.string()
+  .regex(/^[\w\-_]+\.[\w\-_]+\.[\w\-_.+/=]*$/)
+  .required();
+
+export const AuthContext = React.createContext<AuthContextType>(null!);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = React.useState<UserLogin | null>(null!);
+  const [user, setUser] = React.useState<CurrentUser | null>(null);
 
   const signIn = (userLoggedIn: UserLogin, callback: VoidFunction) => {
     //return AuthProvider.signIn
-    setUser(userLoggedIn);
     window.localStorage.setItem("jwt", userLoggedIn.user_jwt);
+    const { user_jwt, ...userData } = userLoggedIn;
+    setUser(userData);
     callback();
   };
 
@@ -28,11 +37,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     callback();
   };
 
-  const passedValue = { user, signIn, signOut };
+  const passedValue = { user, signIn, signOut, setUserFromJwt: setUser };
 
   return <AuthContext.Provider value={passedValue}>{children}</AuthContext.Provider>;
-}
-
-export function useAuth() {
-  return React.useContext(AuthContext);
 }

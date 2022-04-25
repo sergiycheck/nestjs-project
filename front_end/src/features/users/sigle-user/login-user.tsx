@@ -8,14 +8,15 @@ import { useLoginUserMutation } from "../usersApi";
 import TextField from "@mui/material/TextField";
 import { Alert, Button } from "@mui/material";
 import { Location, useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../../../app-component/auth-provider/auth-provider";
+import { AuthContext } from "../../../app-component/auth-provider/auth-provider";
 
 type StateOfLocationType = Location & { from: Location };
 
 export const LoginUser = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const auth = useAuth();
+  const auth = React.useContext(AuthContext);
+
   const stateOfLocation = location.state as StateOfLocationType;
   const from = stateOfLocation?.from?.pathname || "/";
 

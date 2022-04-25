@@ -14,9 +14,12 @@ export type ListResponse<T> = PaginationData & {
   data: T[];
 };
 
-export type LoginResponse<T> = {
+export type GetUserFromJwtResponse<T> = {
   message: string;
-  user_jwt: string;
   userResponse: T;
   successfulAuth: boolean;
+};
+
+export type LoginResponse<T> = GetUserFromJwtResponse<T> & {
+  user_jwt: string;
 };

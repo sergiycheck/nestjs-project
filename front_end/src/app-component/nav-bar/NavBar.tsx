@@ -1,31 +1,77 @@
 import React from "react";
 import { useTheme } from "@mui/material/styles";
-import { Button, Grid, IconButton, ListItem, Typography } from "@mui/material";
+import { Button, Grid, IconButton, ListItem } from "@mui/material";
 import Link from "@mui/material/Link";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
 import { ColorModeContext } from "../color-mode-context";
-import { useAuth } from "../auth-provider/auth-provider";
+import { AuthContext, schemaTokenValidation } from "../auth-provider/auth-provider";
 import { useNavigate } from "react-router-dom";
+import { useGetUserFromJwtMutation } from "../../features/users/usersApi";
+import { CircularIndeterminate } from "../../features/shared/mui-components/Loader";
 
 export function NavBar() {
   const theme = useTheme();
   const colorModeManager = React.useContext(ColorModeContext);
-  const auth = useAuth();
+  const auth = React.useContext(AuthContext);
   const navigate = useNavigate();
+
+  const [getUserFromJwtMutation, { isLoading, isError }] = useGetUserFromJwtMutation();
+
+  React.useEffect(() => {
+    const jwt_token = window.localStorage.getItem("jwt");
+    if (!jwt_token) return;
+    if (auth.user) return;
+
+    async function getUserFromJwtRequest(token: string) {
+      const { error } = schemaTokenValidation.validate(token);
+      if (!Boolean(error)) {
+        const result = await getUserFromJwtMutation(token!).unwrap();
+        const { message, ...currentUser } = result;
+        if (currentUser.successfulAuth) {
+          auth.setUserFromJwt(currentUser);
+        } else {
+          auth.setUserFromJwt(null);
+        }
+      } else {
+        auth.setUserFromJwt(null);
+      }
+    }
+    getUserFromJwtRequest(jwt_token);
+  }, [auth, getUserFromJwtMutation]);
+
+  React.useEffect(() => {
+    if (isError) {
+      auth.setUserFromJwt(null);
+    }
+  }, [isError, auth]);
 
   let renderedLoginResult;
 
-  if (!auth.user) {
+  if (isLoading)
+    renderedLoginResult = (
+      <Grid className="col-auto" item component={ListItem}>
+        <div className="row align-items-center">
+          <div className="col">signing in...</div>
+          <div className="col-auto">
+            <CircularIndeterminate />
+          </div>
+        </div>
+      </Grid>
+    );
+
+  if (!isLoading && !auth.user) {
     renderedLoginResult = (
       <Grid className="col-auto" item component={ListItem}>
         <Link href="login">login</Link>
       </Grid>
     );
-  } else {
+  } else if (auth.user) {
     renderedLoginResult = (
       <Grid className="col-auto" item component={ListItem}>
-        <Typography>welcome {auth.user.userResponse.username}</Typography>
+        <Link className="mx-2" href={`users/${auth.user.userResponse.id}`}>
+          {auth.user.userResponse.username}
+        </Link>
         <Button
           variant="outlined"
           onClick={() => {

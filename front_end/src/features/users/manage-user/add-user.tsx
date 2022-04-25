@@ -75,7 +75,13 @@ export const AddUser = () => {
             control={control}
             defaultValue=""
             render={({ field }) => (
-              <TextField required label="username" {...field} variant="standard" />
+              <TextField
+                required
+                label="username"
+                {...field}
+                variant="standard"
+                autoComplete="username"
+              />
             )}
           />
         </div>

@@ -8,7 +8,12 @@ import {
   UserWithIncludedRelations,
   UserWithRelationsIds,
 } from "./types";
-import { EndPointResponse, ListResponse, LoginResponse } from "../../app/web-api.types";
+import {
+  EndPointResponse,
+  GetUserFromJwtResponse,
+  ListResponse,
+  LoginResponse,
+} from "../../app/web-api.types";
 import { providesList } from "../../app/rtk-query-utils";
 import { QueryGetPaginationListType } from "../shared/types";
 import { getResultUrlWithParams } from "../shared/pagination/query-utils";
@@ -47,6 +52,19 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
         method: "POST",
         body,
       }),
+    }),
+
+    getUserFromJwt: builder.mutation<GetUserFromJwtResponse<UserWithRelationsIds>, string>({
+      query: (jwt_token) => {
+        const headersProvided: Record<string, string> = {
+          Authorization: `Bearer ${jwt_token}`,
+        };
+        return {
+          headers: headersProvided,
+          url: `/${authEndPointName}/get-user-from-jwt`,
+          method: "GET",
+        };
+      },
     }),
 
     getUser: builder.query<UserWithRelationsIds, string>({
@@ -97,6 +115,7 @@ export const {
   useGetUserQuery,
   useGetUserWithRelationsQuery,
   useLoginUserMutation,
+  useGetUserFromJwtMutation,
   useAddUserMutation,
   useUpdateUserMutation,
   useDeleteUserMutation,
