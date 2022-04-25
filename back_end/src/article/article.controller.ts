@@ -27,6 +27,7 @@ import {
 import { MappedUserResponse } from '../users/dto/response-user.dto';
 import { CanUserManageArticleGuard } from './can-user-manage-article.guard';
 import {
+  ApiBearerAuth,
   ApiHeader,
   ApiNotFoundResponse,
   ApiTags,
@@ -55,13 +56,15 @@ export class ArticleController extends BaseController {
     super();
   }
 
+  @ApiBearerAuth()
   @ApiCreateArticleDecorator(CreateArticleResponse)
   @ApiNotFoundResponse({ description: 'article was not created' })
   @ApiUnauthorizedResponse()
-  @ApiHeader({
-    name: 'Authorization',
-    description: 'Bearer token',
-  })
+  // TODO: provide custom header from swagger ui ?
+  // @ApiHeader({
+  //   name: 'Authorization',
+  //   description: 'Bearer token',
+  // })
   @Post()
   async create(
     @Body() createArticleDto: CreateArticleDto,
@@ -111,6 +114,7 @@ export class ArticleController extends BaseController {
     );
   }
 
+  @ApiBearerAuth()
   @UseGuards(CanUserManageArticleGuard)
   @Patch(':id')
   async update(
@@ -125,6 +129,7 @@ export class ArticleController extends BaseController {
     );
   }
 
+  @ApiBearerAuth()
   @UseGuards(CanUserManageArticleGuard)
   @Delete(':id')
   async remove(

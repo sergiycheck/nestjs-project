@@ -4,6 +4,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ConfigService } from '@nestjs/config';
 import { UsersService } from './../users/users.service';
 import { MappedUserResponse } from '../users/dto/response-user.dto';
+import { FailedAuthException } from './responses/response.exceptions';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -27,7 +28,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
 
     if (!user) {
-      throw new NotFoundException(
+      throw new FailedAuthException(
         `user with username ${userObj.username} is not found`,
       );
     }

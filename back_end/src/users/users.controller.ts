@@ -22,7 +22,7 @@ import {
 } from './dto/response-user.dto';
 import { BaseController } from '../base/controllers/base.controller';
 import { CanUserManageUserGuard } from './can-user-manage-user.guard';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { PaginatedRequestDto } from '../base/requests/requests.dto';
 import { PaginatedResponseDto } from '../base/responses/response.dto';
 
@@ -109,8 +109,9 @@ export class UsersController extends BaseController {
     );
   }
 
-  // TODO: uncomment
-  // @UseGuards(new CanUserManageUserGuard())
+  // TODO: provide token from front-end
+  @ApiBearerAuth()
+  @UseGuards(new CanUserManageUserGuard())
   @Public()
   @Patch(':id')
   async update(
@@ -126,8 +127,9 @@ export class UsersController extends BaseController {
     );
   }
 
-  // TODO: uncomment
-  // @UseGuards(new CanUserManageUserGuard())
+  // TODO: provide token from front-end
+  @ApiBearerAuth()
+  @UseGuards(new CanUserManageUserGuard())
   @Public()
   @Delete(':id')
   async remove(@Param('id', new CustomParseObjectIdPipe()) id: string) {

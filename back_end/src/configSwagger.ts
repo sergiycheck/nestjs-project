@@ -11,6 +11,7 @@ export const configSwagger = async (app: INestApplication) => {
     .setTitle('Auth app example')
     .setDescription('The auth app API description')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
 
   const options: SwaggerDocumentOptions = {

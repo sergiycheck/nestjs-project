@@ -8,7 +8,7 @@ import {
 import { MappedUserResponse } from '../../users/dto/response-user.dto';
 import { BaseEntity } from '../../base/entities/base-entities';
 
-export class UserLoginResponse extends BaseEntity {
+export class UserAuthResponse extends BaseEntity {
   @IsNotEmpty()
   @IsString()
   public message: string;
@@ -20,7 +20,9 @@ export class UserLoginResponse extends BaseEntity {
   @IsOptional()
   @IsNotEmpty()
   userResponse: MappedUserResponse;
+}
 
+export class UserLoginResponse extends UserAuthResponse {
   @IsOptional()
   @IsNotEmpty()
   @IsJWT()
