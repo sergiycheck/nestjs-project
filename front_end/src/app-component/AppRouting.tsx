@@ -46,7 +46,7 @@ export const AppRouting = () => {
             <Route path="posts" element={<Posts />}></Route>
 
             <Route
-              path="user/add-post/:userId"
+              path="user/:userId/add-post"
               element={
                 <RequireAuth>
                   <AddPostForUser />
@@ -54,7 +54,7 @@ export const AppRouting = () => {
               }
             ></Route>
             <Route
-              path="user/edit-post/:userId"
+              path="user/:userId/edit-post/:postId"
               element={
                 <RequireAuth>
                   <EditPostForUser />

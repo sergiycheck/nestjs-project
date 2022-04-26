@@ -1,11 +1,5 @@
-import { ArticleResponse } from "../../../posts/types";
+import { ArticleResponse, PostGenre } from "../../../posts/types";
 import { UserWithRelationsIds } from "../../types";
-
-export enum PostGenre {
-  Sport = "sport",
-  Games = "games",
-  History = "history",
-}
 
 type Question<T> = {
   [Prop in keyof T]+?: T[Prop];

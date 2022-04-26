@@ -92,7 +92,7 @@ const SingleUserContent = ({ user }: { user: UserRootData | undefined }) => {
             component={RouterLink}
             variant="outlined"
             className="align-self-start flex-shrink-0"
-            to={`/user/add-post/${user?.id}`}
+            to={`/user/${user?.id}/add-post`}
           >
             add post
           </Button>
@@ -141,7 +141,7 @@ const PostsForUser = ({
             component={RouterLink}
             variant="outlined"
             color="info"
-            to={`/user/edit-post/${userId}`}
+            to={`/user/${userId}/edit-post/${article.id}`}
           >
             edit
           </Button>

@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { PostGenre } from "./types";
+import { PostGenre } from "../../../posts/types";
 
 export const createPostDataToValidate = {
   title: Joi.string().required().min(5).max(400),
@@ -17,7 +17,16 @@ export const createPostSchema = Joi.object({
   ...createPostDataToValidate,
 });
 
-export const updatePostSchema = Joi.object({
-  ...createPostDataToValidate,
+const postId = {
   id: Joi.string().required(),
+};
+
+export const editPostDataToValidate = {
+  ...createPostDataToValidate,
+  ...postId,
+};
+export type EditPostDataToValidateKeysType = keyof typeof editPostDataToValidate;
+
+export const updatePostSchema = Joi.object({
+  ...editPostDataToValidate,
 });

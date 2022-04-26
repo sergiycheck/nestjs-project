@@ -1,10 +1,16 @@
 import { UserWithRelationsIds } from "../users/types";
 
+export enum PostGenre {
+  Sport = "sport",
+  Games = "games",
+  History = "history",
+}
+
 type ArticleNonChangeableData = {
   title: string;
   subtitle: string;
   description: string;
-  category: string;
+  category: PostGenre;
   createdAt: string;
   updatedAt: string;
 };

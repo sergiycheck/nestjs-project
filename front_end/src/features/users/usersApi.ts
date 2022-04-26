@@ -66,7 +66,7 @@ export const extendedUserApiSlice = apiSlice.injectEndpoints({
         url: `/${usersEndPointName}/${userId}`,
         method: "GET",
       }),
-      transformResponse: (response: { data: UserWithRelationsIds }, meta, arg) => {
+      transformResponse: (response: EndPointResponse<UserWithRelationsIds>, meta, arg) => {
         return response.data;
       },
       providesTags: (result, error, id) => [{ type: "User", id }],
@@ -77,7 +77,7 @@ export const extendedUserApiSlice = apiSlice.injectEndpoints({
         url: `/${usersEndPointName}/with-relations/${userId}`,
         method: "GET",
       }),
-      transformResponse: (response: { data: UserWithIncludedRelations }, meta, arg) => {
+      transformResponse: (response: EndPointResponse<UserWithIncludedRelations>, meta, arg) => {
         return response.data;
       },
       providesTags: (result, error, id) => [{ type: "User", id }],
