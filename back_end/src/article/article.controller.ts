@@ -99,11 +99,25 @@ export class ArticleController extends BaseController {
   }
 
   @Public()
+  @Get('with-relations/:id')
+  async findOneWithRelations(
+    @Param('id', new CustomParseObjectIdPipe()) id: string,
+  ) {
+    const res = await this.articleService.findOneWithRelations(id);
+
+    return this.getResponse<MappedArticleResponseWithRelations>(
+      'article was found',
+      `article was not found for id ${id}`,
+      res,
+    );
+  }
+
+  @Public()
   @Get(':id')
   async findOne(@Param('id', new CustomParseObjectIdPipe()) id: string) {
     const res = await this.articleService.findOne(id);
 
-    return this.getResponse<MappedArticleResponseWithRelations>(
+    return this.getResponse<MappedArticleResponse>(
       'article was found',
       `article was not found for id ${id}`,
       res,

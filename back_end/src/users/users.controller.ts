@@ -109,10 +109,8 @@ export class UsersController extends BaseController {
     );
   }
 
-  // TODO: provide token from front-end
   @ApiBearerAuth()
   @UseGuards(new CanUserManageUserGuard())
-  @Public()
   @Patch(':id')
   async update(
     @Param('id', new CustomParseObjectIdPipe()) id: string,
@@ -120,17 +118,14 @@ export class UsersController extends BaseController {
   ) {
     const res = await this.usersService.update(id, updateDto);
 
-    return this.getResponse<MappedUserResponse>(
-      'user was updated successfully',
-      'fail to update the user',
-      res,
-    );
+    return this.getResponse<{
+      mappedUserResponse: MappedUserResponse;
+      access_token: string;
+    }>('user was updated successfully', 'fail to update the user', res);
   }
 
-  // TODO: provide token from front-end
   @ApiBearerAuth()
   @UseGuards(new CanUserManageUserGuard())
-  @Public()
   @Delete(':id')
   async remove(@Param('id', new CustomParseObjectIdPipe()) id: string) {
     const res = await this.usersService.remove(id);

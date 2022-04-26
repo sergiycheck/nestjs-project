@@ -29,7 +29,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     if (!user) {
       throw new FailedAuthException(
-        `user with username ${userObj.username} is not found`,
+        `user with username ${userObj.username} was not found`,
       );
     }
     const userResponse =

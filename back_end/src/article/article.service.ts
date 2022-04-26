@@ -3,6 +3,7 @@ import {
   Inject,
   Injectable,
   BadRequestException,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
@@ -73,14 +74,25 @@ export class ArticleService extends BaseService {
     } as CreateArticleResponse;
   }
 
-  async findOne(id: string) {
+  async findOneWithRelations(id: string) {
     const resQuery = await this.articleModel
       .findById(id)
       .populate({ path: 'owner' })
       .exec();
+
     if (!resQuery)
-      throw new BadRequestException(`cannot find article with id ${id}`);
+      throw new NotFoundException(`cannot find article with id ${id}`);
+
     return this.articleResponseGetterService.getResponseWithRelations(resQuery);
+  }
+
+  async findOne(id: string) {
+    const resQuery = await this.articleModel.findById(id).exec();
+
+    if (!resQuery)
+      throw new NotFoundException(`cannot find article with id ${id}`);
+
+    return this.articleResponseGetterService.getResponse(resQuery);
   }
 
   async findByIdWithRelationsIds(id: string) {

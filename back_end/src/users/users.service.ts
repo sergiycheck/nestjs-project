@@ -18,6 +18,7 @@ import { SALT_ROUNDS } from '../auth/constants';
 import { PaginatedRequestDto } from '../base/requests/requests.dto';
 import { PaginatedResponseDto } from '../base/responses/response.dto';
 import { UsersResponseGetterService } from './users-response-getter.service';
+import { JwtService } from '@nestjs/jwt';
 
 // all thrown exceptions is handled by global exception filter
 @Injectable()
@@ -28,6 +29,7 @@ export class UsersService extends BaseService {
     public usersResponseGetterService: UsersResponseGetterService,
     @Inject(forwardRef(() => ArticleService))
     private readonly articleService: ArticleService,
+    private jwtService: JwtService,
   ) {
     super();
   }
@@ -115,7 +117,7 @@ export class UsersService extends BaseService {
   async findOneWithRelations(id: string) {
     const userQuery = await this.userModel
       .findById(id)
-      .populate({ path: 'articles' })
+      .populate({ path: 'articles', options: { sort: { updatedAt: -1 } } })
       .exec();
     if (!userQuery)
       throw new NotFoundException(`user was not found by id ${id}`);
@@ -144,6 +146,7 @@ export class UsersService extends BaseService {
     return this.usersResponseGetterService.getResponse(res);
   }
 
+  //TODO: generate new jwt token on update
   async update(id: string, updateUserDto: UpdateUserDto) {
     this.countUsername(updateUserDto?.username, id);
     const { id: userId, ...data } = updateUserDto;
@@ -152,7 +155,16 @@ export class UsersService extends BaseService {
       { ...data },
       { runValidators: true, new: true },
     );
-    return this.usersResponseGetterService.getResponse(updatedUserQuery);
+    const mappedUserResponse =
+      this.usersResponseGetterService.getResponse(updatedUserQuery);
+
+    return {
+      access_token: this.jwtService.sign({
+        username: updatedUserQuery.username,
+        sub: updatedUserQuery.id,
+      }),
+      mappedUserResponse,
+    };
   }
 
   async remove(id: string) {
