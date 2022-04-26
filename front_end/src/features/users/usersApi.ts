@@ -7,6 +7,7 @@ import {
   UserDeleteResult,
   UserWithIncludedRelations,
   UserWithRelationsIds,
+  UpdateUserResponse,
 } from "./types";
 import {
   EndPointResponse,
@@ -17,6 +18,7 @@ import {
 import { providesList } from "../../app/rtk-query-utils";
 import { QueryGetPaginationListType } from "../shared/types";
 import { getResultUrlWithParams } from "../shared/pagination/query-utils";
+import { updateUserCredentials, deleteUserCredentials } from "../shared/authSlice";
 
 export const extendedUserApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -83,7 +85,7 @@ export const extendedUserApiSlice = apiSlice.injectEndpoints({
       providesTags: (result, error, id) => [{ type: "User", id }],
     }),
 
-    updateUser: builder.mutation<EndPointResponse<UserWithRelationsIds>, UpdateUserDto>({
+    updateUser: builder.mutation<EndPointResponse<UpdateUserResponse>, UpdateUserDto>({
       query: (data) => {
         return {
           url: `/${usersEndPointName}/${data.id}`,
@@ -92,6 +94,13 @@ export const extendedUserApiSlice = apiSlice.injectEndpoints({
         };
       },
       invalidatesTags: (result, error, { id }) => [{ type: "User", id: "LIST" }],
+      async onQueryStarted(data, { dispatch, queryFulfilled }) {
+        const { data: updateResult } = await queryFulfilled;
+        if (updateResult.data) {
+          const { mappedUserResponse, access_token } = updateResult.data;
+          dispatch(updateUserCredentials({ user: mappedUserResponse, token: access_token }));
+        }
+      },
     }),
 
     deleteUser: builder.mutation<EndPointResponse<UserDeleteResult>, string>({
@@ -100,6 +109,20 @@ export const extendedUserApiSlice = apiSlice.injectEndpoints({
         method: "DELETE",
       }),
       invalidatesTags: (result, error, id) => [{ type: "User", id: "LIST" }],
+      async onQueryStarted(userId, { dispatch, queryFulfilled }) {
+        const patchResult = dispatch(
+          extendedUserApiSlice.util.updateQueryData("getUser", userId, (draft) => {
+            Object.assign(draft, undefined);
+          })
+        );
+
+        try {
+          await queryFulfilled;
+          dispatch(deleteUserCredentials({ userId }));
+        } catch {
+          patchResult.undo();
+        }
+      },
     }),
   }),
 });

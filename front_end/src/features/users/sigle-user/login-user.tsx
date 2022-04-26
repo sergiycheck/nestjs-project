@@ -1,21 +1,19 @@
 import React from "react";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
-import { Typography } from "@mui/material";
+import { Link, Typography } from "@mui/material";
 import { userLoginSchema } from "../manage-user/validation";
 import { LoginUserDto } from "../types";
 import { useLoginUserMutation } from "../usersApi";
 import TextField from "@mui/material/TextField";
 import { Alert, Button } from "@mui/material";
 import { Location, useLocation, useNavigate } from "react-router-dom";
-import { AuthContext } from "../../../app-component/auth-provider/auth-provider";
 
 type StateOfLocationType = Location & { from: Location };
 
 export const LoginUser = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const auth = React.useContext(AuthContext);
 
   const stateOfLocation = location.state as StateOfLocationType;
   const from = stateOfLocation?.from?.pathname || "/";
@@ -45,20 +43,11 @@ export const LoginUser = () => {
     setIsSuccessAuth(result.successfulAuth);
 
     if (result.successfulAuth) {
-      auth.signIn(result, () => {
-        //send them back to the page they tried to visit when they were
-        // redirected to the login page. Use {replace: true} so we don't create
-        //another entry in the history stack for the login page. This means that
-        // when they got to the protected page and click the back button, they
-        // won't end up back on the login page, which is also really nice for
-        // the user experience.
-        setTimeout(() => {
-          navigate(from, { replace: true });
-        }, 1000);
-      });
+      navigate(from, { replace: true });
     } else {
     }
   };
+
   const [schemaIsValid, setIsValid] = React.useState(false);
   React.useEffect(() => {
     const subscription = watch((value, { name, type }) => {
@@ -84,11 +73,14 @@ export const LoginUser = () => {
 
   return (
     <div className="container-md">
-      <div className="row">
-        <div className="col">
-          <Typography variant="h4">login form</Typography>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="col-12">
+      {/* login form */}
+      <div className="row justify-content-center">
+        <div className="col-5">
+          <Typography variant="h4" sx={{ textAlign: "center", marginBottom: "1em" }}>
+            Sign in form
+          </Typography>
+          <form className="row gy-2" onSubmit={handleSubmit(onSubmit)}>
+            <div className="col-12 d-flex justify-content-center">
               <Controller
                 name="username"
                 control={control}
@@ -104,7 +96,7 @@ export const LoginUser = () => {
                 )}
               />
             </div>
-            <div className="col-12">
+            <div className="col-12 d-flex justify-content-center">
               <Controller
                 name="password"
                 control={control}
@@ -123,11 +115,17 @@ export const LoginUser = () => {
             </div>
             <div className="col-12 d-flex justify-content-end">
               <Button disabled={!schemaIsValid} variant="contained" type="submit">
-                Save user
+                sign in
               </Button>
             </div>
           </form>
           <div className="row">{isOpenResult && saveResult}</div>
+        </div>
+      </div>
+      {/* links */}
+      <div className="row justify-content-center mt-2">
+        <div className="col-auto">
+          <Link href="/register">Dont have an account? Sign up</Link>
         </div>
       </div>
     </div>

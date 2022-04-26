@@ -1,6 +1,5 @@
 import { Typography } from "@mui/material";
 import React from "react";
-import { AuthContext } from "../../../../app-component/auth-provider/auth-provider";
 import { useParams } from "react-router-dom";
 import { useUpdatePostMutation } from "./user-manage-posts.api";
 import { useGetPostQuery } from "../../../posts/postsApi";
@@ -15,12 +14,14 @@ import {
 } from "./validation";
 import { Alert, Button } from "@mui/material";
 import TextField from "@mui/material/TextField";
+import { useAppSelector } from "../../../../app/hooks";
+import { selectIsAuthUser } from "../../../shared/authSlice";
 
 //TODO: wait untill login and user is fetched or set
 export default function EditPostForUser() {
   const { userId, postId } = useParams();
 
-  const auth = React.useContext(AuthContext);
+  const authUser = useAppSelector(selectIsAuthUser);
 
   const { data, isLoading, isSuccess, isError } = useGetPostQuery(postId!, {
     refetchOnMountOrArgChange: true,
@@ -36,9 +37,7 @@ export default function EditPostForUser() {
     <div className="container-md">
       <div className="row">
         <div className="col">
-          <Typography variant="h4">
-            user {auth.user?.userResponse.username} protected page
-          </Typography>
+          <Typography variant="h4">user {authUser?.username} protected page</Typography>
         </div>
         <div className="row">
           <EditPostContent post={postDataToUpdate} ownerId={userId!} />

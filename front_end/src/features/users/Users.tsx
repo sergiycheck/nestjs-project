@@ -26,9 +26,6 @@ export const Users = () => {
             <h4>Users</h4>
             <Outlet />
           </div>
-          <div className="col-4">
-            <AddUser></AddUser>
-          </div>
         </div>
         <div className="row">
           <PaginationComponent></PaginationComponent>

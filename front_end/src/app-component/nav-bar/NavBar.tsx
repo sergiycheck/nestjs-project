@@ -5,46 +5,29 @@ import Link from "@mui/material/Link";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
 import { ColorModeContext } from "../color-mode-context";
-import { AuthContext } from "../auth-provider/auth-provider";
 import { useNavigate } from "react-router-dom";
-import { useGetUserFromJwtMutation } from "../../features/users/usersApi";
 import { CircularIndeterminate } from "../../features/shared/mui-components/Loader";
-import { schemaTokenValidation } from "./../../features/shared/token_validator";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import {
+  selectIsAuthenticated,
+  selectIsAuthUser,
+  selectIsAuthStatus,
+  logout,
+} from "../../features/shared/authSlice";
 
 export function NavBar() {
   const theme = useTheme();
   const colorModeManager = React.useContext(ColorModeContext);
-  const auth = React.useContext(AuthContext);
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
-  const [getUserFromJwtMutation, { isLoading, isError }] = useGetUserFromJwtMutation();
-
-  React.useEffect(() => {
-    const jwt_token = window.localStorage.getItem("jwt");
-    if (!jwt_token) return;
-    if (auth.user) return;
-
-    async function getUserFromJwtRequest(token: string) {
-      const result = await getUserFromJwtMutation().unwrap();
-      const { message, ...currentUser } = result;
-      if (currentUser.successfulAuth) {
-        auth.setUserFromJwt(currentUser);
-      } else {
-        auth.setUserFromJwt(null);
-      }
-    }
-    getUserFromJwtRequest(jwt_token);
-  }, [auth, getUserFromJwtMutation]);
-
-  React.useEffect(() => {
-    if (isError) {
-      auth.setUserFromJwt(null);
-    }
-  }, [isError, auth]);
+  const isAuthenticated = useAppSelector(selectIsAuthenticated);
+  const user = useAppSelector(selectIsAuthUser);
+  const authStatus = useAppSelector(selectIsAuthStatus);
 
   let renderedLoginResult;
 
-  if (isLoading)
+  if (authStatus === "loading")
     renderedLoginResult = (
       <Grid className="col-auto" item component={ListItem}>
         <div className="row align-items-center">
@@ -56,24 +39,23 @@ export function NavBar() {
       </Grid>
     );
 
-  if (!isLoading && !auth.user) {
+  if (authStatus !== "loading" && !user) {
     renderedLoginResult = (
       <Grid className="col-auto" item component={ListItem}>
         <Link href="login">login</Link>
       </Grid>
     );
-  } else if (auth.user) {
+  } else if (user && isAuthenticated) {
     renderedLoginResult = (
       <Grid className="col-auto" item component={ListItem}>
-        <Link className="mx-2" href={`users/${auth.user.userResponse.id}`}>
-          {auth.user.userResponse.username}
+        <Link className="mx-2" href={`users/${user!.id}`}>
+          {user!.username}
         </Link>
         <Button
           variant="outlined"
           onClick={() => {
-            auth.signOut(() => {
-              navigate("/");
-            });
+            dispatch(logout());
+            navigate("/");
           }}
         >
           Sign out

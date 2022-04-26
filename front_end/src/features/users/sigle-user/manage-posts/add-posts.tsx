@@ -8,16 +8,17 @@ import {
   createPostDataToValidate,
   CreatePostDataToValidateKeysType,
 } from "./validation";
-import { AuthContext } from "../../../../app-component/auth-provider/auth-provider";
 import { Alert, Button, Typography } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import { useParams } from "react-router-dom";
+import { useAppSelector } from "../../../../app/hooks";
+import { selectIsAuthUser } from "../../../shared/authSlice";
 
 //TODO: wait untill login and user is fetched or set
 export default function AddPostForUser() {
   const { userId } = useParams();
 
-  const auth = React.useContext(AuthContext);
+  const authUser = useAppSelector(selectIsAuthUser);
 
   const [addPostMutation, { isLoading, isError, isSuccess }] = useAddPostMutation();
   const {
@@ -102,7 +103,7 @@ export default function AddPostForUser() {
       <div className="row">
         <div className="col">
           <Typography variant="h4">add post for user </Typography>
-          <Typography>user {auth.user?.userResponse.username} protected page</Typography>
+          <Typography>user {authUser?.username} protected page</Typography>
         </div>
       </div>
       <div className="row">

@@ -35,6 +35,11 @@ export type LoginUserDto = Pick<CreateUserDto, "username" | "password">;
 
 export type UpdateUserDto = Partial<UserRootNonChangeable> & Pick<UserRootData, "id">;
 
+export type UpdateUserResponse = {
+  mappedUserResponse: UserWithRelationsIds;
+  access_token: string;
+};
+
 export type UserDeleteResult = {
   userId: string;
   acknowledged: boolean;

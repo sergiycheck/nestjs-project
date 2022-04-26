@@ -5,7 +5,7 @@ const userUserName = {
 };
 
 const userPassword = {
-  password: Joi.string().required().min(6),
+  password: Joi.string().required().min(6).max(100),
 };
 
 export const userLoginSchema = Joi.object({
@@ -22,6 +22,7 @@ const UserRootDataSchema = {
 export const userAddSchema = Joi.object({
   ...UserRootDataSchema,
   ...userPassword,
+  repeat_password: Joi.ref("password"),
 });
 
 export const userUpdateSchema = Joi.object({
