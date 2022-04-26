@@ -8,22 +8,17 @@ import {
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model, Connection, LeanDocument } from 'mongoose';
 import * as bcrypt from 'bcrypt';
-
 import { User, UserDocument, UserToFindOne } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UserMapperService } from './user-mapper.service';
-import {
-  BaseService,
-  ToObjectContainingQuery,
-} from '../base/services/base.service';
+import { BaseService } from '../base/services/base.service';
 import { ArticleService } from '../article/article.service';
-import {
-  MappedUserResponse,
-  MappedUserResponseWithRelations,
-  UserDeleteResult,
-} from './dto/response-user.dto';
+import { MappedUserResponse, UserDeleteResult } from './dto/response-user.dto';
 import { SALT_ROUNDS } from '../auth/constants';
+import { PaginatedRequestDto } from '../base/requests/requests.dto';
+import { PaginatedResponseDto } from '../base/responses/response.dto';
+import { UsersResponseGetterService } from './users-response-getter.service';
+import { JwtService } from '@nestjs/jwt';
 
 // all thrown exceptions is handled by global exception filter
 @Injectable()
@@ -31,9 +26,10 @@ export class UsersService extends BaseService {
   constructor(
     @InjectModel(User.name) public userModel: Model<UserDocument>,
     @InjectConnection() private connection: Connection,
-    public userMapper: UserMapperService,
+    public usersResponseGetterService: UsersResponseGetterService,
     @Inject(forwardRef(() => ArticleService))
     private readonly articleService: ArticleService,
+    private jwtService: JwtService,
   ) {
     super();
   }
@@ -69,31 +65,7 @@ export class UsersService extends BaseService {
 
     const createdUserQuery = await newUser.save();
 
-    return this.getResponse(createdUserQuery);
-  }
-
-  public getResponse(
-    entityQuery: ToObjectContainingQuery<User>,
-  ): MappedUserResponse | null {
-    if (!entityQuery) return null;
-
-    const entityDoc = super.queryToObj(entityQuery);
-    return this.userObjToPlain(entityDoc);
-  }
-
-  public userObjToPlain(user: LeanDocument<User>) {
-    return this.userMapper.userToUserResponse(user) as MappedUserResponse;
-  }
-
-  private getResponseWithRelations(
-    entityQuery: ToObjectContainingQuery<User>,
-  ): MappedUserResponseWithRelations | null {
-    if (!entityQuery) return null;
-
-    const entityDoc = super.queryToObj(entityQuery);
-    return this.userMapper.userToUserResponseWithRelations(
-      entityDoc,
-    ) as MappedUserResponseWithRelations;
+    return this.usersResponseGetterService.getResponse(createdUserQuery);
   }
 
   async findAlWithRelations() {
@@ -103,35 +75,60 @@ export class UsersService extends BaseService {
       .exec();
 
     const resArr = resQuery.map((query) => {
-      return this.getResponseWithRelations(query);
+      return this.usersResponseGetterService.getResponseWithRelations(query);
     });
     return resArr;
   }
 
-  async findAll() {
-    const resQuery = await this.userModel.find().exec();
+  async findAll(
+    requestQuery: PaginatedRequestDto,
+  ): Promise<PaginatedResponseDto<MappedUserResponse[]>> {
+    let resQuery;
+
+    if (requestQuery && Object.keys(requestQuery).length) {
+      const findArgsArr = this.getFindArgsArrUsers(requestQuery);
+      resQuery = await this.userModel
+        .find(...findArgsArr)
+        .sort({ _id: 'desc' })
+        .exec();
+    } else {
+      resQuery = await this.userModel.find({}).sort({ _id: 'desc' }).exec();
+    }
+    const totalDocsInDbForQuery = await this.userModel.estimatedDocumentCount();
+
+    const { total_pages, per_page, page, total } = this.getPaginatedProps(
+      totalDocsInDbForQuery,
+      requestQuery,
+    );
 
     const resArr = resQuery.map((query) => {
-      return this.getResponse(query);
-    });
-    return resArr;
+      return this.usersResponseGetterService.getResponse(query);
+    }) as MappedUserResponse[];
+
+    return {
+      page,
+      per_page,
+      total,
+      total_pages,
+      data: resArr,
+    };
   }
 
   async findOneWithRelations(id: string) {
     const userQuery = await this.userModel
       .findById(id)
-      .populate({ path: 'articles' })
+      .populate({ path: 'articles', options: { sort: { updatedAt: -1 } } })
       .exec();
     if (!userQuery)
       throw new NotFoundException(`user was not found by id ${id}`);
 
-    return this.getResponseWithRelations(userQuery);
+    return this.usersResponseGetterService.getResponseWithRelations(userQuery);
   }
 
   async findByIdWithRelationsIds(id: string) {
     const res = await this.userModel.findById(id);
     if (!res) throw new NotFoundException(`user was not found by id ${id}`);
-    return this.getResponse(res);
+    return this.usersResponseGetterService.getResponse(res);
   }
 
   private findOneUserByProps(userProps: UserToFindOne) {
@@ -146,9 +143,10 @@ export class UsersService extends BaseService {
 
   async findOneUserByUsername(username: string) {
     const res = await this.findOneUserByProps({ username });
-    return this.getResponse(res);
+    return this.usersResponseGetterService.getResponse(res);
   }
 
+  //TODO: generate new jwt token on update
   async update(id: string, updateUserDto: UpdateUserDto) {
     this.countUsername(updateUserDto?.username, id);
     const { id: userId, ...data } = updateUserDto;
@@ -157,7 +155,16 @@ export class UsersService extends BaseService {
       { ...data },
       { runValidators: true, new: true },
     );
-    return this.getResponse(updatedUserQuery);
+    const mappedUserResponse =
+      this.usersResponseGetterService.getResponse(updatedUserQuery);
+
+    return {
+      access_token: this.jwtService.sign({
+        username: updatedUserQuery.username,
+        sub: updatedUserQuery.id,
+      }),
+      mappedUserResponse,
+    };
   }
 
   async remove(id: string) {

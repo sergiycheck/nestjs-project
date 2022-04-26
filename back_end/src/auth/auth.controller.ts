@@ -1,15 +1,22 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Get, Post, UseFilters } from '@nestjs/common';
 import { UseGuards } from '@nestjs/common';
 import { Public } from './metadata.decorators';
 import { LocalAuthGuard } from './local-auth.guard';
 import { AuthService } from './auth.service';
 import { GetUserFromReqDec } from '../base/decorators/get-user-from-req.decorator';
-import { UserLoginResponse } from './responses/responses.dto';
+import { UserAuthResponse, UserLoginResponse } from './responses/responses.dto';
 import { MappedUserResponse } from '../users/dto/response-user.dto';
-import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { LoginAuthDto } from './dto/auth.dto';
 import { AuthEndPoint } from '../api/endpoints';
+import { FailedToAuthExceptionFilter } from './filters/failed-to-auth.filter';
 
+// TODO: remove for testing
+const sleep = (ms) => {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+};
+
+@UseFilters(FailedToAuthExceptionFilter)
 @ApiTags(AuthEndPoint)
 @Controller(AuthEndPoint)
 export class AuthController {
@@ -25,6 +32,18 @@ export class AuthController {
       message: 'successfully logged in',
       user_jwt: access_token,
       userResponse,
+      successfulAuth: true,
+    });
+  }
+
+  @ApiBearerAuth()
+  @Get('get-user-from-jwt')
+  async getUserFromJwt(@GetUserFromReqDec() user: MappedUserResponse) {
+    await sleep(1000);
+    return new UserAuthResponse({
+      message: 'user was found from jwt',
+      successfulAuth: true,
+      userResponse: user,
     });
   }
 }

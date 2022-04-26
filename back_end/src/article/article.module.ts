@@ -14,6 +14,8 @@ import { UsersModule } from '../users/users.module';
 import { AddOwnerToRequestMiddleware } from './middlewares/add-owner-to-request.middleware';
 import { ArticlesEndpoint } from '../api/endpoints';
 import { CheckIfUserPossessesArticleMiddleware } from './middlewares/check-if-user-possesses-article.middleware';
+import { ArticleResponseGetterService } from './article-response-getter.service';
+import { ArticleSearchService } from './article-search.service';
 
 @Module({
   imports: [
@@ -46,7 +48,12 @@ import { CheckIfUserPossessesArticleMiddleware } from './middlewares/check-if-us
     forwardRef(() => UsersModule),
   ],
   controllers: [ArticleController],
-  providers: [ArticleService, ArticleMapperService],
+  providers: [
+    ArticleService,
+    ArticleMapperService,
+    ArticleResponseGetterService,
+    ArticleSearchService,
+  ],
   exports: [ArticleService, ArticleMapperService],
 })
 export class ArticleModule implements NestModule {

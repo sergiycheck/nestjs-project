@@ -1,45 +1,101 @@
-import React from "react";
-import { useAppSelector } from "../../app/hooks";
-import { Link, Outlet } from "react-router-dom";
+import React, { useEffect, useContext } from "react";
+import { Link as RouterLink, Outlet } from "react-router-dom";
 import { TimeAgo } from "../shared/TimeAgo";
-import { selectUserById, selectUserIds, useGetUsersQuery } from "./usersSlice";
+import { useGetUsersQuery } from "./usersApi";
 import { AddUser } from "./manage-user/add-user";
+import {
+  PaginationContext,
+  useSearchParamsToPassInAndPaginationContext,
+  availableSearchParams,
+} from "../shared/pagination/pagination-context";
+
+import { PaginationComponent } from "../shared/pagination/PaginationComponent";
+import { Button, Link } from "@mui/material";
+import { CircularIndeterminate } from "../shared/mui-components/Loader";
 
 export const Users = () => {
+  const { contextDataAndHandler } = useSearchParamsToPassInAndPaginationContext({
+    searchParamsNames: availableSearchParams,
+  });
+
   return (
-    <div className="container-md">
-      <div className="row">
-        <div className="col-8">
-          <h4>Users</h4>
-          <Outlet />
+    <PaginationContext.Provider value={contextDataAndHandler}>
+      <div className="container-lg d-flex flex-column flex-grow-1">
+        <div className="row flex-grow-1">
+          <div className="col-8">
+            <h4>Users</h4>
+            <Outlet />
+          </div>
         </div>
-        <div className="col-4">
-          <AddUser></AddUser>
+        <div className="row">
+          <PaginationComponent></PaginationComponent>
         </div>
       </div>
-    </div>
+    </PaginationContext.Provider>
   );
 };
 
-export const UsersList = () => {
-  const { isLoading, isFetching, isSuccess, isError, error } = useGetUsersQuery();
-  const userIds = useAppSelector(selectUserIds);
+export const usePaginationContextAndGetDataQuery = () => {};
 
-  const users = userIds.map((userId, index) => (
-    <UserExcerpt key={index} userId={userId.toString()}></UserExcerpt>
+export const UsersList = () => {
+  const { initialPaginationData, setPaginationContextData } = useContext(PaginationContext);
+  const { limit, skip } = initialPaginationData;
+
+  const {
+    data: usersResponse,
+    isLoading,
+    isSuccess,
+    isError,
+    error,
+    isFetching,
+  } = useGetUsersQuery({ limit, skip });
+
+  useEffect(() => {
+    if (usersResponse) {
+      const { page, per_page, total, total_pages } = usersResponse;
+
+      setPaginationContextData((prev) => ({
+        ...prev,
+        page,
+        per_page,
+        total,
+        total_pages,
+        isFetching,
+      }));
+    }
+  }, [isFetching, setPaginationContextData, usersResponse]);
+
+  const users = usersResponse?.data.map((user, index) => (
+    <UserExcerpt key={index} userId={user.id}></UserExcerpt>
   ));
-  if (isLoading) return <div>...loading</div>;
-  return <div className="row gy-2">{users}</div>;
+
+  if (isLoading) return <CircularIndeterminate />;
+
+  if (isError) return <div>Error occurred {error}</div>;
+  if (!usersResponse || !Object.keys(usersResponse).length) return <div>No users found</div>;
+
+  if (isSuccess) return <div className="row gy-2">{users}</div>;
+
+  return <div>unknown response</div>;
 };
 
 export const UserExcerpt = ({ userId }: { userId: string }) => {
-  const user = useAppSelector((state) => selectUserById(state, userId));
+  const { initialPaginationData } = useContext(PaginationContext);
+  const { limit, skip } = initialPaginationData;
+  const { user } = useGetUsersQuery(
+    { limit, skip },
+    {
+      selectFromResult: ({ data }) => ({
+        user: data?.data.find((user) => user.id === userId),
+      }),
+    }
+  );
 
   return (
     <div className="col-12 justify-content-center ">
       <div className="row gx-3">
         <div className="col-5">
-          <Link className="text-dark text-decoration-none" to={`users/${userId}`}>
+          <Link href={`users/${userId}`}>
             {user?.firstName} {user?.lastName} <br />({user?.username})
           </Link>
         </div>
@@ -48,11 +104,14 @@ export const UserExcerpt = ({ userId }: { userId: string }) => {
           <TimeAgo timeStamp={user?.createdAt}></TimeAgo>
         </div>
         <div className="col-auto d-flex justify-content-center">
-          <button className="btn btn-primary  align-self-start flex-shrink-0">
-            <Link className="text-white" to={`users/edit/${user?.id}`}>
-              edit user
-            </Link>
-          </button>
+          <Button
+            component={RouterLink}
+            className="align-self-start flex-shrink-0"
+            to={`users/edit/${user?.id}`}
+            variant="outlined"
+          >
+            edit user
+          </Button>
         </div>
       </div>
     </div>

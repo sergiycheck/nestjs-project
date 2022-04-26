@@ -1,7 +1,14 @@
-import { Length, IsNotEmpty, IsString, IsEnum } from 'class-validator';
+import {
+  Length,
+  IsNotEmpty,
+  IsString,
+  IsEnum,
+  Validate,
+} from 'class-validator';
 import { BaseEntity } from '../../base/entities/base-entities';
 import { ArticleGenre } from '../entities/article.enum';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsPropObjectId } from './is-prop-objectid.validator';
 
 //use plugin for swagger instead of manually defining api types
 export class CreateArticleDto extends BaseEntity {
@@ -34,6 +41,6 @@ export class CreateArticleDto extends BaseEntity {
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsString()
+  @Validate(IsPropObjectId)
   public ownerId: string;
 }

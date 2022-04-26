@@ -22,11 +22,15 @@ import {
 } from './dto/response-user.dto';
 import { BaseController } from '../base/controllers/base.controller';
 import { CanUserManageUserGuard } from './can-user-manage-user.guard';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { PaginatedRequestDto } from '../base/requests/requests.dto';
+import { PaginatedResponseDto } from '../base/responses/response.dto';
 
+// TODO: remove for testing
 const sleep = (ms) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
+
 @ApiTags(UsersEndpoint)
 @Controller(UsersEndpoint)
 export class UsersController extends BaseController {
@@ -59,9 +63,10 @@ export class UsersController extends BaseController {
 
   @Public()
   @Get()
-  async findAll() {
-    const res = await this.usersService.findAll();
-    return this.getResponse<MappedUserResponse[]>(
+  async findAll(@Query() query: PaginatedRequestDto) {
+    const res = await this.usersService.findAll(query);
+    await sleep(1000);
+    return this.getResponse<PaginatedResponseDto<MappedUserResponse[]>>(
       'users were found',
       'no users were found',
       res,
@@ -104,9 +109,8 @@ export class UsersController extends BaseController {
     );
   }
 
-  // TODO: uncomment
-  // @UseGuards(new CanUserManageUserGuard())
-  @Public()
+  @ApiBearerAuth()
+  @UseGuards(new CanUserManageUserGuard())
   @Patch(':id')
   async update(
     @Param('id', new CustomParseObjectIdPipe()) id: string,
@@ -114,16 +118,14 @@ export class UsersController extends BaseController {
   ) {
     const res = await this.usersService.update(id, updateDto);
 
-    return this.getResponse<MappedUserResponse>(
-      'user was updated successfully',
-      'fail to update the user',
-      res,
-    );
+    return this.getResponse<{
+      mappedUserResponse: MappedUserResponse;
+      access_token: string;
+    }>('user was updated successfully', 'fail to update the user', res);
   }
 
-  // TODO: uncomment
-  // @UseGuards(new CanUserManageUserGuard())
-  @Public()
+  @ApiBearerAuth()
+  @UseGuards(new CanUserManageUserGuard())
   @Delete(':id')
   async remove(@Param('id', new CustomParseObjectIdPipe()) id: string) {
     const res = await this.usersService.remove(id);

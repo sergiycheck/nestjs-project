@@ -27,12 +27,20 @@ import {
 import { MappedUserResponse } from '../users/dto/response-user.dto';
 import { CanUserManageArticleGuard } from './can-user-manage-article.guard';
 import {
+  ApiBearerAuth,
   ApiHeader,
   ApiNotFoundResponse,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { ApiCreateArticleDecorator } from './swagger_decorators/api-create-article.decorator';
+import { PaginatedResponseDto } from '../base/responses/response.dto';
+import { ArticleSearchService } from './article-search.service';
+
+// TODO: remove for testing
+const sleep = (ms) => {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+};
 
 // JwtAuthGuard is bounded automatically to endpoint that is not marked with @Public decorator
 // because it is declared as a global guard
@@ -41,17 +49,18 @@ import { ApiCreateArticleDecorator } from './swagger_decorators/api-create-artic
 @ApiTags(ArticlesEndpoint)
 @Controller(ArticlesEndpoint)
 export class ArticleController extends BaseController {
-  constructor(private readonly articleService: ArticleService) {
+  constructor(
+    private readonly articleService: ArticleService,
+    private articleSearchService: ArticleSearchService,
+  ) {
     super();
   }
 
+  @ApiBearerAuth()
   @ApiCreateArticleDecorator(CreateArticleResponse)
   @ApiNotFoundResponse({ description: 'article was not created' })
   @ApiUnauthorizedResponse()
-  @ApiHeader({
-    name: 'Authorization',
-    description: 'Bearer token',
-  })
+  // TODO: provide custom header from swagger ui ?
   @Post()
   async create(
     @Body() createArticleDto: CreateArticleDto,
@@ -69,12 +78,11 @@ export class ArticleController extends BaseController {
   @Public()
   @Get()
   async findAll(@Query() query: ArticleSearchQueryTextDto) {
-    const res = await this.articleService.findAll(query);
-    return this.getResponse<MappedArticleResponseWithRelations[]>(
-      'articles were found',
-      'no articles was found',
-      res,
-    );
+    const res = await this.articleSearchService.findAll(query);
+    await sleep(1000);
+    return this.getResponse<
+      PaginatedResponseDto<MappedArticleResponseWithRelations[]>
+    >('articles were found', 'no articles was found', res);
   }
 
   @Public()
@@ -84,8 +92,22 @@ export class ArticleController extends BaseController {
   ) {
     const res = await this.articleService.getArticlesByUserId(userId);
     return this.getResponse<MappedArticleResponseWithRelations[]>(
-      `articles were found four user`,
+      `articles were found for user`,
       'no articles were found',
+      res,
+    );
+  }
+
+  @Public()
+  @Get('with-relations/:id')
+  async findOneWithRelations(
+    @Param('id', new CustomParseObjectIdPipe()) id: string,
+  ) {
+    const res = await this.articleService.findOneWithRelations(id);
+
+    return this.getResponse<MappedArticleResponseWithRelations>(
+      'article was found',
+      `article was not found for id ${id}`,
       res,
     );
   }
@@ -95,13 +117,14 @@ export class ArticleController extends BaseController {
   async findOne(@Param('id', new CustomParseObjectIdPipe()) id: string) {
     const res = await this.articleService.findOne(id);
 
-    return this.getResponse<MappedArticleResponseWithRelations>(
+    return this.getResponse<MappedArticleResponse>(
       'article was found',
       `article was not found for id ${id}`,
       res,
     );
   }
 
+  @ApiBearerAuth()
   @UseGuards(CanUserManageArticleGuard)
   @Patch(':id')
   async update(
@@ -116,6 +139,7 @@ export class ArticleController extends BaseController {
     );
   }
 
+  @ApiBearerAuth()
   @UseGuards(CanUserManageArticleGuard)
   @Delete(':id')
   async remove(

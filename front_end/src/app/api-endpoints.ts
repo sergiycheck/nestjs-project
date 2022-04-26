@@ -5,4 +5,6 @@ export const baseEndpoint = `${protocol}://${host}:${port}`;
 
 export const usersEndPointName = "users";
 
-export const postsEndPointName = "posts";
+export const postsEndPointName = "articles";
+
+export const authEndPointName = "auth";

@@ -7,7 +7,7 @@ import { LoginEndPoint, ArticlesEndpoint } from '../../src/api/endpoints';
 import { CustomConnectionService } from '../../src/custom-conn.service';
 import { ConfigService } from '@nestjs/config';
 import { MyLogger } from '../../src/injecting-custom-logger/my-logger.service';
-import { DbInitializer } from '../../src/seedDb';
+import { DbInitializer } from '../../src/seed-db-config/seedDb';
 import { Connection } from 'mongoose';
 import { UserLoginResponse } from '../../src/auth/responses/responses.dto';
 import {
@@ -16,7 +16,10 @@ import {
   MappedArticleResponse,
   MappedArticleResponseWithRelations,
 } from '../../src/article/dto/response-article.dto';
-import { EndPointResponse } from '../../src/base/responses/response.dto';
+import {
+  EndPointResponse,
+  PaginatedResponseDto,
+} from '../../src/base/responses/response.dto';
 import { TIMEOUT_FOR_DEBUGGING } from './../constants';
 
 describe('app articles (e2e)', () => {
@@ -123,13 +126,13 @@ describe('app articles (e2e)', () => {
       expect(response.statusCode).toBe(200);
 
       const result = response.body as EndPointResponse<
-        MappedArticleResponseWithRelations[]
+        PaginatedResponseDto<MappedArticleResponseWithRelations[]>
       >;
 
       expect(result.message).toBe('articles were found');
-      expect(result.data).toBeInstanceOf(Array);
-      expect(result.data.length).toBe(5);
-      expect(result.data[0].owner.id).not.toBe('');
+      expect(result.data.data).toBeInstanceOf(Array);
+      expect(result.data.data.length).toBe(5);
+      expect(result.data.data[0].owner.id).not.toBe('');
     },
     TIMEOUT_FOR_DEBUGGING,
   );
@@ -174,10 +177,10 @@ describe('app articles (e2e)', () => {
       expect(response.statusCode).toBe(200);
 
       const resultArticles = response.body as EndPointResponse<
-        MappedArticleResponseWithRelations[]
+        PaginatedResponseDto<MappedArticleResponseWithRelations[]>
       >;
 
-      const articleId = resultArticles.data[0].id;
+      const articleId = resultArticles.data.data[0].id;
       response = await request(app.getHttpServer()).get(
         `/${ArticlesEndpoint}/${articleId}`,
       );
@@ -208,9 +211,10 @@ describe('app articles (e2e)', () => {
       expect(response.statusCode).toBe(200);
 
       const resultArticles = response.body as EndPointResponse<
-        MappedArticleResponseWithRelations[]
+        PaginatedResponseDto<MappedArticleResponseWithRelations[]>
       >;
-      const articleId = resultArticles.data[0].id;
+
+      const articleId = resultArticles.data.data[0].id;
 
       const updateArticleRequest = {
         id: articleId,
@@ -248,9 +252,9 @@ describe('app articles (e2e)', () => {
       expect(response.statusCode).toBe(200);
 
       const resultArticles = response.body as EndPointResponse<
-        MappedArticleResponseWithRelations[]
+        PaginatedResponseDto<MappedArticleResponseWithRelations[]>
       >;
-      const articleId = resultArticles.data[0].id;
+      const articleId = resultArticles.data.data[0].id;
 
       response = await request(httpServer)
         .delete(`/${ArticlesEndpoint}/${articleId}`)

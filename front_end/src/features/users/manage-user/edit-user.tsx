@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useDeleteUserMutation, useGetUserQuery, useUpdateUserMutation } from "../usersSlice";
+import { useDeleteUserMutation, useGetUserQuery, useUpdateUserMutation } from "../usersApi";
 import TextField from "@mui/material/TextField";
-import { Alert, Button } from "@mui/material";
+import { Alert, Button, Link } from "@mui/material";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { UpdateUserDto } from "../types";
 import { joiResolver } from "@hookform/resolvers/joi";
-import { Link, Outlet, useNavigate, useParams } from "react-router-dom";
-import { CircularIndeterminate } from "../mui-components/Loader";
+import { Outlet, useNavigate, useParams } from "react-router-dom";
+import { CircularIndeterminate } from "../../shared/mui-components/Loader";
 import { userUpdateSchema } from "./validation";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { DeleteUserInfoContext, DeleteUserInfoType } from "./context";
@@ -47,21 +47,13 @@ export const UpdateUserContainer = () => {
 };
 
 export const UpdateUserInner = ({ user }: { user: UpdateUserDto }) => {
-  const {
-    control,
-    handleSubmit,
-    watch,
-    formState: { isSubmitSuccessful, errors },
-  } = useForm<UpdateUserDto>({
+  const { control, handleSubmit, watch } = useForm<UpdateUserDto>({
     resolver: joiResolver(userUpdateSchema),
     defaultValues: user,
   });
 
   const [updateUserMutation, { isLoading, isError, isSuccess }] = useUpdateUserMutation();
-  const [
-    deleteUserMutation,
-    { isLoading: isLoadingDelete, isError: isErrorDelete, isSuccess: isSuccessDelete },
-  ] = useDeleteUserMutation();
+  const [deleteUserMutation] = useDeleteUserMutation();
 
   const navigate = useNavigate();
 
@@ -116,9 +108,7 @@ export const UpdateUserInner = ({ user }: { user: UpdateUserDto }) => {
 
         <div className="row">
           <div className="col-auto d-flex align-items-end">
-            <Link className="text-dark text-decoration-none" to={`/users/${user.id}`}>
-              go to user page
-            </Link>
+            <Link href={`/users/${user.id}`}>go to user page</Link>
           </div>
         </div>
 
