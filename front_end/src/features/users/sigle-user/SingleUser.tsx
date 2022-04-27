@@ -43,7 +43,9 @@ export const SingleUser = () => {
 
   return (
     <div className="container-md">
-      <div className="row gap-2 mt-2">{renderedResult}</div>
+      <div className="row gap-2 mt-2 justify-content-center">
+        <div className="col-12 col-md-8">{renderedResult}</div>
+      </div>
     </div>
   );
 };

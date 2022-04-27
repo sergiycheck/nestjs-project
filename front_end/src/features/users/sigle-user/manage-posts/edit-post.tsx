@@ -13,11 +13,10 @@ import {
   EditPostDataToValidateKeysType,
 } from "./validation";
 import { Alert, Button } from "@mui/material";
-import TextField from "@mui/material/TextField";
 import { useAppSelector } from "../../../../app/hooks";
 import { selectIsAuthUser } from "../../../shared/authSlice";
+import getSwitchedTextField from "./get-rendered-form-field-item";
 
-//TODO: wait untill login and user is fetched or set
 export default function EditPostForUser() {
   const { userId, postId } = useParams();
 
@@ -35,11 +34,11 @@ export default function EditPostForUser() {
 
   return (
     <div className="container-md">
-      <div className="row">
-        <div className="col">
+      <div className="row justify-content-center">
+        <div className="col-auto">
           <Typography variant="h4">user {authUser?.username} protected page</Typography>
         </div>
-        <div className="row">
+        <div className="row justify-content-center">
           <EditPostContent post={postDataToUpdate} ownerId={userId!} />
         </div>
       </div>
@@ -88,22 +87,22 @@ function EditPostContent({ post, ownerId }: { post: UpdatePostReqType; ownerId: 
     .filter((k) => k !== "ownerId" && k !== "id")
     .map((postKeyStr, i) => {
       let postkey = postKeyStr as unknown as EditPostDataToValidateKeysType;
+      const resultTextFieldGetter = getSwitchedTextField<EditPostDataToValidateKeysType>(postkey);
+
       return (
         <div key={i} className="col-12">
           <Controller
             name={postkey}
             control={control}
             defaultValue=""
-            render={({ field }) => (
-              <TextField required label={postkey} {...field} variant="standard" />
-            )}
+            render={({ field }) => resultTextFieldGetter(field)}
           />
         </div>
       );
     });
 
   return (
-    <div className="row">
+    <div className="col-6">
       <form className="row gy-2" autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
         {renderedFormFields}
 

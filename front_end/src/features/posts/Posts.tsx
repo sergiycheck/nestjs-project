@@ -18,8 +18,8 @@ export const Posts = () => {
   return (
     <PaginationContext.Provider value={contextDataAndHandler}>
       <div className="container-md d-flex flex-column flex-grow-1">
-        <div className="row flex-grow-1">
-          <div className="col-12">
+        <div className="row flex-grow-1 justify-content-center">
+          <div className="col-12 col-md-8">
             <Suspense fallback={<CircularIndeterminate />}>
               <Typography variant="h4">Posts</Typography>
               <PostsList></PostsList>

@@ -2,7 +2,6 @@ import React, { useEffect, useContext } from "react";
 import { Link as RouterLink, Outlet } from "react-router-dom";
 import { TimeAgo } from "../shared/TimeAgo";
 import { useGetUsersQuery } from "./usersApi";
-import { AddUser } from "./manage-user/add-user";
 import {
   PaginationContext,
   useSearchParamsToPassInAndPaginationContext,
@@ -10,7 +9,7 @@ import {
 } from "../shared/pagination/pagination-context";
 
 import { PaginationComponent } from "../shared/pagination/PaginationComponent";
-import { Button, Link } from "@mui/material";
+import { Button, Link, Typography } from "@mui/material";
 import { CircularIndeterminate } from "../shared/mui-components/Loader";
 
 export const Users = () => {
@@ -21,9 +20,9 @@ export const Users = () => {
   return (
     <PaginationContext.Provider value={contextDataAndHandler}>
       <div className="container-lg d-flex flex-column flex-grow-1">
-        <div className="row flex-grow-1">
-          <div className="col-8">
-            <h4>Users</h4>
+        <div className="row flex-grow-1 justify-content-center">
+          <div className="col-12 col-md-8">
+            <Typography variant="h4">Users</Typography>
             <Outlet />
           </div>
         </div>
