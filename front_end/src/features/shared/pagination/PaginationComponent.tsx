@@ -2,17 +2,21 @@ import React, { useContext } from "react";
 import { useSearchParams } from "react-router-dom";
 import Pagination from "@mui/material/Pagination";
 import { PaginationContext, availableSearchParams } from "./pagination-context";
+import { getObjectFromSearchParams } from "./query-utils";
 
 const increment = 5;
 export const PaginationComponent = () => {
-  const setSearchParams = useSearchParams()[1];
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const { initialPaginationData, setPaginationContextData } = useContext(PaginationContext);
   const { limit, page, total_pages, isFetching } = initialPaginationData;
 
   const setSearchParamsAndContextData = (pageToSet: number) => {
-    const searchParamObj = { [availableSearchParams]: `${pageToSet}` };
-    setSearchParams(searchParamObj);
+    const searchParamsObj = getObjectFromSearchParams(searchParams);
+    setSearchParams({
+      ...searchParamsObj,
+      [availableSearchParams.page]: `${pageToSet}`,
+    });
     const nextParams = { limit: increment, skip: pageToSet * limit - limit };
     setPaginationContextData((prev) => ({
       ...prev,

@@ -5,25 +5,26 @@ import { CircularIndeterminate } from "../shared/mui-components/Loader";
 import { ArticleResponseWithRelations } from "./types";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/dist/query";
 import { SerializedError } from "@reduxjs/toolkit";
-import { PostExcerpt } from "./Posts";
 import { TimeAgo } from "../shared/TimeAgo";
 
 export const PostsListContent = ({
   data,
   isLoading,
+  isFetching,
   isError,
   isSuccess,
   error,
 }: {
   data: ArticleResponseWithRelations[] | undefined;
   isLoading: boolean;
+  isFetching: boolean;
   isError: boolean;
   isSuccess: boolean;
   error: FetchBaseQueryError | SerializedError | undefined;
 }) => {
-  const items = data?.map((item) => <PostExcerpt key={item.id} itemId={item.id}></PostExcerpt>);
+  const items = data?.map((item) => <PostExcerptContent key={item.id} item={item} />);
 
-  if (isLoading) return <CircularIndeterminate />;
+  if (isLoading || isFetching) return <CircularIndeterminate />;
   if (isError) return <div>Error occurred {error}</div>;
   if (!data || !Object.keys(data).length) return <div>No posts found</div>;
 
@@ -41,7 +42,11 @@ export const PostExcerptContent = ({
     <div className="col-12 border rounded">
       <div className="row g-3">
         <div className="col-12">
-          <Typography variant="h5">{item?.title}</Typography>
+          <Typography variant="h5">
+            <Link sx={{ fontWeight: "inherit", fontSize: "inherit" }} href={`/posts/${item?.id}`}>
+              {item?.title}
+            </Link>
+          </Typography>
         </div>
         <div className="col-12">
           <Typography variant="h6">subtitle: {item?.subtitle}</Typography>
@@ -51,7 +56,10 @@ export const PostExcerptContent = ({
             created: <TimeAgo timeStamp={item?.createdAt}></TimeAgo>
           </Typography>
         </div>
-        <div className="col-12">category: {item?.category}</div>
+        <div className="col-12">
+          category:
+          <Link href={`/posts?searchText=${item?.category}`}>{item?.category}</Link>
+        </div>
       </div>
       <div className="row">
         <div className="col">

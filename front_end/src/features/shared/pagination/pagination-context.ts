@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { QueryGetPaginationListType } from "../types";
 import { PaginationData } from "../../../app/web-api.types";
+import Joi from "joi";
 
 type Concrete<Type> = {
   [Prop in keyof Type]: NonNullable<Type[Prop]>;
@@ -35,7 +36,11 @@ const initialPaginationContextData = {
 };
 export const PaginationContext = React.createContext(initialPaginationContextData);
 
-export const availableSearchParams = "page";
+export const availableSearchParams = { page: "page", searchText: "searchText" };
+
+const numPageSchema = Joi.object({
+  numPage: Joi.number().integer().min(1).max(999),
+});
 
 export const useSearchParamsToPassInAndPaginationContext = ({
   searchParamsNames,
@@ -52,7 +57,8 @@ export const useSearchParamsToPassInAndPaginationContext = ({
 
   useEffect(() => {
     const numPage = Number(page);
-    if (Number.isInteger(numPage) && numPage > 0 && numPage < 1000) {
+    const { error } = numPageSchema.validate({ numPage });
+    if (!error) {
       const skip = numPage * limit - limit;
       setPaginationContextData((prev) => ({ ...prev, page: numPage, skip }));
     }

@@ -19,6 +19,7 @@ import { PaginatedRequestDto } from '../base/requests/requests.dto';
 import { PaginatedResponseDto } from '../base/responses/response.dto';
 import { UsersResponseGetterService } from './users-response-getter.service';
 import { JwtService } from '@nestjs/jwt';
+import { UsernameIsNotAccessibleException } from './dto/exceptions/username-accessible.dto';
 
 // all thrown exceptions is handled by global exception filter
 @Injectable()
@@ -34,7 +35,7 @@ export class UsersService extends BaseService {
     super();
   }
 
-  private async countUsername(username: string, id?: string) {
+  public async countUsername(username: string, id?: string) {
     let usernameCount;
     if (id) {
       usernameCount = await this.userModel.count({
@@ -45,10 +46,12 @@ export class UsersService extends BaseService {
     }
 
     if (usernameCount) {
-      throw new BadRequestException(
+      throw new UsernameIsNotAccessibleException(
         `${username} username has already been taken`,
       );
     }
+
+    return true;
   }
 
   async create(createUserDto: CreateUserDto) {

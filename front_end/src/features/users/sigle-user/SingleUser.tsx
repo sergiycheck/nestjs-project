@@ -53,6 +53,7 @@ export const SingleUser = () => {
 const SingleUserContent = ({ user }: { user: UserRootData | undefined }) => {
   return (
     <React.Fragment>
+      {/* user info */}
       <section className="row">
         <div className="row">
           <Typography variant="h5" gutterBottom component="div">
@@ -111,8 +112,7 @@ const PostsForUser = ({
   userId: string;
   articles: ArticleResponseWithRelations[];
 }) => {
-  const [deletePostMutation, { isLoading, isError, isSuccess: isFetchDeleteSuccessful }] =
-    useDeletePostMutation();
+  const [deletePostMutation, { isSuccess: isFetchDeleteSuccessful }] = useDeletePostMutation();
   const [deleteSuccessful, setDelRes] = React.useState<boolean | null>(null);
 
   const renderedArticles = articles.map((article) => (
@@ -137,7 +137,7 @@ const PostsForUser = ({
               }
             }}
           >
-            {/* pop up with message asking if you really want to delete this post */}X
+            {/* TODO: pop up with message asking if you really want to delete this post */}X
           </Button>
           <Button
             component={RouterLink}

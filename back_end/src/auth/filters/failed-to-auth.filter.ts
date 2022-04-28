@@ -13,10 +13,6 @@ export class FailedToAuthExceptionFilter implements ExceptionFilter {
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
-    // const request = ctx.getRequest<Request>();
-    // const status = exception.getStatus();
-
-    // const [req, res, next] = host.getArgs();
 
     const message = exception.message;
 

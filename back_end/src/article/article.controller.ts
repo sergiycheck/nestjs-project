@@ -28,7 +28,6 @@ import { MappedUserResponse } from '../users/dto/response-user.dto';
 import { CanUserManageArticleGuard } from './can-user-manage-article.guard';
 import {
   ApiBearerAuth,
-  ApiHeader,
   ApiNotFoundResponse,
   ApiTags,
   ApiUnauthorizedResponse,

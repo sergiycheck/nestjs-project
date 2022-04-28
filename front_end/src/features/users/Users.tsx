@@ -14,7 +14,7 @@ import { CircularIndeterminate } from "../shared/mui-components/Loader";
 
 export const Users = () => {
   const { contextDataAndHandler } = useSearchParamsToPassInAndPaginationContext({
-    searchParamsNames: availableSearchParams,
+    searchParamsNames: availableSearchParams.page,
   });
 
   return (
@@ -33,8 +33,6 @@ export const Users = () => {
     </PaginationContext.Provider>
   );
 };
-
-export const usePaginationContextAndGetDataQuery = () => {};
 
 export const UsersList = () => {
   const { initialPaginationData, setPaginationContextData } = useContext(PaginationContext);

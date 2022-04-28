@@ -67,3 +67,8 @@ export class UserDeleteResult {
     acknowledged: boolean;
   };
 }
+
+export class isUsernameAccessible extends BaseEntity {
+  public isAccessible: boolean;
+  public message?: string;
+}
