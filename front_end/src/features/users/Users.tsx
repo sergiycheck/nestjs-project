@@ -11,6 +11,8 @@ import {
 import { PaginationComponent } from "../shared/pagination/PaginationComponent";
 import { Button, Link, Typography } from "@mui/material";
 import { CircularIndeterminate } from "../shared/mui-components/Loader";
+import { useAppSelector } from "../../app/hooks";
+import { selectIsAuthenticated, selectIsAuthUser } from "../shared/authSlice";
 
 export const Users = () => {
   const { contextDataAndHandler } = useSearchParamsToPassInAndPaginationContext({
@@ -87,6 +89,9 @@ export const UserExcerpt = ({ userId }: { userId: string }) => {
       }),
     }
   );
+  const isAuth = useAppSelector(selectIsAuthenticated);
+  const userAuth = useAppSelector(selectIsAuthUser);
+  const userIdAuthForManage = Boolean(isAuth && userAuth?.id === user?.id);
 
   return (
     <div className="col-12 justify-content-center ">
@@ -100,16 +105,18 @@ export const UserExcerpt = ({ userId }: { userId: string }) => {
         <div className="col d-flex justify-content-center">
           <TimeAgo timeStamp={user?.createdAt}></TimeAgo>
         </div>
-        <div className="col-auto d-flex justify-content-center">
-          <Button
-            component={RouterLink}
-            className="align-self-start flex-shrink-0"
-            to={`users/edit/${user?.id}`}
-            variant="outlined"
-          >
-            edit user
-          </Button>
-        </div>
+        {userIdAuthForManage && (
+          <div className="col-auto d-flex justify-content-center">
+            <Button
+              component={RouterLink}
+              className="align-self-start flex-shrink-0"
+              to={`users/edit/${user?.id}`}
+              variant="outlined"
+            >
+              edit user
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

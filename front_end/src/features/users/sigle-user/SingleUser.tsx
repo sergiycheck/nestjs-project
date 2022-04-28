@@ -8,6 +8,8 @@ import { ArticleResponseWithRelations } from "../../posts/types";
 import { PostExcerptContent } from "../../posts/PostsContent";
 import { useGetUserWithRelationsQueryAndPopulateUserArticlesWithUser } from "./sigle-user.hooks";
 import { useDeletePostMutation } from "./manage-posts/user-manage-posts.api";
+import { useAppSelector } from "../../../app/hooks";
+import { selectIsAuthenticated, selectIsAuthUser } from "../../shared/authSlice";
 
 export const SingleUser = () => {
   const { userId } = useParams();
@@ -51,6 +53,9 @@ export const SingleUser = () => {
 };
 
 const SingleUserContent = ({ user }: { user: UserRootData | undefined }) => {
+  const isAuth = useAppSelector(selectIsAuthenticated);
+  const userAuth = useAppSelector(selectIsAuthUser);
+
   return (
     <React.Fragment>
       {/* user info */}
@@ -78,29 +83,30 @@ const SingleUserContent = ({ user }: { user: UserRootData | undefined }) => {
           </div>
         </div>
       </section>
-
-      <div className="row">
-        <div className="col-auto">
-          <Button
-            component={RouterLink}
-            variant="outlined"
-            className="align-self-start flex-shrink-0"
-            to={`/users/edit/${user?.id}`}
-          >
-            edit user
-          </Button>
+      {isAuth && userAuth?.id === user?.id && (
+        <div className="row">
+          <div className="col-auto">
+            <Button
+              component={RouterLink}
+              variant="outlined"
+              className="align-self-start flex-shrink-0"
+              to={`/users/edit/${user?.id}`}
+            >
+              edit user
+            </Button>
+          </div>
+          <div className="col-auto">
+            <Button
+              component={RouterLink}
+              variant="outlined"
+              className="align-self-start flex-shrink-0"
+              to={`/user/${user?.id}/add-post`}
+            >
+              add post
+            </Button>
+          </div>
         </div>
-        <div className="col-auto">
-          <Button
-            component={RouterLink}
-            variant="outlined"
-            className="align-self-start flex-shrink-0"
-            to={`/user/${user?.id}/add-post`}
-          >
-            add post
-          </Button>
-        </div>
-      </div>
+      )}
     </React.Fragment>
   );
 };
@@ -115,6 +121,9 @@ const PostsForUser = ({
   const [deletePostMutation, { isSuccess: isFetchDeleteSuccessful }] = useDeletePostMutation();
   const [deleteSuccessful, setDelRes] = React.useState<boolean | null>(null);
 
+  const isAuth = useAppSelector(selectIsAuthenticated);
+  const userAuth = useAppSelector(selectIsAuthUser);
+
   const renderedArticles = articles.map((article) => (
     <div key={article.id} className="row">
       <div className="row">
@@ -123,31 +132,34 @@ const PostsForUser = ({
             <PostExcerptContent item={article} />
           </div>
         </div>
-        <div className="col-3 ">
-          <Button
-            variant="outlined"
-            color="warning"
-            onClick={async () => {
-              const res = await deletePostMutation({
-                postId: article.id,
-                ownerId: userId,
-              }).unwrap();
-              if (res.data.deletedCount === 1 && res.data.updatedUser) {
-                setDelRes(true);
-              }
-            }}
-          >
-            {/* TODO: pop up with message asking if you really want to delete this post */}X
-          </Button>
-          <Button
-            component={RouterLink}
-            variant="outlined"
-            color="info"
-            to={`/user/${userId}/edit-post/${article.id}`}
-          >
-            edit
-          </Button>
-        </div>
+        {isAuth && userAuth?.id === userId && (
+          <div className="col-3 d-flex align-items-end flex-column">
+            <Button
+              variant="outlined"
+              color="warning"
+              onClick={async () => {
+                const res = await deletePostMutation({
+                  postId: article.id,
+                  ownerId: userId,
+                }).unwrap();
+                if (res.data.deletedCount === 1 && res.data.updatedUser) {
+                  setDelRes(true);
+                }
+              }}
+            >
+              {/* TODO: pop up with message asking if you really want to delete this post */}X
+            </Button>
+            <Button
+              className="mt-auto"
+              component={RouterLink}
+              variant="outlined"
+              color="info"
+              to={`/user/${userId}/edit-post/${article.id}`}
+            >
+              edit
+            </Button>
+          </div>
+        )}
       </div>
       {isFetchDeleteSuccessful && deleteSuccessful && <div>post was deleted</div>}
     </div>
