@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+  frontend_app:
+    build: ./front_end
+    ports:
+      - "3005:3005"
+    container_name: frontend_app
+    restart: always
+  backend_app:
+    container_name: backend_app
+    build: ./back_end
+    ports:
+      - "3027:3027"
+    restart: always
+
+  database_mongo:
+    container_name: database_mongo
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root_user
+      MONGO_INITDB_ROOT_PASSWORD: pass_val
+    ports:
+      - "27017:27017"
+
+  mongo-express:
+    container_name: mongo-express
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root_user
+      ME_CONFIG_MONGODB_ADMINPASSWORD: pass_val
+      ME_CONFIG_MONGODB_URL: mongodb://root_user:pass_val@database_mongo:27017/
