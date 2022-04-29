@@ -1,18 +1,18 @@
-import React from "react";
-import { useAddPostMutation } from "./user-manage-posts.api";
-import { useForm, Controller, SubmitHandler } from "react-hook-form";
-import { CreatePostReqType } from "./types";
-import { joiResolver } from "@hookform/resolvers/joi";
+import React from 'react';
+import { useAddPostMutation } from './user-manage-posts.api';
+import { useForm, Controller, SubmitHandler } from 'react-hook-form';
+import { CreatePostReqType } from './types';
+import { joiResolver } from '@hookform/resolvers/joi';
 import {
   createPostSchema,
   createPostDataToValidate,
   CreatePostDataToValidateKeysType,
-} from "./validation";
-import { Alert, Button, Typography } from "@mui/material";
-import { useParams } from "react-router-dom";
-import { useAppSelector } from "../../../../app/hooks";
-import { selectIsAuthUser } from "../../../shared/authSlice";
-import getSwitchedTextField from "./get-rendered-form-field-item";
+} from './validation';
+import { Alert, Button, Typography } from '@mui/material';
+import { useParams } from 'react-router-dom';
+import { useAppSelector } from '../../../../app/hooks';
+import { selectIsAuthUser } from '../../../shared/authSlice';
+import getSwitchedTextField from './get-rendered-form-field-item';
 
 export default function AddPostForUser() {
   const { userId } = useParams();
@@ -33,7 +33,7 @@ export default function AddPostForUser() {
     },
   });
 
-  const [response, setResponse] = React.useState("");
+  const [response, setResponse] = React.useState('');
   const [isOpenResult, setIsOpenResult] = React.useState(false);
 
   React.useEffect(() => {
@@ -80,7 +80,7 @@ export default function AddPostForUser() {
   }, [watch, isLoading]);
 
   const renderedFormFields = Object.keys(createPostDataToValidate)
-    .filter((k) => k !== "ownerId")
+    .filter((k) => k !== 'ownerId')
     .map((postKeyStr, i) => {
       let postkey = postKeyStr as unknown as CreatePostDataToValidateKeysType;
 

@@ -1,8 +1,8 @@
-import React from "react";
-import { useGetUserWithRelationsQuery } from "../usersApi";
-import { createSelector } from "@reduxjs/toolkit";
-import { UserWithIncludedAndPopulatedRelations, UserWithIncludedRelations } from "../types";
-import { ArticleResponseWithRelations } from "../../posts/types";
+import React from 'react';
+import { useGetUserWithRelationsQuery } from '../usersApi';
+import { createSelector } from '@reduxjs/toolkit';
+import { UserWithIncludedAndPopulatedRelations, UserWithIncludedRelations } from '../types';
+import { ArticleResponseWithRelations } from '../../posts/types';
 
 const emptyArr: UserWithIncludedRelations[] = [];
 
@@ -24,12 +24,12 @@ export const useGetUserWithRelationsQueryAndPopulateUserArticlesWithUser = ({
               resolve({
                 owner: { ...userData },
                 ...other,
-              })
+              }),
             );
           });
 
           const mappedPopulatedArticles = (await Promise.all(
-            mappedPopulatedArticlesPromise
+            mappedPopulatedArticlesPromise,
           )) as unknown as ArticleResponseWithRelations[];
 
           const populatedResult = {
@@ -38,7 +38,7 @@ export const useGetUserWithRelationsQueryAndPopulateUserArticlesWithUser = ({
           } as UserWithIncludedAndPopulatedRelations;
           resolve(populatedResult);
         });
-      }
+      },
     );
   }, []);
 

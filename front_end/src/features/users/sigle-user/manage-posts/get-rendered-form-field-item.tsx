@@ -1,13 +1,14 @@
-import { MenuItem, TextField } from "@mui/material";
-import { PostGenre } from "../../../posts/types";
-import { CreatePostDataToValidateKeysType, EditPostDataToValidateKeysType } from "./validation";
+import React from 'react';
+import { MenuItem, TextField } from '@mui/material';
+import { PostGenre } from '../../../posts/types';
+import { CreatePostDataToValidateKeysType, EditPostDataToValidateKeysType } from './validation';
 
 export default function getSwitchedTextField<
-  PostKeyType extends CreatePostDataToValidateKeysType | EditPostDataToValidateKeysType
+  PostKeyType extends CreatePostDataToValidateKeysType | EditPostDataToValidateKeysType,
 >(postkey: PostKeyType) {
   let resultTextFieldGetter: (field: any) => JSX.Element;
   switch (postkey) {
-    case "category":
+    case 'category':
       resultTextFieldGetter = function (field: any) {
         return (
           <TextField
@@ -33,8 +34,8 @@ export default function getSwitchedTextField<
         return (
           <TextField
             fullWidth
-            multiline={postkey === "description"}
-            minRows={postkey === "description" ? 3 : 1}
+            multiline={postkey === 'description'}
+            minRows={postkey === 'description' ? 3 : 1}
             required
             label={postkey}
             {...field}

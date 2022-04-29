@@ -1,18 +1,18 @@
-import React, { useEffect, useContext, Suspense } from "react";
+import React, { useEffect, useContext, Suspense } from 'react';
 import {
   PaginationContext,
   useSearchParamsToPassInAndPaginationContext,
   availableSearchParams,
-} from "../shared/pagination/pagination-context";
-import { PaginationComponent } from "../shared/pagination/PaginationComponent";
-import { Button, TextField, Typography } from "@mui/material";
-import { useGetPostsQuery } from "./postsApi";
-import { CircularIndeterminate } from "../shared/mui-components/Loader";
-import { PostsListContent } from "./PostsContent";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { useSearchParams } from "react-router-dom";
-import Joi from "joi";
-import { getObjectFromSearchParams } from "../shared/pagination/query-utils";
+} from '../shared/pagination/pagination-context';
+import { PaginationComponent } from '../shared/pagination/PaginationComponent';
+import { Button, TextField, Typography } from '@mui/material';
+import { useGetPostsQuery } from './postsApi';
+import { CircularIndeterminate } from '../shared/mui-components/Loader';
+import { PostsListContent } from './PostsContent';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { useSearchParams } from 'react-router-dom';
+import Joi from 'joi';
+import { getObjectFromSearchParams } from '../shared/pagination/query-utils';
 
 export const Posts = () => {
   const { contextDataAndHandler } = useSearchParamsToPassInAndPaginationContext({
@@ -21,7 +21,7 @@ export const Posts = () => {
 
   return (
     <PaginationContext.Provider value={contextDataAndHandler}>
-      <div className="container-md d-flex flex-column" style={{ minHeight: "100vh" }}>
+      <div className="container-md d-flex flex-column" style={{ minHeight: '100vh' }}>
         <div className="row mt-2 gy-2 justify-content-center align-items-start">
           <Suspense fallback={<CircularIndeterminate />}>
             <PostListParamGetter />
@@ -80,7 +80,7 @@ export const PostsList = ({
     refetch,
   } = useGetPostsQuery(
     { limit, skip, searchText: searchTextFromQuery },
-    { refetchOnMountOrArgChange: true }
+    { refetchOnMountOrArgChange: true },
   );
 
   const onSearch: SubmitHandler<SearchTextType> = (data: SearchTextType) => {
@@ -88,7 +88,10 @@ export const PostsList = ({
     if (searchText) {
       setSearchText(searchText);
       const searchParamsObj = getObjectFromSearchParams(searchParams);
-      setSearchParams({ ...searchParamsObj, [availableSearchParams.searchText]: searchText });
+      setSearchParams({
+        ...searchParamsObj,
+        [availableSearchParams.searchText]: searchText,
+      });
       refetch();
     }
   };

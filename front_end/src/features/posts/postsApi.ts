@@ -1,10 +1,10 @@
-import { apiSlice } from "../../app/apiSlice";
-import { EndPointResponse, ListResponse } from "../../app/web-api.types";
-import { getResultUrlWithParams } from "../shared/pagination/query-utils";
-import { QueryGetPaginationListType } from "../shared/types";
-import { ArticleResponse, ArticleResponseWithRelations } from "./types";
-import { postsEndPointName } from "../../app/api-endpoints";
-import { providesList } from "../../app/rtk-query-utils";
+import { apiSlice } from '../../app/apiSlice';
+import { EndPointResponse, ListResponse } from '../../app/web-api.types';
+import { getResultUrlWithParams } from '../shared/pagination/query-utils';
+import { QueryGetPaginationListType } from '../shared/types';
+import { ArticleResponse, ArticleResponseWithRelations } from './types';
+import { postsEndPointName } from '../../app/api-endpoints';
+import { providesList } from '../../app/rtk-query-utils';
 
 type GetListOfPostType = QueryGetPaginationListType & {
   searchText?: undefined | string;
@@ -17,36 +17,36 @@ export const extendedPostsApiSlice = apiSlice.injectEndpoints({
         const resultUrl = getResultUrlWithParams(postsEndPointName, queryParams);
         return {
           url: resultUrl,
-          method: "GET",
+          method: 'GET',
         };
       },
       transformResponse: (
         response: EndPointResponse<ListResponse<ArticleResponseWithRelations>>,
         meta,
-        arg
+        arg,
       ) => {
         return response.data;
       },
-      providesTags: (result, error, id) => providesList(result!.data, "Post"),
+      providesTags: (result, error, id) => providesList(result!.data, 'Post'),
     }),
 
     getPost: builder.query<ArticleResponse, string>({
       query: (postId) => ({
         url: `/${postsEndPointName}/${postId}`,
-        method: "GET",
+        method: 'GET',
       }),
       transformResponse: (response: EndPointResponse<ArticleResponse>, meta, arg) => response.data,
-      providesTags: (result, error, postId) => [{ type: "Post", id: postId }],
+      providesTags: (result, error, postId) => [{ type: 'Post', id: postId }],
     }),
 
     getPostWithRelations: builder.query<ArticleResponseWithRelations, string>({
       query: (postId) => ({
         url: `/${postsEndPointName}/with-relations/${postId}`,
-        method: "GET",
+        method: 'GET',
       }),
       transformResponse: (response: EndPointResponse<ArticleResponseWithRelations>, meta, arg) =>
         response.data,
-      providesTags: (result, error, postId) => [{ type: "Post", id: postId }],
+      providesTags: (result, error, postId) => [{ type: 'Post', id: postId }],
     }),
   }),
 });

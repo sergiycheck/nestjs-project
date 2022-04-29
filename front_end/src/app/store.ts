@@ -1,7 +1,7 @@
-import { configureStore, ThunkAction, Action, combineReducers } from "@reduxjs/toolkit";
-import { loggerMiddleware } from "./middewares";
-import { apiSlice } from "./apiSlice";
-import auth from "../features/shared/authSlice";
+import { configureStore, ThunkAction, Action, combineReducers } from '@reduxjs/toolkit';
+import { loggerMiddleware } from './middewares';
+import { apiSlice } from './apiSlice';
+import auth from '../features/shared/authSlice';
 import {
   persistStore,
   persistReducer,
@@ -11,10 +11,10 @@ import {
   PERSIST,
   PURGE,
   REGISTER,
-} from "redux-persist";
-import storage from "redux-persist/lib/storage";
+} from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
 
-const authPersistConfig = { key: "auth", storage, version: 1 };
+const authPersistConfig = { key: 'auth', storage, version: 1 };
 
 const persistedReducer = persistReducer(authPersistConfig, auth);
 

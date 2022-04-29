@@ -1,10 +1,10 @@
-import { logmMiddleware } from "./middewares";
+import { logmMiddleware } from './middewares';
 
 export async function client(endpoint: string, { body, ...customConfig }: any = {}) {
-  const headers = { "Content-Type": "application/json" };
+  const headers = { 'Content-Type': 'application/json' };
 
   const config = {
-    method: body ? "POST" : "GET",
+    method: body ? 'POST' : 'GET',
     ...customConfig,
     headers: {
       ...headers,
@@ -16,8 +16,8 @@ export async function client(endpoint: string, { body, ...customConfig }: any = 
     config.body = JSON.stringify(body);
   }
 
-  logmMiddleware("client config", config);
-  logmMiddleware("client endpoint", endpoint);
+  logmMiddleware('client config', config);
+  logmMiddleware('client endpoint', endpoint);
 
   let data;
   try {
@@ -28,13 +28,13 @@ export async function client(endpoint: string, { body, ...customConfig }: any = 
     }
     throw new Error(response.statusText);
   } catch (err: any) {
-    console.error("An error occurred", err);
+    console.error('An error occurred', err);
     return Promise.reject(err.message ? err.message : data);
   }
 }
 
 client.get = function (endpoint: string, customConfig = {}) {
-  return client(endpoint, { ...customConfig, method: "GET" });
+  return client(endpoint, { ...customConfig, method: 'GET' });
 };
 
 client.post = function (endpoint: string, body: any, customConfig = {}) {
@@ -42,9 +42,9 @@ client.post = function (endpoint: string, body: any, customConfig = {}) {
 };
 
 client.update = function (endpoint: string, body: any, customConfig = {}) {
-  return client(endpoint, { method: "PATCH", ...customConfig, body });
+  return client(endpoint, { method: 'PATCH', ...customConfig, body });
 };
 
 client.delete = function (endpoint: string, customConfig = {}) {
-  return client(endpoint, { method: "DELETE", ...customConfig });
+  return client(endpoint, { method: 'DELETE', ...customConfig });
 };

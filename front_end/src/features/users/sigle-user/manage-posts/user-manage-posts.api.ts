@@ -1,29 +1,29 @@
-import { apiSlice } from "./../../../../app/apiSlice";
-import { EndPointResponse } from "./../../../../app/web-api.types";
+import { apiSlice } from './../../../../app/apiSlice';
+import { EndPointResponse } from './../../../../app/web-api.types';
 import {
   CreateArticleResponse,
   CreatePostReqType,
   ArticleDeleteResponse,
   UpdatePostReqType,
-} from "./types";
-import { postsEndPointName } from "../../../../app/api-endpoints";
-import { ArticleResponse } from "../../../posts/types";
+} from './types';
+import { postsEndPointName } from '../../../../app/api-endpoints';
+import { ArticleResponse } from '../../../posts/types';
 
 const extendedUserManagePostsApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    //add new post to user posts
+    // add new post to user posts
     // and all posts lists
     addPost: builder.mutation<EndPointResponse<CreateArticleResponse>, CreatePostReqType>({
       query: (newPost) => {
         return {
           url: `/${postsEndPointName}`,
-          method: "POST",
+          method: 'POST',
           body: newPost,
         };
       },
       invalidatesTags: (result, error, args) => [
-        { type: "User", id: args.ownerId },
-        { type: "Post", id: "LIST" },
+        { type: 'User', id: args.ownerId },
+        { type: 'Post', id: 'LIST' },
       ],
     }),
 
@@ -33,23 +33,23 @@ const extendedUserManagePostsApi = apiSlice.injectEndpoints({
     >({
       query: (arg) => ({
         url: `/${postsEndPointName}/${arg.postId}`,
-        method: "DELETE",
+        method: 'DELETE',
       }),
       invalidatesTags: (result, error, args) => [
-        { type: "User", id: args.ownerId },
-        { type: "Post", id: "LIST" },
+        { type: 'User', id: args.ownerId },
+        { type: 'Post', id: 'LIST' },
       ],
     }),
 
     updatePost: builder.mutation<EndPointResponse<ArticleResponse>, UpdatePostReqType>({
       query: (arg) => ({
         url: `/${postsEndPointName}/${arg.id}`,
-        method: "PATCH",
+        method: 'PATCH',
         body: arg,
       }),
       invalidatesTags: (result, error, args) => [
-        { type: "User", id: args.ownerId },
-        { type: "Post", id: "LIST" },
+        { type: 'User', id: args.ownerId },
+        { type: 'Post', id: 'LIST' },
       ],
     }),
   }),

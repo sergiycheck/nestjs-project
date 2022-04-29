@@ -1,18 +1,18 @@
-import React, { useEffect, useContext } from "react";
-import { Link as RouterLink, Outlet } from "react-router-dom";
-import { TimeAgo } from "../shared/TimeAgo";
-import { useGetUsersQuery } from "./usersApi";
+import React, { useEffect, useContext } from 'react';
+import { Link as RouterLink, Outlet } from 'react-router-dom';
+import { TimeAgo } from '../shared/TimeAgo';
+import { useGetUsersQuery } from './usersApi';
 import {
   PaginationContext,
   useSearchParamsToPassInAndPaginationContext,
   availableSearchParams,
-} from "../shared/pagination/pagination-context";
+} from '../shared/pagination/pagination-context';
 
-import { PaginationComponent } from "../shared/pagination/PaginationComponent";
-import { Button, Link, Typography } from "@mui/material";
-import { CircularIndeterminate } from "../shared/mui-components/Loader";
-import { useAppSelector } from "../../app/hooks";
-import { selectIsAuthenticated, selectIsAuthUser } from "../shared/authSlice";
+import { PaginationComponent } from '../shared/pagination/PaginationComponent';
+import { Button, Link, Typography } from '@mui/material';
+import { CircularIndeterminate } from '../shared/mui-components/Loader';
+import { useAppSelector } from '../../app/hooks';
+import { selectIsAuthenticated, selectIsAuthUser } from '../shared/authSlice';
 
 export const Users = () => {
   const { contextDataAndHandler } = useSearchParamsToPassInAndPaginationContext({
@@ -87,7 +87,7 @@ export const UserExcerpt = ({ userId }: { userId: string }) => {
       selectFromResult: ({ data }) => ({
         user: data?.data.find((user) => user.id === userId),
       }),
-    }
+    },
   );
   const isAuth = useAppSelector(selectIsAuthenticated);
   const userAuth = useAppSelector(selectIsAuthUser);

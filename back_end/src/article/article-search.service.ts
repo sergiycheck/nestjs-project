@@ -83,7 +83,7 @@ export class ArticleSearchService extends BaseService {
       requestQuery,
     );
 
-    // losing this if we pass only method call
+    //losing this if we pass only method call
     const resArr = resultQueryFromDb.map((resQuery) =>
       this.articleResponseGetterService.getResponseWithRelations(resQuery),
     ) as MappedArticleResponseWithRelations[];

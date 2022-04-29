@@ -1,12 +1,12 @@
-import { QueryGetPaginationListType } from "../types";
+import { QueryGetPaginationListType } from '../types';
 
-const existingSearchParams = ["limit", "skip", "searchText"];
+const existingSearchParams = ['limit', 'skip', 'searchText'];
 
 export function getResultUrlWithParams<QueryParamType extends QueryGetPaginationListType>(
   endPointNameToSetParams: string,
-  queryParams: QueryParamType
+  queryParams: QueryParamType,
 ) {
-  let urlSearchParams = "";
+  let urlSearchParams = '';
   if (queryParams) {
     const urlParams = new URLSearchParams();
     for (let queryProp in queryParams) {

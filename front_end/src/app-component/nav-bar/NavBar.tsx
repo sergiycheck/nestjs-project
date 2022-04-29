@@ -1,19 +1,19 @@
-import React from "react";
-import { useTheme } from "@mui/material/styles";
-import { Button, Grid, IconButton, ListItem } from "@mui/material";
-import Link from "@mui/material/Link";
-import Brightness4Icon from "@mui/icons-material/Brightness4";
-import Brightness7Icon from "@mui/icons-material/Brightness7";
-import { ColorModeContext } from "../color-mode-context";
-import { useNavigate } from "react-router-dom";
-import { CircularIndeterminate } from "../../features/shared/mui-components/Loader";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import React from 'react';
+import { useTheme } from '@mui/material/styles';
+import { Button, Grid, IconButton, ListItem } from '@mui/material';
+import Link from '@mui/material/Link';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
+import { ColorModeContext } from '../color-mode-context';
+import { useNavigate } from 'react-router-dom';
+import { CircularIndeterminate } from '../../features/shared/mui-components/Loader';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import {
   selectIsAuthenticated,
   selectIsAuthUser,
   selectIsAuthStatus,
   logout,
-} from "../../features/shared/authSlice";
+} from '../../features/shared/authSlice';
 
 export function NavBar() {
   const theme = useTheme();
@@ -27,7 +27,7 @@ export function NavBar() {
 
   let renderedLoginResult;
 
-  if (authStatus === "loading")
+  if (authStatus === 'loading')
     renderedLoginResult = (
       <Grid className="col-auto" item component={ListItem}>
         <div className="row align-items-center">
@@ -39,7 +39,7 @@ export function NavBar() {
       </Grid>
     );
 
-  if (authStatus !== "loading" && !user) {
+  if (authStatus !== 'loading' && !user) {
     renderedLoginResult = (
       <Grid className="col-auto" item component={ListItem}>
         <Link href="login">login</Link>
@@ -55,7 +55,7 @@ export function NavBar() {
           variant="outlined"
           onClick={() => {
             dispatch(logout());
-            navigate("/");
+            navigate('/');
           }}
         >
           Sign out
@@ -76,7 +76,7 @@ export function NavBar() {
         {renderedLoginResult}
         <Grid className="col-auto" item component={ListItem}>
           <IconButton sx={{ ml: 1 }} onClick={colorModeManager.toggleColorMode}>
-            {theme.palette.mode === "dark" ? <Brightness7Icon /> : <Brightness4Icon />}
+            {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
           </IconButton>
         </Grid>
       </Grid>

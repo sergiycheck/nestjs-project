@@ -149,7 +149,7 @@ export class UsersService extends BaseService {
     return this.usersResponseGetterService.getResponse(res);
   }
 
-  //TODO: generate new jwt token on update
+  // TODO: generate new jwt token on update
   async update(id: string, updateUserDto: UpdateUserDto) {
     this.countUsername(updateUserDto?.username, id);
     const { id: userId, ...data } = updateUserDto;

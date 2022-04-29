@@ -1,8 +1,8 @@
-import React, { useContext } from "react";
-import { useSearchParams } from "react-router-dom";
-import Pagination from "@mui/material/Pagination";
-import LoadingButton from "@mui/lab/LoadingButton";
-import { PaginationContext, availableSearchParams } from "./pagination-context";
+import React, { useContext } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import Pagination from '@mui/material/Pagination';
+import LoadingButton from '@mui/lab/LoadingButton';
+import { PaginationContext, availableSearchParams } from './pagination-context';
 
 // TODO: move is to the pagination element and not waiting for all children to render
 // React.useLayoutEffect(() => {
@@ -82,7 +82,7 @@ export const PaginationDetailedComponent = () => {
           </LoadingButton>
         </div>
         <div className="col-auto">
-          {" "}
+          {' '}
           <LoadingButton
             size="small"
             disabled={Boolean(page === total_pages)}

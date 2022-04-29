@@ -1,21 +1,21 @@
-import React from "react";
-import { Divider, Typography } from "@mui/material";
-import { Routes, Route, Outlet, useLocation, Navigate } from "react-router-dom";
-import { Posts } from "../features/posts/Posts";
-import { Users, UsersList } from "../features/users/Users";
-import { SingleUser } from "../features/users/sigle-user/SingleUser";
-import { UpdateUser, UpdateUserContainer } from "../features/users/manage-user/edit-user";
-import { UserInfoDeleteResultComponent } from "../features/users/manage-user/user-delete-result";
-import Link from "@mui/material/Link";
-import Box from "@mui/material/Box";
-import { NavBar } from "./nav-bar/NavBar";
-import { LoginUser } from "../features/users/sigle-user/login-user";
-import AddPostForUser from "../features/users/sigle-user/manage-posts/add-posts";
-import EditPostForUser from "../features/users/sigle-user/manage-posts/edit-post";
-import { useAppSelector } from "../app/hooks";
-import { selectIsAuthenticated } from "../features/shared/authSlice";
-import { AddUser } from "../features/users/manage-user/add-user";
-import { SinglePost } from "../features/posts/SinglePost";
+import React from 'react';
+import { Divider, Typography } from '@mui/material';
+import { Routes, Route, Outlet, useLocation, Navigate } from 'react-router-dom';
+import { Posts } from '../features/posts/Posts';
+import { Users, UsersList } from '../features/users/Users';
+import { SingleUser } from '../features/users/sigle-user/SingleUser';
+import { UpdateUser, UpdateUserContainer } from '../features/users/manage-user/edit-user';
+import { UserInfoDeleteResultComponent } from '../features/users/manage-user/user-delete-result';
+import Link from '@mui/material/Link';
+import Box from '@mui/material/Box';
+import { NavBar } from './nav-bar/NavBar';
+import { LoginUser } from '../features/users/sigle-user/login-user';
+import AddPostForUser from '../features/users/sigle-user/manage-posts/add-posts';
+import EditPostForUser from '../features/users/sigle-user/manage-posts/edit-post';
+import { useAppSelector } from '../app/hooks';
+import { selectIsAuthenticated } from '../features/shared/authSlice';
+import { AddUser } from '../features/users/manage-user/add-user';
+import { SinglePost } from '../features/posts/SinglePost';
 
 export const AppRouting = () => {
   return (
@@ -23,8 +23,8 @@ export const AppRouting = () => {
       data-testid="app-root"
       className="page"
       sx={{
-        bgcolor: "background.default",
-        color: "text.primary",
+        bgcolor: 'background.default',
+        color: 'text.primary',
       }}
     >
       <header className="page__header">

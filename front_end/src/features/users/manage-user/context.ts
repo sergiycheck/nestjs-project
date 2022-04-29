@@ -1,9 +1,12 @@
-import React from "react";
+import React from 'react';
 
-export type DeleteUserInfoType = { isSuccessFullDelete: boolean | null; deleteMessage: string };
+export type DeleteUserInfoType = {
+  isSuccessFullDelete: boolean | null;
+  deleteMessage: string;
+};
 const deleteUserInfoData: DeleteUserInfoType = {
   isSuccessFullDelete: false,
-  deleteMessage: "",
+  deleteMessage: '',
 };
 
 type UpdateDeleteUserInfoType = React.Dispatch<React.SetStateAction<DeleteUserInfoType>>;
