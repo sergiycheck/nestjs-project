@@ -3,7 +3,7 @@ import { IsPropObjectId } from '../../article/dto/is-prop-objectid.validator';
 import { UserUserName } from './create-user.dto';
 
 export class IsUsernameAccessible extends UserUserName {
-  //username for registration
+  // username for registration
 
   // for username change
   @IsOptional()
