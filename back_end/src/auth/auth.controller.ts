@@ -11,7 +11,6 @@ import { LoginAuthDto } from './dto/auth.dto';
 import { AuthEndPoint } from '../api/endpoints';
 import { FailedToAuthExceptionFilter } from './filters/failed-to-auth.filter';
 
-// TODO: remove for testing
 const sleep = (ms) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };

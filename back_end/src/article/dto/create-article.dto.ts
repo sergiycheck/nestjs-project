@@ -10,7 +10,6 @@ import { ArticleGenre } from '../entities/article.enum';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsPropObjectId } from './is-prop-objectid.validator';
 
-// use plugin for swagger instead of manually defining api types
 export class CreateArticleDto extends BaseEntity {
   @ApiProperty({
     description: 'title of the article',

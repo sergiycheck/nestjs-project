@@ -21,7 +21,6 @@ import { Article, ArticleDocument } from './entities/article.entity';
 import { MappedUserResponse } from '../users/dto/response-user.dto';
 import { ArticleResponseGetterService } from './article-response-getter.service';
 
-// all thrown exceptions is handled by global exception filter
 @Injectable()
 export class ArticleService extends BaseService {
   constructor(

@@ -36,14 +36,9 @@ import { ApiCreateArticleDecorator } from './swagger_decorators/api-create-artic
 import { PaginatedResponseDto } from '../base/responses/response.dto';
 import { ArticleSearchService } from './article-search.service';
 
-// TODO: remove for testing
 const sleep = (ms) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
-
-// JwtAuthGuard is bounded automatically to endpoint that is not marked with @Public decorator
-// because it is declared as a global guard
-// user is add to the req obj by passport
 
 @ApiTags(ArticlesEndpoint)
 @Controller(ArticlesEndpoint)
@@ -59,7 +54,6 @@ export class ArticleController extends BaseController {
   @ApiCreateArticleDecorator(CreateArticleResponse)
   @ApiNotFoundResponse({ description: 'article was not created' })
   @ApiUnauthorizedResponse()
-  // TODO: provide custom header from swagger ui ?
   @Post()
   async create(
     @Body() createArticleDto: CreateArticleDto,

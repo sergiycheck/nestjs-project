@@ -30,7 +30,6 @@ import { PaginatedResponseDto } from '../base/responses/response.dto';
 import { IsUsernameAccessible } from './dto/requests.dto';
 import { UsernameIsNotAccessibleFilter } from './filters/users.filters';
 
-// TODO: remove for testing
 const sleep = (ms) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };

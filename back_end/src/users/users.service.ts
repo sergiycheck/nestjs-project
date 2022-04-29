@@ -21,7 +21,6 @@ import { UsersResponseGetterService } from './users-response-getter.service';
 import { JwtService } from '@nestjs/jwt';
 import { UsernameIsNotAccessibleException } from './dto/exceptions/username-accessible.dto';
 
-// all thrown exceptions is handled by global exception filter
 @Injectable()
 export class UsersService extends BaseService {
   constructor(
@@ -149,7 +148,6 @@ export class UsersService extends BaseService {
     return this.usersResponseGetterService.getResponse(res);
   }
 
-  // TODO: generate new jwt token on update
   async update(id: string, updateUserDto: UpdateUserDto) {
     this.countUsername(updateUserDto?.username, id);
     const { id: userId, ...data } = updateUserDto;
