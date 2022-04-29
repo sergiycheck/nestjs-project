@@ -1,6 +1,12 @@
 version: "3.9"
 
 services:
+  frontend_app:
+    build: ./front_end
+    ports:
+      - "3005:3005"
+    container_name: frontend_app
+    restart: always
   backend_app:
     container_name: backend_app
     build: ./back_end

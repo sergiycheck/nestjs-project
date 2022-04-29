@@ -12,7 +12,7 @@ import { ArticleResponse } from "../../../posts/types";
 const extendedUserManagePostsApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     //add new post to user posts
-    // and all posts list
+    // and all posts lists
     addPost: builder.mutation<EndPointResponse<CreateArticleResponse>, CreatePostReqType>({
       query: (newPost) => {
         return {

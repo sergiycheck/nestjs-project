@@ -8,6 +8,7 @@ import {
   Delete,
   Query,
   UseGuards,
+  UseFilters,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -16,6 +17,7 @@ import { Public } from '../auth/metadata.decorators';
 import { CustomParseObjectIdPipe } from '../pipes/custom-parse-objectid.pipe';
 import { UsersEndpoint } from '../api/endpoints';
 import {
+  isUsernameAccessible,
   MappedUserResponse,
   MappedUserResponseWithRelations,
   UserDeleteResult,
@@ -25,6 +27,8 @@ import { CanUserManageUserGuard } from './can-user-manage-user.guard';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { PaginatedRequestDto } from '../base/requests/requests.dto';
 import { PaginatedResponseDto } from '../base/responses/response.dto';
+import { IsUsernameAccessible } from './dto/requests.dto';
+import { UsernameIsNotAccessibleFilter } from './filters/users.filters';
 
 // TODO: remove for testing
 const sleep = (ms) => {
@@ -83,6 +87,19 @@ export class UsersController extends BaseController {
       `user was not found for username ${username}`,
       user,
     );
+  }
+
+  @UseFilters(UsernameIsNotAccessibleFilter)
+  @Public()
+  @Get('is-username-accessible')
+  async checkIfUserNameAccessible(@Query() query: IsUsernameAccessible) {
+    const { username, userId } = query;
+    const isAccessible = await this.usersService.countUsername(
+      username,
+      userId,
+    );
+
+    return new isUsernameAccessible({ isAccessible });
   }
 
   @Public()

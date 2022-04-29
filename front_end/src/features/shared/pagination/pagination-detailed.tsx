@@ -13,14 +13,16 @@ import { PaginationContext, availableSearchParams } from "./pagination-context";
 
 const increment = 5;
 export const PaginationDetailedComponent = () => {
-  const setSearchParams = useSearchParams()[1];
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const { initialPaginationData, setPaginationContextData } = useContext(PaginationContext);
   const { limit, skip, page, per_page, total, total_pages, isFetching } = initialPaginationData;
 
   const setSearchParamsAndContextData = (pageToSet: number) => {
-    const searchParamObj = { [availableSearchParams]: `${pageToSet}` };
-    setSearchParams(searchParamObj);
+    setSearchParams({
+      ...searchParams,
+      [availableSearchParams.page]: `${pageToSet}`,
+    });
     const nextParams = { limit: increment, skip: pageToSet * limit - limit };
     setPaginationContextData((prev) => ({
       ...prev,

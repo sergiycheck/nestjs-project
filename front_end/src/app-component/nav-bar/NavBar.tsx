@@ -67,10 +67,10 @@ export function NavBar() {
   return (
     <div className="container-md">
       <Grid component="nav" className="row">
-        <Grid className="col" item component={ListItem}>
+        <Grid className="col d-flex justify-content-center" item component={ListItem}>
           <Link href="/">users</Link>
         </Grid>
-        <Grid className="col" item component={ListItem}>
+        <Grid className="col d-flex justify-content-center" item component={ListItem}>
           <Link href="posts">posts</Link>
         </Grid>
         {renderedLoginResult}

@@ -15,6 +15,7 @@ import EditPostForUser from "../features/users/sigle-user/manage-posts/edit-post
 import { useAppSelector } from "../app/hooks";
 import { selectIsAuthenticated } from "../features/shared/authSlice";
 import { AddUser } from "../features/users/manage-user/add-user";
+import { SinglePost } from "../features/posts/SinglePost";
 
 export const AppRouting = () => {
   return (
@@ -46,6 +47,7 @@ export const AppRouting = () => {
           <Route path="login" element={<LoginUser />}></Route>
           <Route path="register" element={<AddUser />}></Route>
           <Route path="posts" element={<Posts />}></Route>
+          <Route path="posts/:postId" element={<SinglePost />}></Route>
 
           <Route
             path="user/:userId/add-post"

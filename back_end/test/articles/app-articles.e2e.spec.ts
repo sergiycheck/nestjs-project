@@ -137,8 +137,6 @@ describe('app articles (e2e)', () => {
     TIMEOUT_FOR_DEBUGGING,
   );
 
-  // TODO: BUG passing when running separately but fails if runs with app article all tests
-
   it(
     '/ (GET) find articles with owner by owner id (ArticleController findArticlesByUser)',
     async () => {
