@@ -1,5 +1,5 @@
-import { ArticleResponse, PostGenre } from "../../../posts/types";
-import { UserWithRelationsIds } from "../../types";
+import { ArticleResponse, PostGenre } from '../../../posts/types';
+import { UserWithRelationsIds } from '../../types';
 
 type Question<T> = {
   [Prop in keyof T]+?: T[Prop];
@@ -17,8 +17,8 @@ export type PostIdType = {
   id: string;
 };
 
-export type UpdatePostReqType = Pick<CreatePostReqType, "ownerId"> &
-  Question<Omit<CreatePostReqType, "ownerId">> &
+export type UpdatePostReqType = Pick<CreatePostReqType, 'ownerId'> &
+  Question<Omit<CreatePostReqType, 'ownerId'>> &
   PostIdType;
 
 export type CreateArticleResponse = {

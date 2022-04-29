@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
-import { QueryGetPaginationListType } from "../types";
-import { PaginationData } from "../../../app/web-api.types";
-import Joi from "joi";
+import React, { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { QueryGetPaginationListType } from '../types';
+import { PaginationData } from '../../../app/web-api.types';
+import Joi from 'joi';
 
 type Concrete<Type> = {
   [Prop in keyof Type]: NonNullable<Type[Prop]>;
@@ -36,7 +36,7 @@ const initialPaginationContextData = {
 };
 export const PaginationContext = React.createContext(initialPaginationContextData);
 
-export const availableSearchParams = { page: "page", searchText: "searchText" };
+export const availableSearchParams = { page: 'page', searchText: 'searchText' };
 
 const numPageSchema = Joi.object({
   numPage: Joi.number().integer().min(1).max(999),
@@ -51,7 +51,7 @@ export const useSearchParamsToPassInAndPaginationContext = ({
   const page = searchParams.get(searchParamsNames);
 
   const [initialPaginationData, setPaginationContextData] = useState<PaginationContextType>(
-    willBePassedToPaginationData
+    willBePassedToPaginationData,
   );
   const { limit } = initialPaginationData;
 
@@ -64,7 +64,10 @@ export const useSearchParamsToPassInAndPaginationContext = ({
     }
   }, [page, limit]);
 
-  const contextDataAndHandler = { initialPaginationData, setPaginationContextData };
+  const contextDataAndHandler = {
+    initialPaginationData,
+    setPaginationContextData,
+  };
 
   return { contextDataAndHandler };
 };

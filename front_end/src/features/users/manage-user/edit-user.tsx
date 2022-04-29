@@ -1,20 +1,20 @@
-import React, { useContext, useEffect, useState } from "react";
-import { useDeleteUserMutation, useGetUserQuery, useUpdateUserMutation } from "../usersApi";
-import TextField from "@mui/material/TextField";
-import { Alert, Button, Link, Typography } from "@mui/material";
-import { useForm, Controller, SubmitHandler } from "react-hook-form";
-import { UpdateUserDto } from "../types";
-import { joiResolver } from "@hookform/resolvers/joi";
-import { Outlet, useNavigate, useParams } from "react-router-dom";
-import { CircularIndeterminate } from "../../shared/mui-components/Loader";
-import { userUpdateSchema } from "./validation";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { DeleteUserInfoContext, DeleteUserInfoType } from "./context";
+import React, { useContext, useEffect, useState } from 'react';
+import { useDeleteUserMutation, useGetUserQuery, useUpdateUserMutation } from '../usersApi';
+import TextField from '@mui/material/TextField';
+import { Alert, Button, Link, Typography } from '@mui/material';
+import { useForm, Controller, SubmitHandler } from 'react-hook-form';
+import { UpdateUserDto } from '../types';
+import { joiResolver } from '@hookform/resolvers/joi';
+import { Outlet, useNavigate, useParams } from 'react-router-dom';
+import { CircularIndeterminate } from '../../shared/mui-components/Loader';
+import { userUpdateSchema } from './validation';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { DeleteUserInfoContext, DeleteUserInfoType } from './context';
 
 export const UpdateUser = () => {
   const [deleteUserInfoData, setUpdateDeleteUserInfo] = useState<DeleteUserInfoType>({
     isSuccessFullDelete: null,
-    deleteMessage: "",
+    deleteMessage: '',
   });
   const passedValue = { deleteUserInfoData, setUpdateDeleteUserInfo };
 
@@ -57,7 +57,7 @@ export const UpdateUserInner = ({ user }: { user: UpdateUserDto }) => {
 
   const navigate = useNavigate();
 
-  const [response, setResponse] = useState("");
+  const [response, setResponse] = useState('');
   const [isOpenResult, setIsOpenResult] = useState(false);
 
   const onSubmit: SubmitHandler<UpdateUserDto> = async (data: UpdateUserDto) => {
@@ -168,7 +168,7 @@ export const UpdateUserInner = ({ user }: { user: UpdateUserDto }) => {
                       isSuccessFullDelete: true,
                     });
 
-                    navigate("deleteResult");
+                    navigate('deleteResult');
                   }
                 }}
               >

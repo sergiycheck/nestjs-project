@@ -1,9 +1,9 @@
-import { UserWithRelationsIds } from "../users/types";
+import { UserWithRelationsIds } from '../users/types';
 
 export enum PostGenre {
-  Sport = "sport",
-  Games = "games",
-  History = "history",
+  Sport = 'sport',
+  Games = 'games',
+  History = 'history',
 }
 
 type ArticleNonChangeableData = {

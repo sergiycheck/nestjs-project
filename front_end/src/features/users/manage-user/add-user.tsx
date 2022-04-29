@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { useAddUserMutation } from "../usersApi";
-import TextField from "@mui/material/TextField";
-import { Alert, Button, Link, Typography } from "@mui/material";
-import { useForm, Controller, SubmitHandler } from "react-hook-form";
-import { CreateUserDto } from "../types";
-import { joiResolver } from "@hookform/resolvers/joi";
-import { userAddSchema } from "./validation";
+import React, { useEffect, useState } from 'react';
+import { useAddUserMutation } from '../usersApi';
+import TextField from '@mui/material/TextField';
+import { Alert, Button, Link, Typography } from '@mui/material';
+import { useForm, Controller, SubmitHandler } from 'react-hook-form';
+import { CreateUserDto } from '../types';
+import { joiResolver } from '@hookform/resolvers/joi';
+import { userAddSchema } from './validation';
 
 type SingUpUserType = CreateUserDto & { repeat_password: string };
 
@@ -23,7 +23,7 @@ export const AddUser = () => {
     resolver: joiResolver(userAddSchema),
   });
 
-  const [response, setResponse] = useState("");
+  const [response, setResponse] = useState('');
   const [isOpenResult, setIsOpenResult] = useState(false);
 
   useEffect(() => {
@@ -73,7 +73,7 @@ export const AddUser = () => {
       {/* register form */}
       <div className="row justify-content-center">
         <div className="col-5">
-          <Typography variant="h4" sx={{ textAlign: "center", marginBottom: "1em" }}>
+          <Typography variant="h4" sx={{ textAlign: 'center', marginBottom: '1em' }}>
             Sing up as a new user
           </Typography>
           <form className="row gy-2" autoComplete="off" onSubmit={handleSubmit(onSubmit)}>

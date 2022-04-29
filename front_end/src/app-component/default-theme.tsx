@@ -1,21 +1,21 @@
-import React from "react";
-import { Link as RouterLink, LinkProps as RouterLinkProps } from "react-router-dom";
-import { createTheme, responsiveFontSizes } from "@mui/material/styles";
-import { LinkProps } from "@mui/material/Link";
-import { PaletteMode } from "@mui/material";
+import React from 'react';
+import { Link as RouterLink, LinkProps as RouterLinkProps } from 'react-router-dom';
+import { createTheme, responsiveFontSizes } from '@mui/material/styles';
+import { LinkProps } from '@mui/material/Link';
+import { PaletteMode } from '@mui/material';
 
 export const LinkBehavior = React.forwardRef<
   any,
-  Omit<RouterLinkProps, "to"> & { href: RouterLinkProps["to"] }
+  Omit<RouterLinkProps, 'to'> & { href: RouterLinkProps['to'] }
 >((props, ref) => {
   const { href, ...other } = props;
   // Map hre (Mui) -> to (react-router)
   return <RouterLink data-testid="custom-link" ref={ref} to={href} {...other} />;
 });
 
-export const colorsThemesAvailable = { light: "light", dark: "dark" };
-export type ColorThemeType = "light" | "dark";
-export const BG_COLOR = "bgColor";
+export const colorsThemesAvailable = { light: 'light', dark: 'dark' };
+export type ColorThemeType = 'light' | 'dark';
+export const BG_COLOR = 'bgColor';
 export const getThemeMode = () => {
   const bgColorFromLocalStorage = window.localStorage.getItem(BG_COLOR);
   if (
@@ -24,10 +24,10 @@ export const getThemeMode = () => {
   ) {
     return bgColorFromLocalStorage as ColorThemeType;
   }
-  return "light";
+  return 'light';
 };
 
-declare module "@mui/material/styles" {
+declare module '@mui/material/styles' {
   interface BreakpointOverrides {
     xs: true;
     sm: true;
@@ -41,9 +41,9 @@ declare module "@mui/material/styles" {
 const getDesignTokens = (mode: PaletteMode) => ({
   palette: {
     mode,
-    ...(mode === "dark" && {
+    ...(mode === 'dark' && {
       background: {
-        default: "#1a202c",
+        default: '#1a202c',
       },
     }),
   },
@@ -56,10 +56,10 @@ export function createThemeFromMode(mode: ColorThemeType) {
         MuiLink: {
           defaultProps: {
             component: LinkBehavior,
-            underline: "none",
-            variant: "subtitle1",
-            fontWeight: "500",
-            color: "inherit",
+            underline: 'none',
+            variant: 'subtitle1',
+            fontWeight: '500',
+            color: 'inherit',
           } as LinkProps,
         },
       },
@@ -74,6 +74,6 @@ export function createThemeFromMode(mode: ColorThemeType) {
           xxl: 1400,
         },
       },
-    })
+    }),
   );
 }

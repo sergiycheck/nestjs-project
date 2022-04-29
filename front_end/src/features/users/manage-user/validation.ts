@@ -1,4 +1,4 @@
-import Joi from "joi";
+import Joi from 'joi';
 
 const userUserName = {
   username: Joi.string().required().min(4),
@@ -22,7 +22,7 @@ const UserRootDataSchema = {
 export const userAddSchema = Joi.object({
   ...UserRootDataSchema,
   ...userPassword,
-  repeat_password: Joi.ref("password"),
+  repeat_password: Joi.ref('password'),
 });
 
 export const userUpdateSchema = Joi.object({

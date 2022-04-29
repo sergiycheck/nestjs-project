@@ -1,11 +1,11 @@
-import React from "react";
-import { Divider, Typography } from "@mui/material";
-import Link from "@mui/material/Link";
-import { CircularIndeterminate } from "../shared/mui-components/Loader";
-import { ArticleResponseWithRelations } from "./types";
-import { FetchBaseQueryError } from "@reduxjs/toolkit/dist/query";
-import { SerializedError } from "@reduxjs/toolkit";
-import { TimeAgo } from "../shared/TimeAgo";
+import React from 'react';
+import { Divider, Typography } from '@mui/material';
+import Link from '@mui/material/Link';
+import { CircularIndeterminate } from '../shared/mui-components/Loader';
+import { ArticleResponseWithRelations } from './types';
+import { FetchBaseQueryError } from '@reduxjs/toolkit/dist/query';
+import { SerializedError } from '@reduxjs/toolkit';
+import { TimeAgo } from '../shared/TimeAgo';
 
 export const PostsListContent = ({
   data,
@@ -43,7 +43,7 @@ export const PostExcerptContent = ({
       <div className="row g-3">
         <div className="col-12">
           <Typography variant="h5">
-            <Link sx={{ fontWeight: "inherit", fontSize: "inherit" }} href={`/posts/${item?.id}`}>
+            <Link sx={{ fontWeight: 'inherit', fontSize: 'inherit' }} href={`/posts/${item?.id}`}>
               {item?.title}
             </Link>
           </Typography>
