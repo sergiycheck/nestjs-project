@@ -1,13 +1,13 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "../../app/store";
-import { UserWithRelationsIds } from "../users/types";
-import { extendedUserApiSlice } from "../users/usersApi";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { RootState } from '../../app/store';
+import { UserWithRelationsIds } from '../users/types';
+import { extendedUserApiSlice } from '../users/usersApi';
 
 export enum StatusData {
-  loading = "loading",
-  succeeded = "succeeded",
-  failed = "failed",
-  idle = "idle",
+  loading = 'loading',
+  succeeded = 'succeeded',
+  failed = 'failed',
+  idle = 'idle',
 }
 
 type AuthStateType = {
@@ -25,13 +25,13 @@ const initialState: AuthStateType = {
 };
 
 const slice = createSlice({
-  name: "auth",
+  name: 'auth',
   initialState,
   reducers: {
     logout: () => initialState,
     setCredentials: (
       state: AuthStateType,
-      { payload: { user, token } }: PayloadAction<{ user: UserWithRelationsIds; token: string }>
+      { payload: { user, token } }: PayloadAction<{ user: UserWithRelationsIds; token: string }>,
     ) => {
       state.user = user;
       state.token = token;
@@ -40,10 +40,10 @@ const slice = createSlice({
     },
     updateUserCredentials: (
       state: AuthStateType,
-      { payload: { user, token } }: PayloadAction<{ user: UserWithRelationsIds; token: string }>
+      { payload: { user, token } }: PayloadAction<{ user: UserWithRelationsIds; token: string }>,
     ) => {
       const ifWeUpdatingCurrentUser = Boolean(
-        state.isAuthenticated && user && state.user && user.id === state.user.id
+        state.isAuthenticated && user && state.user && user.id === state.user.id,
       );
       if (ifWeUpdatingCurrentUser) {
         state.user = user;
@@ -52,10 +52,10 @@ const slice = createSlice({
     },
     deleteUserCredentials: (
       state: AuthStateType,
-      { payload: { userId } }: PayloadAction<{ userId: string }>
+      { payload: { userId } }: PayloadAction<{ userId: string }>,
     ) => {
       const ifWeUpdatingCurrentUser = Boolean(
-        state.isAuthenticated && state.user && userId === state.user.id
+        state.isAuthenticated && state.user && userId === state.user.id,
       );
       if (ifWeUpdatingCurrentUser) {
         Object.assign(state, initialState);

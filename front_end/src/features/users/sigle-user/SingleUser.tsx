@@ -1,15 +1,15 @@
-import React from "react";
-import { Link as RouterLink, useParams } from "react-router-dom";
-import { CircularIndeterminate } from "../../shared/mui-components/Loader";
-import { TimeAgo } from "../../shared/TimeAgo";
-import { Button, Divider, Typography } from "@mui/material";
-import { UserRootData } from "../types";
-import { ArticleResponseWithRelations } from "../../posts/types";
-import { PostExcerptContent } from "../../posts/PostsContent";
-import { useGetUserWithRelationsQueryAndPopulateUserArticlesWithUser } from "./sigle-user.hooks";
-import { useDeletePostMutation } from "./manage-posts/user-manage-posts.api";
-import { useAppSelector } from "../../../app/hooks";
-import { selectIsAuthenticated, selectIsAuthUser } from "../../shared/authSlice";
+import React from 'react';
+import { Link as RouterLink, useParams } from 'react-router-dom';
+import { CircularIndeterminate } from '../../shared/mui-components/Loader';
+import { TimeAgo } from '../../shared/TimeAgo';
+import { Button, Divider, Typography } from '@mui/material';
+import { UserRootData } from '../types';
+import { ArticleResponseWithRelations } from '../../posts/types';
+import { PostExcerptContent } from '../../posts/PostsContent';
+import { useGetUserWithRelationsQueryAndPopulateUserArticlesWithUser } from './sigle-user.hooks';
+import { useDeletePostMutation } from './manage-posts/user-manage-posts.api';
+import { useAppSelector } from '../../../app/hooks';
+import { selectIsAuthenticated, selectIsAuthUser } from '../../shared/authSlice';
 
 export const SingleUser = () => {
   const { userId } = useParams();
@@ -24,7 +24,7 @@ export const SingleUser = () => {
   let renderedUserPosts;
   if (!user?.numberOfArticles) {
     renderedUserPosts = (
-      <Typography variant="subtitle1">User hasn't created any post yet</Typography>
+      <Typography variant="subtitle1">User hasn&apos;t created any post yet</Typography>
     );
   } else if (articles?.length) {
     renderedUserPosts = <PostsForUser userId={user.id} articles={articles}></PostsForUser>;
@@ -68,7 +68,7 @@ const SingleUserContent = ({ user }: { user: UserRootData | undefined }) => {
         <div className="row">
           <div className="col-6">
             <div className="row">
-              <Typography>username: {user?.username}</Typography>{" "}
+              <Typography>username: {user?.username}</Typography>{' '}
             </div>
             <div className="row">
               full name: {user?.firstName} {user?.lastName}

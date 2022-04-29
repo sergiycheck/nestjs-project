@@ -1,4 +1,4 @@
-import Joi from "joi";
+import Joi from 'joi';
 
 export const schemaTokenValidation = Joi.string()
   .regex(/^[\w\-_]+\.[\w\-_]+\.[\w\-_.+/=]*$/)

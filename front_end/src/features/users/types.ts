@@ -1,6 +1,6 @@
-import { ArticleResponse, ArticleResponseWithRelations } from "../posts/types";
+import { ArticleResponse, ArticleResponseWithRelations } from '../posts/types';
 
-export const usersSliceName = "users";
+export const usersSliceName = 'users';
 
 type UserRootNonChangeable = {
   username: string;
@@ -31,9 +31,9 @@ export type CreateUserDto = UserRootNonChangeable & {
   password: string;
 };
 
-export type LoginUserDto = Pick<CreateUserDto, "username" | "password">;
+export type LoginUserDto = Pick<CreateUserDto, 'username' | 'password'>;
 
-export type UpdateUserDto = Partial<UserRootNonChangeable> & Pick<UserRootData, "id">;
+export type UpdateUserDto = Partial<UserRootNonChangeable> & Pick<UserRootData, 'id'>;
 
 export type UpdateUserResponse = {
   mappedUserResponse: UserWithRelationsIds;

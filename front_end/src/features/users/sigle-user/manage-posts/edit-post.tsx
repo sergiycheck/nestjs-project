@@ -1,21 +1,21 @@
-import { Typography } from "@mui/material";
-import React from "react";
-import { useParams } from "react-router-dom";
-import { useUpdatePostMutation } from "./user-manage-posts.api";
-import { useGetPostQuery } from "../../../posts/postsApi";
-import { CircularIndeterminate } from "../../../shared/mui-components/Loader";
-import { UpdatePostReqType } from "./types";
-import { useForm, Controller, SubmitHandler } from "react-hook-form";
-import { joiResolver } from "@hookform/resolvers/joi";
+import { Typography } from '@mui/material';
+import React from 'react';
+import { useParams } from 'react-router-dom';
+import { useUpdatePostMutation } from './user-manage-posts.api';
+import { useGetPostQuery } from '../../../posts/postsApi';
+import { CircularIndeterminate } from '../../../shared/mui-components/Loader';
+import { UpdatePostReqType } from './types';
+import { useForm, Controller, SubmitHandler } from 'react-hook-form';
+import { joiResolver } from '@hookform/resolvers/joi';
 import {
   editPostDataToValidate,
   updatePostSchema,
   EditPostDataToValidateKeysType,
-} from "./validation";
-import { Alert, Button } from "@mui/material";
-import { useAppSelector } from "../../../../app/hooks";
-import { selectIsAuthUser } from "../../../shared/authSlice";
-import getSwitchedTextField from "./get-rendered-form-field-item";
+} from './validation';
+import { Alert, Button } from '@mui/material';
+import { useAppSelector } from '../../../../app/hooks';
+import { selectIsAuthUser } from '../../../shared/authSlice';
+import getSwitchedTextField from './get-rendered-form-field-item';
 
 export default function EditPostForUser() {
   const { userId, postId } = useParams();
@@ -54,7 +54,7 @@ function EditPostContent({ post, ownerId }: { post: UpdatePostReqType; ownerId: 
     defaultValues: post,
   });
 
-  const [response, setResponse] = React.useState("");
+  const [response, setResponse] = React.useState('');
   const [isOpenResult, setIsOpenResult] = React.useState(false);
 
   const onSubmit: SubmitHandler<UpdatePostReqType> = async (data: UpdatePostReqType) => {
@@ -84,7 +84,7 @@ function EditPostContent({ post, ownerId }: { post: UpdatePostReqType; ownerId: 
   }, [watch, isLoading]);
 
   const renderedFormFields = Object.keys(editPostDataToValidate)
-    .filter((k) => k !== "ownerId" && k !== "id")
+    .filter((k) => k !== 'ownerId' && k !== 'id')
     .map((postKeyStr, i) => {
       let postkey = postKeyStr as unknown as EditPostDataToValidateKeysType;
       const resultTextFieldGetter = getSwitchedTextField<EditPostDataToValidateKeysType>(postkey);

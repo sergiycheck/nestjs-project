@@ -1,8 +1,8 @@
-import React, { useContext } from "react";
-import { useSearchParams } from "react-router-dom";
-import Pagination from "@mui/material/Pagination";
-import { PaginationContext, availableSearchParams } from "./pagination-context";
-import { getObjectFromSearchParams } from "./query-utils";
+import React, { useContext } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import Pagination from '@mui/material/Pagination';
+import { PaginationContext, availableSearchParams } from './pagination-context';
+import { getObjectFromSearchParams } from './query-utils';
 
 const increment = 5;
 export const PaginationComponent = () => {

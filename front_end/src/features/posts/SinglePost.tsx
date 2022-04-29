@@ -1,8 +1,8 @@
-import React from "react";
-import { useParams } from "react-router-dom";
-import { useGetPostWithRelationsQuery } from "./postsApi";
-import { CircularIndeterminate } from "../shared/mui-components/Loader";
-import { PostExcerptContent } from "./PostsContent";
+import React from 'react';
+import { useParams } from 'react-router-dom';
+import { useGetPostWithRelationsQuery } from './postsApi';
+import { CircularIndeterminate } from '../shared/mui-components/Loader';
+import { PostExcerptContent } from './PostsContent';
 
 export const SinglePost = () => {
   const { postId } = useParams();

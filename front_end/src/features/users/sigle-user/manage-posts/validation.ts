@@ -1,5 +1,5 @@
-import Joi from "joi";
-import { PostGenre } from "../../../posts/types";
+import Joi from 'joi';
+import { PostGenre } from '../../../posts/types';
 
 export const createPostDataToValidate = {
   title: Joi.string().required().min(5).max(400),

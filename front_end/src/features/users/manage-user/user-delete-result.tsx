@@ -1,6 +1,6 @@
-import React, { useContext } from "react";
-import { Alert } from "@mui/material";
-import { DeleteUserInfoContext } from "./context";
+import React, { useContext } from 'react';
+import { Alert } from '@mui/material';
+import { DeleteUserInfoContext } from './context';
 
 export const UserInfoDeleteResultComponent = () => {
   const { deleteUserInfoData } = useContext(DeleteUserInfoContext);

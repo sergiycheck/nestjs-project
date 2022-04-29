@@ -1,20 +1,20 @@
-import React from "react";
-import { ThemeProvider } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
-import { ColorModeContext } from "./color-mode-context";
-import { AppRouting } from "./AppRouting";
-import "./App.scss";
+import React from 'react';
+import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import { ColorModeContext } from './color-mode-context';
+import { AppRouting } from './AppRouting';
+import './App.scss';
 import {
   getThemeMode,
   ColorThemeType,
   BG_COLOR,
   createThemeFromMode,
   colorsThemesAvailable,
-} from "./default-theme";
-import { useMediaQuery } from "@mui/material";
+} from './default-theme';
+import { useMediaQuery } from '@mui/material';
 
 export default function App() {
-  const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
+  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
   const memoizedThemeMode = React.useMemo(() => {
     const gotTheme = getThemeMode();
     if (prefersDarkMode) return colorsThemesAvailable.dark;
@@ -35,7 +35,7 @@ export default function App() {
         });
       },
     }),
-    []
+    [],
   );
 
   const theme = React.useMemo(() => createThemeFromMode(mode), [mode]);
