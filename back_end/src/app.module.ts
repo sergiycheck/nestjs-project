@@ -12,10 +12,31 @@ import { CustomConnectionService } from './custom-conn.service';
 import { AppController } from './app-initial/app.controller';
 import { AppService } from './app-initial/app.service';
 import { MyLogger } from './injecting-custom-logger/my-logger.service';
+import * as Joi from 'joi';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ cache: true, expandVariables: true }),
+    ConfigModule.forRoot({
+      cache: true,
+      expandVariables: true,
+      validationSchema: Joi.object({
+        WEB_API_APP_PORT: Joi.string().required(),
+        DB_USERNAME: Joi.string().required(),
+        DB_PASSWORD: Joi.string().required(),
+        DB_HOST: Joi.string().required(),
+        DB_PORT: Joi.string().required(),
+        AUTH_MECHANISM: Joi.string().required(),
+        AUTH_SOURCE: Joi.string().required(),
+        DB_NAME: Joi.string().required(),
+        MONGODB_URI: Joi.string().required(),
+        MONGO_TESTING_DB_URI: Joi.string().required(),
+        //
+        PRIVATE_JWT_KEY: Joi.string().required(),
+        JWT_EXPIRES_SECONDS: Joi.string().required(),
+        REFRESH_JWT_TOKEN_SECRET: Joi.string().required(),
+        REFRESH_JWT_EXPIRES_SECONDS: Joi.string().required(),
+      }),
+    }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule, MyLoggerModule],
       useFactory: async (configService: ConfigService, logger: MyLogger) => {
@@ -35,7 +56,7 @@ import { MyLogger } from './injecting-custom-logger/my-logger.service';
       inject: [ConfigService, MyLogger],
     }),
     MyLoggerModule,
-    ThrottlerModule.forRoot({ ttl: 5, limit: 10 }),
+    ThrottlerModule.forRoot({ ttl: 5, limit: 100 }),
     AuthModule,
     UsersModule,
     ArticleModule,

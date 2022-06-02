@@ -1,5 +1,6 @@
+import { FailedAuthException } from './../auth/responses/response.exceptions';
 import {
-  BadRequestException,
+  ForbiddenException,
   forwardRef,
   Inject,
   Injectable,
@@ -18,7 +19,6 @@ import { SALT_ROUNDS } from '../auth/constants';
 import { PaginatedRequestDto } from '../base/requests/requests.dto';
 import { PaginatedResponseDto } from '../base/responses/response.dto';
 import { UsersResponseGetterService } from './users-response-getter.service';
-import { JwtService } from '@nestjs/jwt';
 import { UsernameIsNotAccessibleException } from './dto/exceptions/username-accessible.dto';
 
 // all thrown exceptions is handled by global exception filter
@@ -30,7 +30,6 @@ export class UsersService extends BaseService {
     public usersResponseGetterService: UsersResponseGetterService,
     @Inject(forwardRef(() => ArticleService))
     private readonly articleService: ArticleService,
-    private jwtService: JwtService,
   ) {
     super();
   }
@@ -161,13 +160,54 @@ export class UsersService extends BaseService {
     const mappedUserResponse =
       this.usersResponseGetterService.getResponse(updatedUserQuery);
 
-    return {
-      access_token: this.jwtService.sign({
-        username: updatedUserQuery.username,
-        sub: updatedUserQuery.id,
-      }),
-      mappedUserResponse,
-    };
+    return mappedUserResponse;
+  }
+
+  async setRefreshToken(refreshToken: string, id: string) {
+    const res = await this.findOneUserLean(id);
+
+    const currentHashedRefreshToken = await bcrypt.hash(
+      refreshToken,
+      SALT_ROUNDS,
+    );
+
+    await this.userModel.findOneAndUpdate(
+      { id: res._id },
+      { $set: { currentHashedRefreshToken } },
+    );
+  }
+
+  async removeRefreshToken(id: string) {
+    const res = await this.findOneUserLean(id);
+    await this.userModel.findOneAndUpdate(
+      { id: res._id },
+      { $set: { currentHashedRefreshToken: null } },
+    );
+  }
+
+  async findOneUserLean(id: string) {
+    const user = await this.userModel.findById(id).lean();
+
+    if (!user)
+      throw new FailedAuthException(`user with id ${id} was not found`);
+
+    return user;
+  }
+
+  async getUserIfRefreshTokenMatches(refreshToken: string, id: string) {
+    const user = await this.findOneUserLean(id);
+
+    const refreshTokenMatched = await bcrypt.compare(
+      user.currentHashedRefreshToken,
+      refreshToken,
+    );
+
+    if (!refreshTokenMatched)
+      throw new ForbiddenException(`refresh token is not matched`);
+
+    const userObj = this.usersResponseGetterService.userObjToPlain(user);
+
+    return userObj;
   }
 
   async remove(id: string) {

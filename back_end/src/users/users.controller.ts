@@ -9,6 +9,7 @@ import {
   Query,
   UseGuards,
   UseFilters,
+  Res,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -24,13 +25,15 @@ import {
 } from './dto/response-user.dto';
 import { BaseController } from '../base/controllers/base.controller';
 import { CanUserManageUserGuard } from './can-user-manage-user.guard';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiTags, ApiCookieAuth } from '@nestjs/swagger';
 import { PaginatedRequestDto } from '../base/requests/requests.dto';
 import { PaginatedResponseDto } from '../base/responses/response.dto';
 import { IsUsernameAccessible } from './dto/requests.dto';
 import { UsernameIsNotAccessibleFilter } from './filters/users.filters';
+import { AuthService } from './../auth/auth.service';
+import { Response } from 'express';
 
-// TODO: remove for testing
+// TODO: remove. only for testing
 const sleep = (ms) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
@@ -38,7 +41,10 @@ const sleep = (ms) => {
 @ApiTags(UsersEndpoint)
 @Controller(UsersEndpoint)
 export class UsersController extends BaseController {
-  constructor(private readonly usersService: UsersService) {
+  constructor(
+    private readonly usersService: UsersService,
+    private authService: AuthService,
+  ) {
     super();
   }
 
@@ -126,31 +132,61 @@ export class UsersController extends BaseController {
     );
   }
 
-  @ApiBearerAuth()
+  @ApiCookieAuth()
   @UseGuards(new CanUserManageUserGuard())
   @Patch(':id')
   async update(
     @Param('id', new CustomParseObjectIdPipe()) id: string,
     @Body() updateDto: UpdateUserDto,
+    @Res() response: Response,
   ) {
-    const res = await this.usersService.update(id, updateDto);
+    const mappedUserResponse = await this.usersService.update(id, updateDto);
 
-    return this.getResponse<{
+    const { username } = mappedUserResponse;
+
+    const { refreshCookieValue } =
+      this.authService.getRefreshTokenAndCookieWithIt(username, id);
+
+    const { access_token, authCookieValue } =
+      this.authService.getAuthTokenWithItsCookie({
+        username,
+        sub: id,
+      });
+
+    response.setHeader('Set-Cookie', [authCookieValue, refreshCookieValue]);
+
+    const mappedResponse = this.getResponse<{
       mappedUserResponse: MappedUserResponse;
       access_token: string;
-    }>('user was updated successfully', 'fail to update the user', res);
+    }>('user was updated successfully', 'fail to update the user', {
+      access_token,
+      mappedUserResponse,
+    });
+
+    response.json(mappedResponse);
   }
 
-  @ApiBearerAuth()
+  @ApiCookieAuth()
   @UseGuards(new CanUserManageUserGuard())
   @Delete(':id')
-  async remove(@Param('id', new CustomParseObjectIdPipe()) id: string) {
+  async remove(
+    @Param('id', new CustomParseObjectIdPipe()) id: string,
+    @Res() response: Response,
+  ) {
     const res = await this.usersService.remove(id);
 
-    return this.getResponse<UserDeleteResult>(
+    await this.authService.usersService.removeRefreshToken(id);
+
+    const logOutCookies = this.authService.getCookiesForLogOut();
+
+    response.setHeader('Set-Cookie', [...logOutCookies]);
+
+    const mappedResponse = this.getResponse<UserDeleteResult>(
       'user was deleted successfully',
       'fail to delete the user',
       res,
     );
+
+    response.json(mappedResponse);
   }
 }

@@ -27,7 +27,7 @@ import {
 import { MappedUserResponse } from '../users/dto/response-user.dto';
 import { CanUserManageArticleGuard } from './can-user-manage-article.guard';
 import {
-  ApiBearerAuth,
+  ApiCookieAuth,
   ApiNotFoundResponse,
   ApiTags,
   ApiUnauthorizedResponse,
@@ -55,7 +55,7 @@ export class ArticleController extends BaseController {
     super();
   }
 
-  @ApiBearerAuth()
+  @ApiCookieAuth()
   @ApiCreateArticleDecorator(CreateArticleResponse)
   @ApiNotFoundResponse({ description: 'article was not created' })
   @ApiUnauthorizedResponse()
@@ -123,7 +123,7 @@ export class ArticleController extends BaseController {
     );
   }
 
-  @ApiBearerAuth()
+  @ApiCookieAuth()
   @UseGuards(CanUserManageArticleGuard)
   @Patch(':id')
   async update(
@@ -138,7 +138,7 @@ export class ArticleController extends BaseController {
     );
   }
 
-  @ApiBearerAuth()
+  @ApiCookieAuth()
   @UseGuards(CanUserManageArticleGuard)
   @Delete(':id')
   async remove(
