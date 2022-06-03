@@ -8,14 +8,8 @@ import { Request } from 'express';
 import { cookieValues } from './constants';
 
 @Injectable()
-export class JwtRefreshTokenStrategy extends PassportStrategy(
-  Strategy,
-  'jwt-refresh-token',
-) {
-  constructor(
-    private usersService: UsersService,
-    private configService: ConfigService,
-  ) {
+export class JwtRefreshTokenStrategy extends PassportStrategy(Strategy, 'jwt-refresh-token') {
+  constructor(private usersService: UsersService, private configService: ConfigService) {
     const configObj: StrategyOptions = {
       jwtFromRequest: ExtractJwt.fromExtractors([
         (req: Request) => {

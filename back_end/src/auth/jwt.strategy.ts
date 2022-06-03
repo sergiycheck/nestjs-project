@@ -10,10 +10,7 @@ import { cookieValues } from './constants';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(
-    private usersService: UsersService,
-    private configService: ConfigService,
-  ) {
+  constructor(private usersService: UsersService, private configService: ConfigService) {
     const configObj: StrategyOptions = {
       jwtFromRequest: ExtractJwt.fromExtractors([
         (req: Request) => {
@@ -35,12 +32,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
 
     if (!user) {
-      throw new FailedAuthException(
-        `user with username ${userObj.username} was not found`,
-      );
+      throw new FailedAuthException(`user with username ${userObj.username} was not found`);
     }
-    const userResponse =
-      this.usersService.usersResponseGetterService.userObjToPlain(user);
+    const userResponse = this.usersService.usersResponseGetterService.userObjToPlain(user);
     return userResponse;
   }
 }

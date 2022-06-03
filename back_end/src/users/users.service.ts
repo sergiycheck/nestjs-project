@@ -45,9 +45,7 @@ export class UsersService extends BaseService {
     }
 
     if (usernameCount) {
-      throw new UsernameIsNotAccessibleException(
-        `${username} username has already been taken`,
-      );
+      throw new UsernameIsNotAccessibleException(`${username} username has already been taken`);
     }
 
     return true;
@@ -71,10 +69,7 @@ export class UsersService extends BaseService {
   }
 
   async findAlWithRelations() {
-    const resQuery = await this.userModel
-      .find()
-      .populate({ path: 'articles' })
-      .exec();
+    const resQuery = await this.userModel.find().populate({ path: 'articles' }).exec();
 
     const resArr = resQuery.map((query) => {
       return this.usersResponseGetterService.getResponseWithRelations(query);
@@ -121,8 +116,7 @@ export class UsersService extends BaseService {
       .findById(id)
       .populate({ path: 'articles', options: { sort: { updatedAt: -1 } } })
       .exec();
-    if (!userQuery)
-      throw new NotFoundException(`user was not found by id ${id}`);
+    if (!userQuery) throw new NotFoundException(`user was not found by id ${id}`);
 
     return this.usersResponseGetterService.getResponseWithRelations(userQuery);
   }
@@ -157,8 +151,7 @@ export class UsersService extends BaseService {
       { ...data },
       { runValidators: true, new: true },
     );
-    const mappedUserResponse =
-      this.usersResponseGetterService.getResponse(updatedUserQuery);
+    const mappedUserResponse = this.usersResponseGetterService.getResponse(updatedUserQuery);
 
     return mappedUserResponse;
   }
@@ -166,15 +159,9 @@ export class UsersService extends BaseService {
   async setRefreshToken(refreshToken: string, id: string) {
     const res = await this.findOneUserLean(id);
 
-    const currentHashedRefreshToken = await bcrypt.hash(
-      refreshToken,
-      SALT_ROUNDS,
-    );
+    const currentHashedRefreshToken = await bcrypt.hash(refreshToken, SALT_ROUNDS);
 
-    await this.userModel.findOneAndUpdate(
-      { id: res._id },
-      { $set: { currentHashedRefreshToken } },
-    );
+    await this.userModel.findOneAndUpdate({ id: res._id }, { $set: { currentHashedRefreshToken } });
   }
 
   async removeRefreshToken(id: string) {
@@ -188,8 +175,7 @@ export class UsersService extends BaseService {
   async findOneUserLean(id: string) {
     const user = await this.userModel.findById(id).lean();
 
-    if (!user)
-      throw new FailedAuthException(`user with id ${id} was not found`);
+    if (!user) throw new FailedAuthException(`user with id ${id} was not found`);
 
     return user;
   }
@@ -197,13 +183,9 @@ export class UsersService extends BaseService {
   async getUserIfRefreshTokenMatches(refreshToken: string, id: string) {
     const user = await this.findOneUserLean(id);
 
-    const refreshTokenMatched = await bcrypt.compare(
-      user.currentHashedRefreshToken,
-      refreshToken,
-    );
+    const refreshTokenMatched = await bcrypt.compare(user.currentHashedRefreshToken, refreshToken);
 
-    if (!refreshTokenMatched)
-      throw new ForbiddenException(`refresh token is not matched`);
+    if (!refreshTokenMatched) throw new ForbiddenException(`refresh token is not matched`);
 
     const userObj = this.usersResponseGetterService.userObjToPlain(user);
 

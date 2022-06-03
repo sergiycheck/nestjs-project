@@ -4,10 +4,7 @@ import {
   ArticleSearchQueryTextDto,
   searchArticleQueryPropsNames,
 } from '../../article/dto/article-requests.dto';
-import {
-  PaginatedRequestDto,
-  paginatedRequestPropsNames,
-} from '../requests/requests.dto';
+import { PaginatedRequestDto, paginatedRequestPropsNames } from '../requests/requests.dto';
 
 export type ToObjectContainingQuery<T> = {
   toObject: (args: mongoose.ToObjectOptions) => mongoose.LeanDocument<T>;
@@ -16,9 +13,7 @@ export type ToObjectContainingQuery<T> = {
 export class BaseService {
   protected queryToObj<T>(query: ToObjectContainingQuery<T>) {
     if (!query)
-      throw new InternalServerErrorException(
-        'query was not provided for calling toObject method',
-      );
+      throw new InternalServerErrorException('query was not provided for calling toObject method');
 
     return query.toObject({
       getters: true,
@@ -36,16 +31,9 @@ export class BaseService {
     return { query, projection, options };
   }
 
-  private getComputedLimit(
-    requestQuery: PaginatedRequestDto,
-    queryProp: string,
-  ): number {
-    const defaultLimitValue = Number(
-      Reflect.getMetadata('limit', requestQuery, 'limit'),
-    );
-    const resultLimit = requestQuery[queryProp]
-      ? requestQuery[queryProp]
-      : defaultLimitValue;
+  private getComputedLimit(requestQuery: PaginatedRequestDto, queryProp: string): number {
+    const defaultLimitValue = Number(Reflect.getMetadata('limit', requestQuery, 'limit'));
+    const resultLimit = requestQuery[queryProp] ? requestQuery[queryProp] : defaultLimitValue;
 
     return resultLimit;
   }
@@ -104,25 +92,16 @@ export class BaseService {
     return [query, projection, options];
   }
 
-  protected getPaginatedProps(
-    total: number,
-    requestQuery: PaginatedRequestDto,
-  ) {
-    const defaultLimitValue = Number(
-      Reflect.getMetadata('limit', requestQuery, 'limit'),
-    );
+  protected getPaginatedProps(total: number, requestQuery: PaginatedRequestDto) {
+    const defaultLimitValue = Number(Reflect.getMetadata('limit', requestQuery, 'limit'));
 
     const total_pages = requestQuery.limit
       ? Math.ceil(total / requestQuery.limit)
       : Math.ceil(total / defaultLimitValue);
 
-    const per_page = requestQuery.limit
-      ? requestQuery.limit
-      : defaultLimitValue;
+    const per_page = requestQuery.limit ? requestQuery.limit : defaultLimitValue;
 
-    const defaultSkipValue = Number(
-      Reflect.getMetadata('skip', requestQuery, 'skip'),
-    );
+    const defaultSkipValue = Number(Reflect.getMetadata('skip', requestQuery, 'skip'));
     const computedSkip = requestQuery.skip ?? defaultSkipValue;
 
     const page = Math.floor(computedSkip / per_page) + 1;

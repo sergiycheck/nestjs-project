@@ -17,7 +17,7 @@ import { Connection } from 'mongoose';
 // instruction how to debug jest test from microsoft
 // https://github.com/Microsoft/vscode-recipes/tree/master/debugging-jest-tests
 
-// TODO: change jest-e2e.json from  "rootDir": "./articles" to "rootDir": "."
+// change jest-e2e.json from  "rootDir": "./articles" to "rootDir": "." to run all tests
 
 describe('app global (e2e)', () => {
   let app: INestApplication;
@@ -55,9 +55,6 @@ describe('app global (e2e)', () => {
   });
 
   it('/ (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World! nestjs-project');
+    return request(app.getHttpServer()).get('/').expect(200).expect('Hello World! nestjs-project');
   });
 });

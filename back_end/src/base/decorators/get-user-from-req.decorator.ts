@@ -7,8 +7,6 @@ export const GetUserFromReqInner = (ctx: ExecutionContext) => {
   return user;
 };
 
-export const GetUserFromReqDec = createParamDecorator(
-  (data: unknown, ctx: ExecutionContext) => {
-    return GetUserFromReqInner(ctx);
-  },
-);
+export const GetUserFromReqDec = createParamDecorator((data: unknown, ctx: ExecutionContext) => {
+  return GetUserFromReqInner(ctx);
+});

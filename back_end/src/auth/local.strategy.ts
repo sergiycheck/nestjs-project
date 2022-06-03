@@ -15,9 +15,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     const user = await this.authService.validateUser(username, password);
 
     if (!user) {
-      throw new FailedAuthException(
-        `user with username ${username} was not found`,
-      );
+      throw new FailedAuthException(`user with username ${username} was not found`);
     }
     return user;
   }

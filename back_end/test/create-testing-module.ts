@@ -22,8 +22,15 @@ export const createAndCompileTestingModule = async ({
       MongooseModule.forRootAsync({
         imports: [ConfigModule],
         useFactory: async (configService: ConfigService) => {
-          let uri = configService.get<string>('MONGO_TESTING_DB_URI');
-          uri = uri.concat(partOfTheDbName);
+          const dbUsername = configService.get<string>('DB_USERNAME');
+          const dbPassword = configService.get<string>('DB_PASSWORD');
+          const dbHost = configService.get<string>('DB_HOST');
+          const dbPort = configService.get<string>('DB_PORT');
+          const dbAuthMechanism = configService.get<string>('AUTH_MECHANISM');
+          const dbAuthSource = configService.get<string>('AUTH_SOURCE');
+
+          const uri = `mongodb://${dbUsername}:${dbPassword}@${dbHost}:${dbPort}/${partOfTheDbName}?authMechanism=${dbAuthMechanism}&authSource=${dbAuthSource}`;
+
           return { uri };
         },
         inject: [ConfigService],
@@ -37,8 +44,8 @@ export const createAndCompileTestingModule = async ({
     controllers: [AppController],
     providers: [
       // { provide: APP_GUARD, useExisting: ThrottlerGuard },
-      { provide: APP_FILTER, useExisting: AllExceptionsFilter },
       // ThrottlerGuard,
+      { provide: APP_FILTER, useExisting: AllExceptionsFilter },
       AllExceptionsFilter,
       CustomConnectionService,
       AppService,

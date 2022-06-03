@@ -2,8 +2,26 @@
 
 ## Prerequisites
 
-Create a user in your mongodb admin database with superuser role.
-Add comments with space after two dashes in order to be removed in without_comments branch with regex **_// \w+_**
+1. Create a user in your mongodb admin database with superuser role.
+   Add comments with space after two dashes in order to be removed in without\*comments branch with regex \*\*\*// \w+\_\*\*
+
+2. For local running and testing create user in mongodb database with mongosh.
+
+paste following commands into mongosh:
+
+```js
+use admin;
+db.createUser(
+  {
+    user: "username",
+    pwd: "user_password",
+    roles: [ { role: "userAdminAnyDatabase", db: "admin" }, "readWriteAnyDatabase" ]
+  }
+)
+
+use admin;
+db.grantRolesToUser('username', [{ role: 'root', db: 'admin' }])
+```
 
 ```js
 // sample of comment
@@ -69,4 +87,4 @@ $ npm run test:cov
 
 9. Api endpoints is tested with supertest library.
 
-TODO: 10. add more tests with trying different requests json data. try requests with bad and invalid data
+10. add more tests with trying different requests json data. try requests with bad and invalid data

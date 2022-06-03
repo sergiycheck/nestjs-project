@@ -41,9 +41,7 @@ export class ArticleMapperService extends BaseMapper {
     const {
       ownerId: owner,
       ...transformedData
-    }: { ownerId: { id: string }; transformedData: any[] } = instanceToPlain(
-      entityResp,
-    ) as any;
+    }: { ownerId: { id: string }; transformedData: any[] } = instanceToPlain(entityResp) as any;
     const entityResponse = {
       ownerId: owner.id,
       ...transformedData,

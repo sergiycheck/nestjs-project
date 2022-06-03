@@ -28,8 +28,7 @@ import * as Joi from 'joi';
         AUTH_MECHANISM: Joi.string().required(),
         AUTH_SOURCE: Joi.string().required(),
         DB_NAME: Joi.string().required(),
-        MONGODB_URI: Joi.string().required(),
-        MONGO_TESTING_DB_URI: Joi.string().required(),
+        TESTING_DB_NAME: Joi.string().required(),
         //
         PRIVATE_JWT_KEY: Joi.string().required(),
         JWT_EXPIRES_SECONDS: Joi.string().required(),

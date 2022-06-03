@@ -41,10 +41,7 @@ const sleep = (ms) => {
 @ApiTags(UsersEndpoint)
 @Controller(UsersEndpoint)
 export class UsersController extends BaseController {
-  constructor(
-    private readonly usersService: UsersService,
-    private authService: AuthService,
-  ) {
+  constructor(private readonly usersService: UsersService, private authService: AuthService) {
     super();
   }
 
@@ -53,11 +50,7 @@ export class UsersController extends BaseController {
   async create(@Body() createCatDto: CreateUserDto) {
     const res = await this.usersService.create(createCatDto);
 
-    return this.getResponse<MappedUserResponse>(
-      'user was created',
-      'user was not created',
-      res,
-    );
+    return this.getResponse<MappedUserResponse>('user was created', 'user was not created', res);
   }
 
   @Public()
@@ -100,19 +93,14 @@ export class UsersController extends BaseController {
   @Get('is-username-accessible')
   async checkIfUserNameAccessible(@Query() query: IsUsernameAccessible) {
     const { username, userId } = query;
-    const isAccessible = await this.usersService.countUsername(
-      username,
-      userId,
-    );
+    const isAccessible = await this.usersService.countUsername(username, userId);
 
     return new isUsernameAccessible({ isAccessible });
   }
 
   @Public()
   @Get('with-relations/:id')
-  async findOneWithRelations(
-    @Param('id', new CustomParseObjectIdPipe()) id: string,
-  ) {
+  async findOneWithRelations(@Param('id', new CustomParseObjectIdPipe()) id: string) {
     const user = await this.usersService.findOneWithRelations(id);
     return this.getResponse<MappedUserResponseWithRelations>(
       'user was found',
@@ -144,14 +132,12 @@ export class UsersController extends BaseController {
 
     const { username } = mappedUserResponse;
 
-    const { refreshCookieValue } =
-      this.authService.getRefreshTokenAndCookieWithIt(username, id);
+    const { refreshCookieValue } = this.authService.getRefreshTokenAndCookieWithIt(username, id);
 
-    const { access_token, authCookieValue } =
-      this.authService.getAuthTokenWithItsCookie({
-        username,
-        sub: id,
-      });
+    const { access_token, authCookieValue } = this.authService.getAuthTokenWithItsCookie({
+      username,
+      sub: id,
+    });
 
     response.setHeader('Set-Cookie', [authCookieValue, refreshCookieValue]);
 
@@ -163,16 +149,13 @@ export class UsersController extends BaseController {
       mappedUserResponse,
     });
 
-    response.json(mappedResponse);
+    response.status(201).json(mappedResponse);
   }
 
   @ApiCookieAuth()
   @UseGuards(new CanUserManageUserGuard())
   @Delete(':id')
-  async remove(
-    @Param('id', new CustomParseObjectIdPipe()) id: string,
-    @Res() response: Response,
-  ) {
+  async remove(@Param('id', new CustomParseObjectIdPipe()) id: string, @Res() response: Response) {
     const res = await this.usersService.remove(id);
 
     await this.authService.usersService.removeRefreshToken(id);
@@ -187,6 +170,6 @@ export class UsersController extends BaseController {
       res,
     );
 
-    response.json(mappedResponse);
+    response.status(200).json(mappedResponse);
   }
 }

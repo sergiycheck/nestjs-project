@@ -28,27 +28,19 @@ export class AuthController {
   @Public()
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  async login(
-    @GetUserFromReqDec() user: MappedUserResponse,
-    @Res() response: Response,
-  ) {
-    const { access_token, userResponse, authCookieValue } =
-      await this.authService.login(user);
+  async login(@GetUserFromReqDec() user: MappedUserResponse, @Res() response: Response) {
+    const { access_token, userResponse, authCookieValue } = await this.authService.login(user);
 
-    const { refreshToken, refreshCookieValue } =
-      this.authService.getRefreshTokenAndCookieWithIt(
-        userResponse.username,
-        userResponse.id,
-      );
-
-    await this.authService.usersService.setRefreshToken(
-      refreshToken,
+    const { refreshToken, refreshCookieValue } = this.authService.getRefreshTokenAndCookieWithIt(
+      userResponse.username,
       userResponse.id,
     );
 
+    await this.authService.usersService.setRefreshToken(refreshToken, userResponse.id);
+
     response.setHeader('Set-Cookie', [authCookieValue, refreshCookieValue]);
 
-    response.json(
+    response.status(201).json(
       new UserLoginResponse({
         message: 'successfully logged in',
         user_jwt: access_token,
@@ -73,12 +65,11 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @ApiCookieAuth()
   @Get('refresh-token-get-user')
-  async refreshToken(
-    @GetUserFromReqDec() user: MappedUserResponse,
-    @Res() res: Response,
-  ) {
-    const { refreshCookieValue } =
-      this.authService.getRefreshTokenAndCookieWithIt(user.username, user.id);
+  async refreshToken(@GetUserFromReqDec() user: MappedUserResponse, @Res() res: Response) {
+    const { refreshCookieValue } = this.authService.getRefreshTokenAndCookieWithIt(
+      user.username,
+      user.id,
+    );
 
     const { authCookieValue } = this.authService.getAuthTokenWithItsCookie({
       username: user.username,
@@ -98,10 +89,7 @@ export class AuthController {
 
   @ApiCookieAuth()
   @Post('log-out')
-  async logOut(
-    @GetUserFromReqDec() user: MappedUserResponse,
-    @Res() res: Response,
-  ) {
+  async logOut(@GetUserFromReqDec() user: MappedUserResponse, @Res() res: Response) {
     await this.authService.usersService.removeRefreshToken(user.id);
 
     const logOutCookies = this.authService.getCookiesForLogOut();

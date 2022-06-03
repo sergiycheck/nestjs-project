@@ -23,25 +23,17 @@ export class AuthService {
     private configService: ConfigService,
   ) {}
 
-  async validateUser(
-    username: string,
-    pass: string,
-  ): Promise<MappedUserResponse> {
+  async validateUser(username: string, pass: string): Promise<MappedUserResponse> {
     const user = await this.usersService.findOne({ username });
 
-    if (!user)
-      throw new FailedAuthException(
-        `user was not found for username ${username}`,
-      );
+    if (!user) throw new FailedAuthException(`user was not found for username ${username}`);
 
     const isMatch = await bcrypt.compare(pass, user.passwordHash);
     if (user && isMatch) {
       return this.getResponseForUser(user);
     }
 
-    throw new FailedAuthException(
-      `password is incorrect for username ${username}`,
-    );
+    throw new FailedAuthException(`password is incorrect for username ${username}`);
   }
 
   getResponseForUser(user: LeanDocument<User>) {
@@ -51,14 +43,11 @@ export class AuthService {
   getAuthTokenWithItsCookie(payload: AuthTokenPayload) {
     const expiresSeconds = this.configService.get('JWT_EXPIRES_SECONDS');
     const access_token = this.jwtService.sign(payload);
-    const authCookieValue = cookie.serialize(
+
+    const authCookieValue = this.getSerializedAuthCookie(
       cookieValues.Authentication,
-      String(access_token),
-      {
-        httpOnly: true,
-        maxAge: expiresSeconds,
-        path: '/',
-      },
+      access_token,
+      expiresSeconds,
     );
 
     return {
@@ -70,8 +59,7 @@ export class AuthService {
   async login(user: MappedUserResponse) {
     const payload = { username: user.username, sub: user.id };
 
-    const { access_token, authCookieValue } =
-      this.getAuthTokenWithItsCookie(payload);
+    const { access_token, authCookieValue } = this.getAuthTokenWithItsCookie(payload);
 
     return {
       // generate JWT token
@@ -86,23 +74,17 @@ export class AuthService {
     id: MappedUserResponse['id'],
   ) {
     const payload = { username: username, sub: id };
-    const expiresSeconds = this.configService.get(
-      'REFRESH_JWT_EXPIRES_SECONDS',
-    );
+    const expiresSeconds = this.configService.get('REFRESH_JWT_EXPIRES_SECONDS');
 
     const refreshToken = this.jwtService.sign(payload, {
       secret: this.configService.get('REFRESH_JWT_TOKEN_SECRET'),
       expiresIn: `${expiresSeconds}s`,
     });
 
-    const refreshCookieValue = cookie.serialize(
+    const refreshCookieValue = this.getSerializedAuthCookie(
       cookieValues.Refresh,
-      String(refreshToken),
-      {
-        httpOnly: true,
-        maxAge: expiresSeconds,
-        path: '/',
-      },
+      refreshToken,
+      expiresSeconds,
     );
 
     return {
@@ -111,26 +93,24 @@ export class AuthService {
     };
   }
 
+  getSerializedAuthCookie(cookieName: string, token: string, expiresSeconds: number) {
+    const cookieValue = cookie.serialize(cookieName, String(token), {
+      httpOnly: true,
+      maxAge: expiresSeconds,
+      path: '/',
+    });
+
+    return cookieValue;
+  }
+
   getCookiesForLogOut() {
-    const logOuthAuthenticatioCookieValue = cookie.serialize(
+    const logOuthAuthenticatioCookieValue = this.getSerializedAuthCookie(
       cookieValues.Authentication,
-      String(''),
-      {
-        httpOnly: true,
-        maxAge: 0,
-        path: '/',
-      },
+      null,
+      0,
     );
 
-    const logOuthRefreshCookieValue = cookie.serialize(
-      cookieValues.Refresh,
-      String(''),
-      {
-        httpOnly: true,
-        maxAge: 0,
-        path: '/',
-      },
-    );
+    const logOuthRefreshCookieValue = this.getSerializedAuthCookie(cookieValues.Refresh, null, 0);
 
     return [logOuthAuthenticatioCookieValue, logOuthRefreshCookieValue];
   }

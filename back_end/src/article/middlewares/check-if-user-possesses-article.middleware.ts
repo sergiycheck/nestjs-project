@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NestMiddleware,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, NestMiddleware } from '@nestjs/common';
 import { UsersService } from '../../users/users.service';
 import { Request, Response, NextFunction } from 'express';
 import { validate } from 'class-validator';
@@ -26,9 +22,7 @@ export class CheckIfUserPossessesArticleMiddleware implements NestMiddleware {
       return next(new BadRequestException({ message: errors }));
     }
 
-    const article = await this.articleService.findByIdWithRelationsIds(
-      articleId.id,
-    );
+    const article = await this.articleService.findByIdWithRelationsIds(articleId.id);
     if (!article || !Object.keys(article).length) {
       return next(
         new BadRequestException({
@@ -39,9 +33,7 @@ export class CheckIfUserPossessesArticleMiddleware implements NestMiddleware {
 
     const { ownerId } = article;
 
-    const userFromArticle = await this.usersService.findByIdWithRelationsIds(
-      ownerId,
-    );
+    const userFromArticle = await this.usersService.findByIdWithRelationsIds(ownerId);
 
     if (!userFromArticle)
       return next(

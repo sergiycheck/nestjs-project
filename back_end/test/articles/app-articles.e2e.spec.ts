@@ -16,10 +16,7 @@ import {
   MappedArticleResponse,
   MappedArticleResponseWithRelations,
 } from '../../src/article/dto/response-article.dto';
-import {
-  EndPointResponse,
-  PaginatedResponseDto,
-} from '../../src/base/responses/response.dto';
+import { EndPointResponse, PaginatedResponseDto } from '../../src/base/responses/response.dto';
 import { TIMEOUT_FOR_DEBUGGING } from './../constants';
 
 describe('app articles (e2e)', () => {
@@ -68,12 +65,8 @@ describe('app articles (e2e)', () => {
   });
 
   afterEach(async () => {
-    await connection.db
-      .collection(dbInitializer.articleCollectionName)
-      .deleteMany({});
-    await connection.db
-      .collection(dbInitializer.userCollectionName)
-      .deleteMany({});
+    await connection.db.collection(dbInitializer.articleCollectionName).deleteMany({});
+    await connection.db.collection(dbInitializer.userCollectionName).deleteMany({});
   });
 
   it(
@@ -99,8 +92,7 @@ describe('app articles (e2e)', () => {
       expect(response.statusCode).toBe(201);
       expect(response.headers['content-type']).toMatch(/json/);
 
-      const createArticleMappedResponse =
-        response.body as EndPointResponse<CreateArticleResponse>;
+      const createArticleMappedResponse = response.body as EndPointResponse<CreateArticleResponse>;
       const { updatedUser, newArticle } = createArticleMappedResponse.data;
 
       expect(createArticleMappedResponse.message).toBe('article was created');
@@ -120,9 +112,7 @@ describe('app articles (e2e)', () => {
     async () => {
       expect.assertions(5);
 
-      const response = await request(app.getHttpServer()).get(
-        `/${ArticlesEndpoint}`,
-      );
+      const response = await request(app.getHttpServer()).get(`/${ArticlesEndpoint}`);
       expect(response.statusCode).toBe(200);
 
       const result = response.body as EndPointResponse<
@@ -147,9 +137,7 @@ describe('app articles (e2e)', () => {
       );
       expect(response.statusCode).toBe(200);
 
-      const result = response.body as EndPointResponse<
-        MappedArticleResponseWithRelations[]
-      >;
+      const result = response.body as EndPointResponse<MappedArticleResponseWithRelations[]>;
 
       expect(result.message).toBe(`articles were found four user`);
 
@@ -179,14 +167,11 @@ describe('app articles (e2e)', () => {
       >;
 
       const articleId = resultArticles.data.data[0].id;
-      response = await request(app.getHttpServer()).get(
-        `/${ArticlesEndpoint}/${articleId}`,
-      );
+      response = await request(app.getHttpServer()).get(`/${ArticlesEndpoint}/${articleId}`);
 
       expect(response.statusCode).toBe(200);
 
-      const result =
-        response.body as EndPointResponse<MappedArticleResponseWithRelations>;
+      const result = response.body as EndPointResponse<MappedArticleResponseWithRelations>;
 
       expect(result.message).toBe('article was found');
       expect(result.data.id).toBe(articleId);
@@ -202,9 +187,7 @@ describe('app articles (e2e)', () => {
       expect.assertions(5);
 
       const httpServer = app.getHttpServer();
-      let response = await request(httpServer)
-        .get(`/${ArticlesEndpoint}`)
-        .query({ limit: '1' });
+      let response = await request(httpServer).get(`/${ArticlesEndpoint}`).query({ limit: '1' });
 
       expect(response.statusCode).toBe(200);
 
@@ -243,9 +226,7 @@ describe('app articles (e2e)', () => {
     async () => {
       expect.assertions(6);
       const httpServer = app.getHttpServer();
-      let response = await request(httpServer)
-        .get(`/${ArticlesEndpoint}`)
-        .query({ limit: '1' });
+      let response = await request(httpServer).get(`/${ArticlesEndpoint}`).query({ limit: '1' });
 
       expect(response.statusCode).toBe(200);
 
@@ -260,19 +241,14 @@ describe('app articles (e2e)', () => {
         .set('Accept', 'application/json');
 
       expect(response.statusCode).toBe(200);
-      const articleDeleteResult =
-        response.body as EndPointResponse<ArticleDeleteResult>;
+      const articleDeleteResult = response.body as EndPointResponse<ArticleDeleteResult>;
 
-      expect(articleDeleteResult.message).toBe(
-        'article was deleted successfully',
-      );
+      expect(articleDeleteResult.message).toBe('article was deleted successfully');
       expect(articleDeleteResult.data.deletedCount).toBe(1);
       expect(articleDeleteResult.data.updatedUser.numberOfArticles).toBe(
         Number(userLoginResponse.userResponse.numberOfArticles) - 1,
       );
-      expect(articleDeleteResult.data.updatedUser.articleIds).not.toContain(
-        articleId,
-      );
+      expect(articleDeleteResult.data.updatedUser.articleIds).not.toContain(articleId);
     },
     TIMEOUT_FOR_DEBUGGING,
   );
