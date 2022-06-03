@@ -30,6 +30,8 @@ describe('app articles (e2e)', () => {
   };
 
   let userLoginResponse: UserLoginResponse;
+  const cookieName = 'Cookie';
+  let authCookiesFromServer;
 
   beforeAll(async () => {
     const partOfTheDbName = 'appArticles';
@@ -61,6 +63,8 @@ describe('app articles (e2e)', () => {
       .post(`/${LoginEndPoint}`)
       .set('Accept', 'application/json')
       .send(userToLogin);
+
+    authCookiesFromServer = responseLogin.header['set-cookie'];
     userLoginResponse = responseLogin.body as UserLoginResponse;
   });
 
@@ -85,7 +89,7 @@ describe('app articles (e2e)', () => {
 
       const response = await request(httpServer)
         .post(`/${ArticlesEndpoint}`)
-        .set('Authorization', `Bearer ${userLoginResponse.user_jwt}`)
+        .set(cookieName, authCookiesFromServer)
         .set('Accept', 'application/json')
         .send(articleToCreate);
 
@@ -139,7 +143,7 @@ describe('app articles (e2e)', () => {
 
       const result = response.body as EndPointResponse<MappedArticleResponseWithRelations[]>;
 
-      expect(result.message).toBe(`articles were found four user`);
+      expect(result.message).toBe(`articles were found for user`);
 
       expect(result.data).toBeInstanceOf(Array);
       expect(result.data.length).toBe(2);
@@ -147,10 +151,6 @@ describe('app articles (e2e)', () => {
     },
     TIMEOUT_FOR_DEBUGGING,
   );
-
-  // TODO: BUG passing when running separately but fails if runs with app article all tests
-  // TODO: ERROR [ExceptionsHandler] text index required for $text query
-  // text index is not creating for tests in debug mode
 
   it(
     '/ (GET) find article by id (ArticleController findOne)',
@@ -167,7 +167,9 @@ describe('app articles (e2e)', () => {
       >;
 
       const articleId = resultArticles.data.data[0].id;
-      response = await request(app.getHttpServer()).get(`/${ArticlesEndpoint}/${articleId}`);
+      response = await request(app.getHttpServer()).get(
+        `/${ArticlesEndpoint}/with-relations/${articleId}`,
+      );
 
       expect(response.statusCode).toBe(200);
 
@@ -176,13 +178,13 @@ describe('app articles (e2e)', () => {
       expect(result.message).toBe('article was found');
       expect(result.data.id).toBe(articleId);
       expect(result.data.title).not.toBe('');
-      expect(result.data.owner.username).not.toBe('');
+      expect(result.data.owner.id).not.toBe('');
     },
     TIMEOUT_FOR_DEBUGGING,
   );
 
   it(
-    '/ (PATCH) updates article with bearer token (ArticleController update)',
+    '/ (PATCH) updates article with cookie Refresh token (ArticleController update)',
     async () => {
       expect.assertions(5);
 
@@ -191,11 +193,7 @@ describe('app articles (e2e)', () => {
 
       expect(response.statusCode).toBe(200);
 
-      const resultArticles = response.body as EndPointResponse<
-        PaginatedResponseDto<MappedArticleResponseWithRelations[]>
-      >;
-
-      const articleId = resultArticles.data.data[0].id;
+      const articleId = userLoginResponse.userResponse.articleIds[0];
 
       const updateArticleRequest = {
         id: articleId,
@@ -205,13 +203,14 @@ describe('app articles (e2e)', () => {
 
       response = await request(httpServer)
         .patch(`/${ArticlesEndpoint}/${articleId}`)
-        .set('Authorization', `Bearer ${userLoginResponse.user_jwt}`)
+        .set(cookieName, authCookiesFromServer)
         .set('Accept', 'application/json')
         .send(updateArticleRequest);
 
       expect(response.statusCode).toBe(200);
 
       const result = response.body as EndPointResponse<MappedArticleResponse>;
+
       expect(result.message).toBe('article was updated successfully');
       expect(result.data.id).not.toBe('');
       expect(result.data.title).toBe(updateArticleRequest.title);
@@ -219,25 +218,17 @@ describe('app articles (e2e)', () => {
     TIMEOUT_FOR_DEBUGGING,
   );
 
-  // TODO: force space after comment
-
   it(
     '/ (DELETE) deletes article (ArticleController remove)',
     async () => {
-      expect.assertions(6);
+      expect.assertions(5);
       const httpServer = app.getHttpServer();
-      let response = await request(httpServer).get(`/${ArticlesEndpoint}`).query({ limit: '1' });
 
-      expect(response.statusCode).toBe(200);
+      const articleId = userLoginResponse.userResponse.articleIds[0];
 
-      const resultArticles = response.body as EndPointResponse<
-        PaginatedResponseDto<MappedArticleResponseWithRelations[]>
-      >;
-      const articleId = resultArticles.data.data[0].id;
-
-      response = await request(httpServer)
+      const response = await request(httpServer)
         .delete(`/${ArticlesEndpoint}/${articleId}`)
-        .set('Authorization', `Bearer ${userLoginResponse.user_jwt}`)
+        .set(cookieName, authCookiesFromServer)
         .set('Accept', 'application/json');
 
       expect(response.statusCode).toBe(200);

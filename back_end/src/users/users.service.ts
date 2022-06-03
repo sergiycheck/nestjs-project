@@ -4,6 +4,7 @@ import {
   forwardRef,
   Inject,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
@@ -161,7 +162,13 @@ export class UsersService extends BaseService {
 
     const currentHashedRefreshToken = await bcrypt.hash(refreshToken, SALT_ROUNDS);
 
-    await this.userModel.findOneAndUpdate({ id: res._id }, { $set: { currentHashedRefreshToken } });
+    const updatedNewDoc = await this.userModel.findOneAndUpdate(
+      { id: res._id },
+      { $set: { currentHashedRefreshToken } },
+      { new: true },
+    );
+
+    if (!updatedNewDoc) throw new InternalServerErrorException('refresh token was not updated');
   }
 
   async removeRefreshToken(id: string) {
@@ -183,9 +190,9 @@ export class UsersService extends BaseService {
   async getUserIfRefreshTokenMatches(refreshToken: string, id: string) {
     const user = await this.findOneUserLean(id);
 
-    const refreshTokenMatched = await bcrypt.compare(user.currentHashedRefreshToken, refreshToken);
+    const refreshTokenMatched = await bcrypt.compare(refreshToken, user.currentHashedRefreshToken);
 
-    if (!refreshTokenMatched) throw new ForbiddenException(`refresh token is not matched`);
+    if (!refreshTokenMatched) throw new ForbiddenException(`refresh token was not matched`);
 
     const userObj = this.usersResponseGetterService.userObjToPlain(user);
 

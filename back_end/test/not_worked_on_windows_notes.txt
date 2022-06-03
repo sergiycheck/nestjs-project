@@ -1,0 +1,5 @@
+  // TODO: BUG passing when running separately but fails if runs with app article all tests
+  // TODO: ERROR [ExceptionsHandler] text index required for $text query
+  // text index is not creating for tests in debug mode
+  for test / (GET) find article by id (ArticleController findOne)
+  

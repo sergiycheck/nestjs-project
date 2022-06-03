@@ -156,10 +156,9 @@ export class UsersController extends BaseController {
   @UseGuards(new CanUserManageUserGuard())
   @Delete(':id')
   async remove(@Param('id', new CustomParseObjectIdPipe()) id: string, @Res() response: Response) {
-    const res = await this.usersService.remove(id);
-
     await this.authService.usersService.removeRefreshToken(id);
 
+    const res = await this.usersService.remove(id);
     const logOutCookies = this.authService.getCookiesForLogOut();
 
     response.setHeader('Set-Cookie', [...logOutCookies]);

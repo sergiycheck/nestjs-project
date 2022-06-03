@@ -59,7 +59,6 @@ export class ArticleController extends BaseController {
   @ApiCreateArticleDecorator(CreateArticleResponse)
   @ApiNotFoundResponse({ description: 'article was not created' })
   @ApiUnauthorizedResponse()
-  // TODO: provide custom header from swagger ui ?
   @Post()
   async create(
     @Body() createArticleDto: CreateArticleDto,

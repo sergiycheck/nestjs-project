@@ -200,7 +200,7 @@ describe('app users (e2e)', () => {
     const cookieName = 'Cookie';
     let authCookiesFromServer;
 
-    beforeAll(async () => {
+    beforeEach(async () => {
       httpServer = app.getHttpServer();
       const responseLogin = await request(httpServer)
         .post(`/${LoginEndPoint}`)
@@ -234,12 +234,15 @@ describe('app users (e2e)', () => {
 
         expect(response.statusCode).toBe(201);
 
-        const result = response.body as EndPointResponse<MappedUserResponse>;
+        const result = response.body as EndPointResponse<{
+          access_token: string;
+          mappedUserResponse: MappedUserResponse;
+        }>;
 
         expect(result.message).toBe('user was updated successfully');
-        expect(result.data.id).not.toBe('');
-        expect(result.data.firstName).toBe(updateUserDto.firstName);
-        expect(result.data.username).toBe(updateUserDto.username);
+        expect(result.data.mappedUserResponse.id).toBe(userLoginResponse.userResponse.id);
+        expect(result.data.mappedUserResponse.firstName).toBe(updateUserDto.firstName);
+        expect(result.data.mappedUserResponse.username).toBe(updateUserDto.username);
       },
       TIMEOUT_FOR_DEBUGGING,
     );
