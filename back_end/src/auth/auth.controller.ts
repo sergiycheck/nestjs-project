@@ -13,11 +13,6 @@ import { AuthEndPoint } from '../api/endpoints';
 import { FailedToAuthExceptionFilter } from './filters/failed-to-auth.filter';
 import { Response } from 'express';
 
-// TODO: remove for testing
-const sleep = (ms) => {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-};
-
 @UseFilters(FailedToAuthExceptionFilter)
 @ApiTags(AuthEndPoint)
 @Controller(AuthEndPoint)
@@ -53,7 +48,6 @@ export class AuthController {
   @ApiCookieAuth()
   @Get('get-user-from-jwt')
   async getUserFromJwt(@GetUserFromReqDec() user: MappedUserResponse) {
-    await sleep(1000);
     return new UserAuthResponse({
       message: 'user was found from jwt',
       successfulAuth: true,

@@ -33,11 +33,6 @@ import { UsernameIsNotAccessibleFilter } from './filters/users.filters';
 import { AuthService } from './../auth/auth.service';
 import { Response } from 'express';
 
-// TODO: remove. only for testing
-const sleep = (ms) => {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-};
-
 @ApiTags(UsersEndpoint)
 @Controller(UsersEndpoint)
 export class UsersController extends BaseController {
@@ -68,7 +63,6 @@ export class UsersController extends BaseController {
   @Get()
   async findAll(@Query() query: PaginatedRequestDto) {
     const res = await this.usersService.findAll(query);
-    await sleep(1000);
     return this.getResponse<PaginatedResponseDto<MappedUserResponse[]>>(
       'users were found',
       'no users were found',

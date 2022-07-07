@@ -32,14 +32,8 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { ApiCreateArticleDecorator } from './swagger_decorators/api-create-article.decorator';
 import { PaginatedResponseDto } from '../base/responses/response.dto';
 import { ArticleSearchService } from './article-search.service';
-
-// TODO: remove for testing
-const sleep = (ms) => {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-};
 
 // JwtAuthGuard is bounded automatically to endpoint that is not marked with @Public decorator
 // because it is declared as a global guard
@@ -56,7 +50,6 @@ export class ArticleController extends BaseController {
   }
 
   @ApiCookieAuth()
-  @ApiCreateArticleDecorator(CreateArticleResponse)
   @ApiNotFoundResponse({ description: 'article was not created' })
   @ApiUnauthorizedResponse()
   @Post()
@@ -77,7 +70,6 @@ export class ArticleController extends BaseController {
   @Get()
   async findAll(@Query() query: ArticleSearchQueryTextDto) {
     const res = await this.articleSearchService.findAll(query);
-    await sleep(1000);
     return this.getResponse<PaginatedResponseDto<MappedArticleResponseWithRelations[]>>(
       'articles were found',
       'no articles was found',

@@ -9,7 +9,7 @@
       "type": "node",
       "request": "launch",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "start:debug:lin"],
+      "runtimeArgs": ["run", "start:debug"],
       "console": "integratedTerminal"
     },
     {
@@ -29,11 +29,7 @@
       "request": "launch",
       "name": "Jest Current File e2e tests",
       "program": "${workspaceFolder}/node_modules/.bin/jest",
-      "args": [
-        "${fileBasenameNoExtension}",
-        "--config",
-        "${workspaceFolder}/test/jest-e2e.json"
-      ],
+      "args": ["${fileBasenameNoExtension}", "--config", "${workspaceFolder}/test/jest-e2e.json"],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
       "windows": {

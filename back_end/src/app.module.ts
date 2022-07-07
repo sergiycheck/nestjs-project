@@ -31,9 +31,9 @@ import * as Joi from 'joi';
         TESTING_DB_NAME: Joi.string().required(),
         //
         PRIVATE_JWT_KEY: Joi.string().required(),
-        JWT_EXPIRES_SECONDS: Joi.string().required(),
+        JWT_EXPIRES_SECONDS: Joi.number().required(),
         REFRESH_JWT_TOKEN_SECRET: Joi.string().required(),
-        REFRESH_JWT_EXPIRES_SECONDS: Joi.string().required(),
+        REFRESH_JWT_EXPIRES_SECONDS: Joi.number().required(),
       }),
     }),
     MongooseModule.forRootAsync({

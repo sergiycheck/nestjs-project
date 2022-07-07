@@ -1,3 +1,9 @@
+### Run mongod instance before project start
+
+```bash
+sudo systemctl start mongod
+```
+
 ### Run this command to delete all unused containers
 
 ```bash
