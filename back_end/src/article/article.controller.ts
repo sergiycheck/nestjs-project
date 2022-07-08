@@ -27,19 +27,13 @@ import {
 import { MappedUserResponse } from '../users/dto/response-user.dto';
 import { CanUserManageArticleGuard } from './can-user-manage-article.guard';
 import {
-  ApiBearerAuth,
+  ApiCookieAuth,
   ApiNotFoundResponse,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { ApiCreateArticleDecorator } from './swagger_decorators/api-create-article.decorator';
 import { PaginatedResponseDto } from '../base/responses/response.dto';
 import { ArticleSearchService } from './article-search.service';
-
-// TODO: remove for testing
-const sleep = (ms) => {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-};
 
 // JwtAuthGuard is bounded automatically to endpoint that is not marked with @Public decorator
 // because it is declared as a global guard
@@ -55,11 +49,9 @@ export class ArticleController extends BaseController {
     super();
   }
 
-  @ApiBearerAuth()
-  @ApiCreateArticleDecorator(CreateArticleResponse)
+  @ApiCookieAuth()
   @ApiNotFoundResponse({ description: 'article was not created' })
   @ApiUnauthorizedResponse()
-  // TODO: provide custom header from swagger ui ?
   @Post()
   async create(
     @Body() createArticleDto: CreateArticleDto,
@@ -78,17 +70,16 @@ export class ArticleController extends BaseController {
   @Get()
   async findAll(@Query() query: ArticleSearchQueryTextDto) {
     const res = await this.articleSearchService.findAll(query);
-    await sleep(1000);
-    return this.getResponse<
-      PaginatedResponseDto<MappedArticleResponseWithRelations[]>
-    >('articles were found', 'no articles was found', res);
+    return this.getResponse<PaginatedResponseDto<MappedArticleResponseWithRelations[]>>(
+      'articles were found',
+      'no articles was found',
+      res,
+    );
   }
 
   @Public()
   @Get('by-user-id/:userId')
-  async findArticlesByUser(
-    @Param('userId', new CustomParseObjectIdPipe()) userId: string,
-  ) {
+  async findArticlesByUser(@Param('userId', new CustomParseObjectIdPipe()) userId: string) {
     const res = await this.articleService.getArticlesByUserId(userId);
     return this.getResponse<MappedArticleResponseWithRelations[]>(
       `articles were found for user`,
@@ -99,9 +90,7 @@ export class ArticleController extends BaseController {
 
   @Public()
   @Get('with-relations/:id')
-  async findOneWithRelations(
-    @Param('id', new CustomParseObjectIdPipe()) id: string,
-  ) {
+  async findOneWithRelations(@Param('id', new CustomParseObjectIdPipe()) id: string) {
     const res = await this.articleService.findOneWithRelations(id);
 
     return this.getResponse<MappedArticleResponseWithRelations>(
@@ -123,13 +112,10 @@ export class ArticleController extends BaseController {
     );
   }
 
-  @ApiBearerAuth()
+  @ApiCookieAuth()
   @UseGuards(CanUserManageArticleGuard)
   @Patch(':id')
-  async update(
-    @Param('id') id: string,
-    @Body() updateArticleDto: UpdateArticleDto,
-  ) {
+  async update(@Param('id') id: string, @Body() updateArticleDto: UpdateArticleDto) {
     const res = await this.articleService.update(id, updateArticleDto);
     return this.getResponse<MappedArticleResponse>(
       'article was updated successfully',
@@ -138,13 +124,10 @@ export class ArticleController extends BaseController {
     );
   }
 
-  @ApiBearerAuth()
+  @ApiCookieAuth()
   @UseGuards(CanUserManageArticleGuard)
   @Delete(':id')
-  async remove(
-    @Param('id') id: string,
-    @GetUserFromReqDec() user: MappedUserResponse,
-  ) {
+  async remove(@Param('id') id: string, @GetUserFromReqDec() user: MappedUserResponse) {
     const res = await this.articleService.remove(id, user);
     return this.getResponse<ArticleDeleteResult>(
       'article was deleted successfully',

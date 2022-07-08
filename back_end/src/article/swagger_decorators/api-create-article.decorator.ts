@@ -2,9 +2,7 @@ import { Type, applyDecorators } from '@nestjs/common';
 import { ApiCreatedResponse, getSchemaPath } from '@nestjs/swagger';
 import { EndPointResponse } from '../../base/responses/response.dto';
 
-export const ApiCreateArticleDecorator = <TModel extends Type<any>>(
-  model: TModel,
-) => {
+export const ApiCreateArticleDecorator = <TModel extends Type<any>>(model: TModel) => {
   return applyDecorators(
     ApiCreatedResponse({
       description: 'article was created',

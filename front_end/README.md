@@ -1,3 +1,11 @@
+### prerequisites
+
+generate certeficate for secure connection with **mkcert** tool
+
+```bash
+mkcert localhost
+```
+
 ## Available Scripts
 
 In the project directory, you can run:

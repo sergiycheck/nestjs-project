@@ -1,10 +1,4 @@
-import {
-  IsBoolean,
-  IsJWT,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsBoolean, IsJWT, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { MappedUserResponse } from '../../users/dto/response-user.dto';
 import { BaseEntity } from '../../base/entities/base-entities';
 

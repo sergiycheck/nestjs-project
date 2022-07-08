@@ -2,14 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { LeanDocument } from 'mongoose';
 import { User } from './entities/user.entity';
 import { UserMapperService } from './user-mapper.service';
-import {
-  BaseService,
-  ToObjectContainingQuery,
-} from '../base/services/base.service';
-import {
-  MappedUserResponse,
-  MappedUserResponseWithRelations,
-} from './dto/response-user.dto';
+import { BaseService, ToObjectContainingQuery } from '../base/services/base.service';
+import { MappedUserResponse, MappedUserResponseWithRelations } from './dto/response-user.dto';
 
 @Injectable()
 export class UsersResponseGetterService extends BaseService {
@@ -17,9 +11,7 @@ export class UsersResponseGetterService extends BaseService {
     super();
   }
 
-  public getResponse(
-    entityQuery: ToObjectContainingQuery<User>,
-  ): MappedUserResponse | null {
+  public getResponse(entityQuery: ToObjectContainingQuery<User>): MappedUserResponse | null {
     if (!entityQuery) return null;
 
     const entityDoc = super.queryToObj(entityQuery);

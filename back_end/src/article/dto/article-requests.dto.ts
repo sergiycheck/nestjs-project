@@ -1,14 +1,6 @@
-import {
-  IsDateString,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsDateString, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
-import {
-  PaginatedRequestDto,
-  paginatedRequestPropsNames,
-} from '../../base/requests/requests.dto';
+import { PaginatedRequestDto, paginatedRequestPropsNames } from '../../base/requests/requests.dto';
 
 export class ArticleSearchQueryTextDto extends PaginatedRequestDto {
   @IsOptional()

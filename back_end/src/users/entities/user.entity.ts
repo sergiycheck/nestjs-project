@@ -29,6 +29,9 @@ export class User extends BaseEntity {
   @Prop({ type: Number, default: 0 })
   public numberOfArticles: number;
 
+  @Prop({ type: String })
+  public currentHashedRefreshToken: string;
+
   @Prop({
     type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Article' }],
   })

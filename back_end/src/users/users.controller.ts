@@ -9,6 +9,7 @@ import {
   Query,
   UseGuards,
   UseFilters,
+  Res,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -24,21 +25,18 @@ import {
 } from './dto/response-user.dto';
 import { BaseController } from '../base/controllers/base.controller';
 import { CanUserManageUserGuard } from './can-user-manage-user.guard';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiTags, ApiCookieAuth } from '@nestjs/swagger';
 import { PaginatedRequestDto } from '../base/requests/requests.dto';
 import { PaginatedResponseDto } from '../base/responses/response.dto';
 import { IsUsernameAccessible } from './dto/requests.dto';
 import { UsernameIsNotAccessibleFilter } from './filters/users.filters';
-
-// TODO: remove for testing
-const sleep = (ms) => {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-};
+import { AuthService } from './../auth/auth.service';
+import { Response } from 'express';
 
 @ApiTags(UsersEndpoint)
 @Controller(UsersEndpoint)
 export class UsersController extends BaseController {
-  constructor(private readonly usersService: UsersService) {
+  constructor(private readonly usersService: UsersService, private authService: AuthService) {
     super();
   }
 
@@ -47,11 +45,7 @@ export class UsersController extends BaseController {
   async create(@Body() createCatDto: CreateUserDto) {
     const res = await this.usersService.create(createCatDto);
 
-    return this.getResponse<MappedUserResponse>(
-      'user was created',
-      'user was not created',
-      res,
-    );
+    return this.getResponse<MappedUserResponse>('user was created', 'user was not created', res);
   }
 
   @Public()
@@ -69,7 +63,6 @@ export class UsersController extends BaseController {
   @Get()
   async findAll(@Query() query: PaginatedRequestDto) {
     const res = await this.usersService.findAll(query);
-    await sleep(1000);
     return this.getResponse<PaginatedResponseDto<MappedUserResponse[]>>(
       'users were found',
       'no users were found',
@@ -94,19 +87,14 @@ export class UsersController extends BaseController {
   @Get('is-username-accessible')
   async checkIfUserNameAccessible(@Query() query: IsUsernameAccessible) {
     const { username, userId } = query;
-    const isAccessible = await this.usersService.countUsername(
-      username,
-      userId,
-    );
+    const isAccessible = await this.usersService.countUsername(username, userId);
 
     return new isUsernameAccessible({ isAccessible });
   }
 
   @Public()
   @Get('with-relations/:id')
-  async findOneWithRelations(
-    @Param('id', new CustomParseObjectIdPipe()) id: string,
-  ) {
+  async findOneWithRelations(@Param('id', new CustomParseObjectIdPipe()) id: string) {
     const user = await this.usersService.findOneWithRelations(id);
     return this.getResponse<MappedUserResponseWithRelations>(
       'user was found',
@@ -126,31 +114,55 @@ export class UsersController extends BaseController {
     );
   }
 
-  @ApiBearerAuth()
+  @ApiCookieAuth()
   @UseGuards(new CanUserManageUserGuard())
   @Patch(':id')
   async update(
     @Param('id', new CustomParseObjectIdPipe()) id: string,
     @Body() updateDto: UpdateUserDto,
+    @Res() response: Response,
   ) {
-    const res = await this.usersService.update(id, updateDto);
+    const mappedUserResponse = await this.usersService.update(id, updateDto);
 
-    return this.getResponse<{
+    const { username } = mappedUserResponse;
+
+    const { refreshCookieValue } = this.authService.getRefreshTokenAndCookieWithIt(username, id);
+
+    const { access_token, authCookieValue } = this.authService.getAuthTokenWithItsCookie({
+      username,
+      sub: id,
+    });
+
+    response.setHeader('Set-Cookie', [authCookieValue, refreshCookieValue]);
+
+    const mappedResponse = this.getResponse<{
       mappedUserResponse: MappedUserResponse;
       access_token: string;
-    }>('user was updated successfully', 'fail to update the user', res);
+    }>('user was updated successfully', 'fail to update the user', {
+      access_token,
+      mappedUserResponse,
+    });
+
+    response.status(201).json(mappedResponse);
   }
 
-  @ApiBearerAuth()
+  @ApiCookieAuth()
   @UseGuards(new CanUserManageUserGuard())
   @Delete(':id')
-  async remove(@Param('id', new CustomParseObjectIdPipe()) id: string) {
-    const res = await this.usersService.remove(id);
+  async remove(@Param('id', new CustomParseObjectIdPipe()) id: string, @Res() response: Response) {
+    await this.authService.usersService.removeRefreshToken(id);
 
-    return this.getResponse<UserDeleteResult>(
+    const res = await this.usersService.remove(id);
+    const logOutCookies = this.authService.getCookiesForLogOut();
+
+    response.setHeader('Set-Cookie', [...logOutCookies]);
+
+    const mappedResponse = this.getResponse<UserDeleteResult>(
       'user was deleted successfully',
       'fail to delete the user',
       res,
     );
+
+    response.status(200).json(mappedResponse);
   }
 }

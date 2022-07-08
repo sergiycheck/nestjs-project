@@ -5,31 +5,57 @@ services:
     build: ./front_end
     ports:
       - "3005:3005"
-    container_name: frontend_app
     restart: always
+    environment:
+      - GENERATE_SOURCEMAP=false
+      - PORT=3005
+      - REACT_APP_WEB_API_HOST=localhost
+    depends_on:
+      - backend_app
   backend_app:
-    container_name: backend_app
     build: ./back_end
     ports:
       - "3027:3027"
     restart: always
+    environment:
+      - NODE_ENV=dev
+      - WEB_API_APP_PORT=3027
 
+      - DB_USERNAME=root_user
+      - DB_PASSWORD=pass_val
+      - DB_HOST=database_mongo
+      - DB_PORT=27017
+      - AUTH_MECHANISM=DEFAULT
+      - AUTH_SOURCE=admin
+      - DB_NAME=nestjs-mongoose-proj
+      - TESTING_DB_NAME=nestjs-mongoose-proj-testing
+
+      - PRIVATE_JWT_KEY=secretKeyForJwt
+      - JWT_EXPIRES_SECONDS=99999
+
+      - REFRESH_JWT_TOKEN_SECRET=secretKeyForRefreshJwt
+      - REFRESH_JWT_EXPIRES_SECONDS=900
+
+    depends_on:
+      - database_mongo
+    command: sh -c './entr.sh'
   database_mongo:
-    container_name: database_mongo
     image: mongo
     restart: always
+    volumes:
+      - $PWD/mongo_datadir:/data/db
     environment:
       MONGO_INITDB_ROOT_USERNAME: root_user
       MONGO_INITDB_ROOT_PASSWORD: pass_val
     ports:
-      - "27017:27017"
+      - "27019:27017"
 
   mongo-express:
     container_name: mongo-express
     image: mongo-express
     restart: always
     ports:
-      - 8081:8081
+      - 8098:8081
     environment:
       ME_CONFIG_MONGODB_ADMINUSERNAME: root_user
       ME_CONFIG_MONGODB_ADMINPASSWORD: pass_val

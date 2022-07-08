@@ -51,12 +51,8 @@ describe('app users (e2e)', () => {
   });
 
   afterEach(async () => {
-    await connection.db
-      .collection(dbInitializer.articleCollectionName)
-      .deleteMany({});
-    await connection.db
-      .collection(dbInitializer.userCollectionName)
-      .deleteMany({});
+    await connection.db.collection(dbInitializer.articleCollectionName).deleteMany({});
+    await connection.db.collection(dbInitializer.userCollectionName).deleteMany({});
   });
 
   it('/ (GET) users with populated articles (UsersController findAllWithRelations)', () => {
@@ -66,9 +62,7 @@ describe('app users (e2e)', () => {
       .then((response) => {
         expect(response.statusCode).toBe(200);
 
-        const result = response.body as EndPointResponse<
-          MappedUserResponseWithRelations[]
-        >;
+        const result = response.body as EndPointResponse<MappedUserResponseWithRelations[]>;
 
         expect(result.message).toBe('users were found');
         expect(result.data).toBeInstanceOf(Array);
@@ -180,24 +174,19 @@ describe('app users (e2e)', () => {
       .query({ username });
 
     expect(response.statusCode).toBe(200);
-    const resultUserResponse =
-      response.body as EndPointResponse<MappedUserResponse>;
+    const resultUserResponse = response.body as EndPointResponse<MappedUserResponse>;
 
     const { id } = resultUserResponse.data;
 
     expect(mongoose.Types.ObjectId.isValid(id)).toBeTruthy();
 
-    response = await request(httpServer).get(
-      `/${UsersEndpoint}/with-relations/${id}`,
-    );
+    response = await request(httpServer).get(`/${UsersEndpoint}/with-relations/${id}`);
 
     const resultUserResponseWithRelations =
       response.body as EndPointResponse<MappedUserResponseWithRelations>;
 
     expect(resultUserResponseWithRelations.message).toBe('user was found');
-    expect(
-      mongoose.Types.ObjectId.isValid(resultUserResponseWithRelations.data.id),
-    ).toBeTruthy();
+    expect(mongoose.Types.ObjectId.isValid(resultUserResponseWithRelations.data.id)).toBeTruthy();
     expect(resultUserResponseWithRelations.data.articles[0].title).not.toBe('');
   });
 
@@ -208,6 +197,8 @@ describe('app users (e2e)', () => {
     };
     let httpServer;
     let userLoginResponse: UserLoginResponse;
+    const cookieName = 'Cookie';
+    let authCookiesFromServer;
 
     beforeEach(async () => {
       httpServer = app.getHttpServer();
@@ -217,6 +208,8 @@ describe('app users (e2e)', () => {
         .send(userToLogin);
 
       expect(responseLogin.statusCode).toBe(201);
+
+      authCookiesFromServer = responseLogin.header['set-cookie'];
 
       userLoginResponse = responseLogin.body as UserLoginResponse;
     });
@@ -235,18 +228,21 @@ describe('app users (e2e)', () => {
         const updateUserUrl = `/${UsersEndpoint}/${userLoginResponse.userResponse.id}`;
         const response = await request(httpServer)
           .patch(updateUserUrl)
-          .set('Authorization', `Bearer ${userLoginResponse.user_jwt}`)
+          .set(cookieName, authCookiesFromServer)
           .set('Accept', 'application/json')
           .send(updateUserDto);
 
-        expect(response.statusCode).toBe(200);
+        expect(response.statusCode).toBe(201);
 
-        const result = response.body as EndPointResponse<MappedUserResponse>;
+        const result = response.body as EndPointResponse<{
+          access_token: string;
+          mappedUserResponse: MappedUserResponse;
+        }>;
 
         expect(result.message).toBe('user was updated successfully');
-        expect(result.data.id).not.toBe('');
-        expect(result.data.firstName).toBe(updateUserDto.firstName);
-        expect(result.data.username).toBe(updateUserDto.username);
+        expect(result.data.mappedUserResponse.id).toBe(userLoginResponse.userResponse.id);
+        expect(result.data.mappedUserResponse.firstName).toBe(updateUserDto.firstName);
+        expect(result.data.mappedUserResponse.username).toBe(updateUserDto.username);
       },
       TIMEOUT_FOR_DEBUGGING,
     );
@@ -259,7 +255,7 @@ describe('app users (e2e)', () => {
 
         const response = await request(httpServer)
           .delete(updateUserUrl)
-          .set('Authorization', `Bearer ${userLoginResponse.user_jwt}`)
+          .set(cookieName, authCookiesFromServer)
           .set('Accept', 'application/json');
 
         expect(response.statusCode).toBe(200);

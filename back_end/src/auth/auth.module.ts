@@ -1,3 +1,5 @@
+import { JwtRefreshTokenStrategy } from './jwt-refresh-token.strategy';
+import { JwtRefreshTokenAuthGuard } from './jwt-refresh-token-auth.guard';
 import { Global, Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { PassportModule } from '@nestjs/passport';
@@ -20,7 +22,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         signOptions: {
-          expiresIn: configService.get<string>('JWT_EXPIRES_SECONDS'),
+          expiresIn: `${configService.get<string>('JWT_EXPIRES_SECONDS')}s`,
         },
         secret: configService.get<string>('PRIVATE_JWT_KEY'),
       }),
@@ -31,7 +33,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     AuthService,
     LocalStrategy,
     JwtStrategy,
-    { provide: APP_GUARD, useExisting: JwtAuthGuard },
+    JwtRefreshTokenStrategy,
+    { provide: APP_GUARD, useExisting: JwtRefreshTokenAuthGuard },
+    JwtRefreshTokenAuthGuard,
     JwtAuthGuard,
   ],
 

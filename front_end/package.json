@@ -30,6 +30,7 @@
   "scripts": {
     "format": "prettier --write \"src/**/*.{ts,tsx}\" \"test/**/*.{ts,tsx}\"",
     "lint": "eslint \"{src,test}/**/*.{ts,tsx}\" --fix",
+    "start:https": "HTTPS=true SSL_CRT_FILE=localhost.pem SSL_KEY_FILE=localhost-key.pem npm start",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

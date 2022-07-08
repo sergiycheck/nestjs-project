@@ -1,9 +1,4 @@
-import {
-  CanActivate,
-  ExecutionContext,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Request } from 'express';
 import { GetUserFromReqInner } from '../base/decorators/get-user-from-req.decorator';
 import { UsersService } from '../users/users.service';
@@ -18,9 +13,7 @@ export class CanUserManageArticleGuard implements CanActivate {
 
     const articleId = request.params['id'] as string;
     // check if we get data from db in canActivate
-    const userFromDb = await this.usersService.findByIdWithRelationsIds(
-      userFromBearerToken.id,
-    );
+    const userFromDb = await this.usersService.findByIdWithRelationsIds(userFromBearerToken.id);
 
     if (!userFromDb.articleIds.includes(articleId)) {
       throw new UnauthorizedException(

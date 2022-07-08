@@ -27,10 +27,7 @@ export class DbInitializer {
   }
 
   public async seedDb() {
-    const usersDocs = await this.connection.db
-      .collection(this.userCollectionName)
-      .find()
-      .toArray();
+    const usersDocs = await this.connection.db.collection(this.userCollectionName).find().toArray();
     const articleDocs = await this.connection.db
       .collection(this.articleCollectionName)
       .find()
@@ -43,13 +40,9 @@ export class DbInitializer {
       return;
     }
 
-    const UserModel = (await this.connection.model(
-      User.name,
-    )) as Model<UserDocument>;
+    const UserModel = (await this.connection.model(User.name)) as Model<UserDocument>;
 
-    const ArticleModel = (await this.connection.model(
-      Article.name,
-    )) as Model<ArticleDocument>;
+    const ArticleModel = (await this.connection.model(Article.name)) as Model<ArticleDocument>;
 
     try {
       const usersPasswords = ['cft0id32', 'v32rfizx', '3182v53f'];
@@ -155,10 +148,7 @@ export class DbInitializer {
   }
 
   public async seedManyDocumentsIntoDb() {
-    const usersDocs = await this.connection.db
-      .collection(this.userCollectionName)
-      .find()
-      .toArray();
+    const usersDocs = await this.connection.db.collection(this.userCollectionName).find().toArray();
 
     const articleDocs = await this.connection.db
       .collection(this.articleCollectionName)
@@ -172,13 +162,9 @@ export class DbInitializer {
       return;
     }
 
-    const UserModel = (await this.connection.model(
-      User.name,
-    )) as Model<UserDocument>;
+    const UserModel = (await this.connection.model(User.name)) as Model<UserDocument>;
 
-    const ArticleModel = (await this.connection.model(
-      Article.name,
-    )) as Model<ArticleDocument>;
+    const ArticleModel = (await this.connection.model(Article.name)) as Model<ArticleDocument>;
 
     try {
       const generatedUsers = [
@@ -208,10 +194,7 @@ export class DbInitializer {
         },
       ];
 
-      const usersPath = path.resolve(
-        'src/seed-db-config',
-        fakeUsersObjWithArrName,
-      );
+      const usersPath = path.resolve('src/seed-db-config', fakeUsersObjWithArrName);
       const loadedUsersObj = (await fsExtra.readJSON(usersPath)) as {
         total: number;
         data: FakeUserFromFile[];
@@ -228,9 +211,7 @@ export class DbInitializer {
         })),
       );
 
-      const authors = await UserModel.create(
-        generatedUsers.concat(mappedNormalizedUsers),
-      );
+      const authors = await UserModel.create(generatedUsers.concat(mappedNormalizedUsers));
 
       const generatedArticles = [
         {
@@ -289,17 +270,12 @@ export class DbInitializer {
           title: p.title,
           subtitle: `article subtitle ${getRandomInt(0, 100)}`,
           description: p.body,
-          category:
-            Object.values(ArticleGenre)[
-              getRandomInt(0, Object.keys(ArticleGenre).length)
-            ],
+          category: Object.values(ArticleGenre)[getRandomInt(0, Object.keys(ArticleGenre).length)],
           owner: authors[getRandomInt(0, authors.length)]._id,
         })),
       );
 
-      const articles = await ArticleModel.create(
-        generatedArticles.concat(mappedNormalizedPosts),
-      );
+      const articles = await ArticleModel.create(generatedArticles.concat(mappedNormalizedPosts));
 
       for (const article of articles) {
         const ownerFromDb = authors.find(

@@ -1,10 +1,4 @@
-import {
-  Length,
-  IsNotEmpty,
-  IsString,
-  IsEnum,
-  Validate,
-} from 'class-validator';
+import { Length, IsNotEmpty, IsString, IsEnum, Validate } from 'class-validator';
 import { BaseEntity } from '../../base/entities/base-entities';
 import { ArticleGenre } from '../entities/article.enum';
 import { ApiProperty } from '@nestjs/swagger';

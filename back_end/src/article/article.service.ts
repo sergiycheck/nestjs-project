@@ -33,15 +33,10 @@ export class ArticleService extends BaseService {
     super();
   }
 
-  async create(
-    createArticleDto: CreateArticleDto,
-    userResponse: MappedUserResponse,
-  ) {
+  async create(createArticleDto: CreateArticleDto, userResponse: MappedUserResponse) {
     const { ownerId, ...articleData } = createArticleDto;
 
-    const userFromDb = await this.usersService.userModel.findById(
-      userResponse.id,
-    );
+    const userFromDb = await this.usersService.userModel.findById(userResponse.id);
 
     const newArticle = new this.articleModel({
       _id: new mongoose.Types.ObjectId(),
@@ -59,14 +54,9 @@ export class ArticleService extends BaseService {
       { new: true },
     );
 
-    const userResp =
-      this.usersService.usersResponseGetterService.getResponse(
-        updatedUserQuery,
-      );
+    const userResp = this.usersService.usersResponseGetterService.getResponse(updatedUserQuery);
     const articleResp =
-      this.articleResponseGetterService.getResponseWithExcludedRelations(
-        createdArticleQuery,
-      );
+      this.articleResponseGetterService.getResponseWithExcludedRelations(createdArticleQuery);
 
     return {
       updatedUser: userResp,
@@ -75,13 +65,9 @@ export class ArticleService extends BaseService {
   }
 
   async findOneWithRelations(id: string) {
-    const resQuery = await this.articleModel
-      .findById(id)
-      .populate({ path: 'owner' })
-      .exec();
+    const resQuery = await this.articleModel.findById(id).populate({ path: 'owner' }).exec();
 
-    if (!resQuery)
-      throw new NotFoundException(`cannot find article with id ${id}`);
+    if (!resQuery) throw new NotFoundException(`cannot find article with id ${id}`);
 
     return this.articleResponseGetterService.getResponseWithRelations(resQuery);
   }
@@ -89,16 +75,14 @@ export class ArticleService extends BaseService {
   async findOne(id: string) {
     const resQuery = await this.articleModel.findById(id).exec();
 
-    if (!resQuery)
-      throw new NotFoundException(`cannot find article with id ${id}`);
+    if (!resQuery) throw new NotFoundException(`cannot find article with id ${id}`);
 
     return this.articleResponseGetterService.getResponse(resQuery);
   }
 
   async findByIdWithRelationsIds(id: string) {
     const res = await this.articleModel.findById(id);
-    if (!res)
-      throw new BadRequestException(`cannot find article with id ${id}`);
+    if (!res) throw new BadRequestException(`cannot find article with id ${id}`);
     return this.articleResponseGetterService.getResponse(res);
   }
 
@@ -123,10 +107,7 @@ export class ArticleService extends BaseService {
       { new: true },
     );
 
-    const userResp =
-      this.usersService.usersResponseGetterService.getResponse(
-        updatedUserQuery,
-      );
+    const userResp = this.usersService.usersResponseGetterService.getResponse(updatedUserQuery);
 
     const deleteRes = await this.articleModel.deleteOne({ _id: id });
     return {

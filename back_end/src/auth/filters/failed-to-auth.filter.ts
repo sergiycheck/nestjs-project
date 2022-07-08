@@ -1,9 +1,4 @@
-import {
-  Catch,
-  ExceptionFilter,
-  HttpException,
-  ArgumentsHost,
-} from '@nestjs/common';
+import { Catch, ExceptionFilter, HttpException, ArgumentsHost } from '@nestjs/common';
 import { FailedAuthException } from '../responses/response.exceptions';
 import { UserLoginResponse } from '../responses/responses.dto';
 import { Response } from 'express';
@@ -21,6 +16,6 @@ export class FailedToAuthExceptionFilter implements ExceptionFilter {
       successfulAuth: false,
     });
 
-    return response.status(200).json(loginResponse);
+    return response.status(403).json(loginResponse);
   }
 }

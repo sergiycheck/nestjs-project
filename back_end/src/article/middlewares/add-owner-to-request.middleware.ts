@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NestMiddleware,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, NestMiddleware } from '@nestjs/common';
 import { UsersService } from '../../users/users.service';
 import { Response, NextFunction } from 'express';
 import { CreateArticleDto } from '../dto/create-article.dto';

@@ -4,10 +4,7 @@ import { Model } from 'mongoose';
 import { BaseService } from '../base/services/base.service';
 import { MappedArticleResponseWithRelations } from './dto/response-article.dto';
 import { Article, ArticleDocument } from './entities/article.entity';
-import {
-  ArticleSearchQueryTextDto,
-  searchArticleFilterProps,
-} from './dto/article-requests.dto';
+import { ArticleSearchQueryTextDto, searchArticleFilterProps } from './dto/article-requests.dto';
 import { PaginatedResponseDto } from '../base/responses/response.dto';
 import * as _ from 'lodash';
 import { ArticleResponseGetterService } from './article-response-getter.service';
@@ -37,13 +34,9 @@ export class ArticleSearchService extends BaseService {
       const [query, projection, options] = findArgsArr;
 
       const requestQueryIncludesSearchTextProp = Boolean(
-        requestQueryFilterKeysPresent.includes(
-          searchArticleFilterProps.searchText,
-        ),
+        requestQueryFilterKeysPresent.includes(searchArticleFilterProps.searchText),
       );
-      const requestQueryIncludesAnyFilterProp = Boolean(
-        requestQueryFilterKeysPresent.length,
-      );
+      const requestQueryIncludesAnyFilterProp = Boolean(requestQueryFilterKeysPresent.length);
 
       if (requestQueryIncludesSearchTextProp) {
         resultQueryFromDb = await this.articleModel
@@ -66,8 +59,7 @@ export class ArticleSearchService extends BaseService {
           .sort({ _id: 'desc' })
           .populate({ path: 'owner' })
           .exec();
-        totalDocsInDbForQuery =
-          await this.articleModel.estimatedDocumentCount();
+        totalDocsInDbForQuery = await this.articleModel.estimatedDocumentCount();
       }
     } else {
       resultQueryFromDb = await this.articleModel

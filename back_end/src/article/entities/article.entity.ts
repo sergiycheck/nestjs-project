@@ -51,9 +51,4 @@ export class Article extends BaseEntity {
 export type ArticleDocument = Article & Document;
 export const ArticleSchema = SchemaFactory.createForClass(Article);
 
-export const articleTextSearchFilters = [
-  'title',
-  'subtitle',
-  'description',
-  'category',
-];
+export const articleTextSearchFilters = ['title', 'subtitle', 'description', 'category'];

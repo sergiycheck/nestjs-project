@@ -2,23 +2,29 @@ import { ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/com
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { Observable } from 'rxjs';
-import { IS_PUBLIC_KEY } from './constants';
+import { IS_PUBLIC_KEY, FOR_REFRESHING_KEY } from './constants';
 
 @Injectable()
-export class JwtAuthGuard extends AuthGuard('jwt') {
+//associate with strategy type that is passed to AuthGuard constructor
+export class JwtRefreshTokenAuthGuard extends AuthGuard('jwt-refresh-token') {
   constructor(private reflector: Reflector) {
     super();
   }
 
-  canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
+  async canActivate(context: ExecutionContext) {
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
       context.getClass(),
     ]);
 
-    if (isPublic) return true;
+    const isForRefreshing = this.reflector.getAllAndOverride<boolean>(FOR_REFRESHING_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
 
-    const superCanActivateRes = super.canActivate(context);
+    if ([isPublic, isForRefreshing].includes(true)) return true;
+
+    const superCanActivateRes = (await super.canActivate(context)) as unknown as Promise<boolean>;
     return superCanActivateRes;
   }
 

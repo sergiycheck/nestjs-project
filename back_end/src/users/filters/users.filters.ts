@@ -1,9 +1,4 @@
-import {
-  Catch,
-  ExceptionFilter,
-  HttpException,
-  ArgumentsHost,
-} from '@nestjs/common';
+import { Catch, ExceptionFilter, HttpException, ArgumentsHost } from '@nestjs/common';
 import { UsernameIsNotAccessibleException } from '../dto/exceptions/username-accessible.dto';
 import { Response } from 'express';
 import { isUsernameAccessible } from '../dto/response-user.dto';
@@ -16,8 +11,6 @@ export class UsernameIsNotAccessibleFilter implements ExceptionFilter {
 
     const message = exception.message;
 
-    return response
-      .status(200)
-      .json(new isUsernameAccessible({ isAccessible: false, message }));
+    return response.status(200).json(new isUsernameAccessible({ isAccessible: false, message }));
   }
 }
