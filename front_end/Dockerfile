@@ -10,4 +10,4 @@ COPY . ./
 
 EXPOSE 3005
 
-CMD ["npm", "run", "start"]
+CMD ["npm", "run", "start:https"]

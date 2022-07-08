@@ -24,3 +24,5 @@ yarn-error.log*
 .vscode
 .env
 links
+localhost-key.pem
+localhost.pem

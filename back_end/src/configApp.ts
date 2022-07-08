@@ -30,7 +30,10 @@ export const configApp = async (app: INestApplication, seedDb = false) => {
 
   app.use(cookieParser());
   app.use(helmet());
-  app.enableCors();
+  app.enableCors({
+    origin: true,
+    credentials: true,
+  });
 
   if (seedDb && isDevEnv) {
     const connection = app.get(CustomConnectionService).getConnection();

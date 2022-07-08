@@ -98,6 +98,8 @@ export class AuthService {
       httpOnly: true,
       maxAge: expiresSeconds,
       path: '/',
+      secure: true,
+      sameSite: 'none',
     });
 
     return cookieValue;

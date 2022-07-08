@@ -15,7 +15,7 @@ services:
   backend_app:
     build: ./back_end
     ports:
-      - "3028:3027"
+      - "3027:3027"
     restart: always
     environment:
       - NODE_ENV=dev
