@@ -13,6 +13,7 @@ import { Button, Link, Typography } from '@mui/material';
 import { CircularIndeterminate } from '../shared/mui-components/Loader';
 import { useAppSelector } from '../../app/hooks';
 import { selectIsAuthenticated, selectIsAuthUser } from '../shared/authSlice';
+import { getErrorMessageFromReduxError } from '../shared/error-message';
 
 export const Users = () => {
   const { contextDataAndHandler } = useSearchParamsToPassInAndPaginationContext({
@@ -70,7 +71,8 @@ export const UsersList = () => {
 
   if (isLoading) return <CircularIndeterminate />;
 
-  if (isError) return <div>Error occurred {error}</div>;
+  let err = error as any;
+  if (isError) return <div>Error occurred {getErrorMessageFromReduxError(err)}</div>;
   if (!usersResponse || !Object.keys(usersResponse).length) return <div>No users found</div>;
 
   if (isSuccess) return <div className="row gy-2">{users}</div>;

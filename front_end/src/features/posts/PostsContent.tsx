@@ -6,6 +6,7 @@ import { ArticleResponseWithRelations } from './types';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/dist/query';
 import { SerializedError } from '@reduxjs/toolkit';
 import { TimeAgo } from '../shared/TimeAgo';
+import { getErrorMessageFromReduxError } from '../shared/error-message';
 
 export const PostsListContent = ({
   data,
@@ -25,7 +26,9 @@ export const PostsListContent = ({
   const items = data?.map((item) => <PostExcerptContent key={item.id} item={item} />);
 
   if (isLoading || isFetching) return <CircularIndeterminate />;
-  if (isError) return <div>Error occurred {error}</div>;
+
+  let err = error as any;
+  if (isError) return <div>Error occurred {getErrorMessageFromReduxError(err)}</div>;
   if (!data || !Object.keys(data).length) return <div>No posts found</div>;
 
   if (isSuccess) return <div className="row gy-2">{items}</div>;
