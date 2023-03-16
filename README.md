@@ -21,3 +21,7 @@ The front end url: `http://localhost:3005/` <br/>
 The back end web api url: `http://localhost:3027/` <br/>
 
 Mongo-express ui port 8081
+
+### How to login
+
+User username **leane1Gra** and password **cft0id32**
