@@ -38,7 +38,6 @@ services:
 
     depends_on:
       - database_mongo
-    command: sh -c './entr.sh'
   database_mongo:
     image: mongo
     restart: always
