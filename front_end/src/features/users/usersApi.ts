@@ -37,7 +37,8 @@ export const extendedUserApiSlice = apiSlice.injectEndpoints({
       ) => {
         return response.data;
       },
-      providesTags: (result, error, id) => providesList(result!.data, 'User'),
+      providesTags: (result, error, id) =>
+        result ? providesList(result.data, 'User') : ['RESULT_IS_UNDEFINED'],
     }),
     addUser: builder.mutation<EndPointResponse<UserWithRelationsIds>, CreateUserDto>({
       query: (body) => ({

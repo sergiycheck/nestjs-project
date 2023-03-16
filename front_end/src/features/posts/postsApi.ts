@@ -27,7 +27,8 @@ export const extendedPostsApiSlice = apiSlice.injectEndpoints({
       ) => {
         return response.data;
       },
-      providesTags: (result, error, id) => providesList(result!.data, 'Post'),
+      providesTags: (result, error, id) =>
+        result ? providesList(result.data, 'Post') : ['RESULT_IS_UNDEFINED'],
     }),
 
     getPost: builder.query<ArticleResponse, string>({

@@ -1,5 +1,11 @@
-@function strip-unit($value) {
-  @return $value / ($value * 0 + 1);
+@use 'sass:math';
+
+@function strip-unit($number) {
+  @if type-of($number) == 'number' and not unitless($number) {
+    @return math.div($number, ($number * 0 + 1));
+  }
+
+  @return $number;
 }
 
 @function getBiggerValueBasedOnFactor($value, $factor) {
@@ -19,7 +25,7 @@
       @media screen and (min-width: $min-vw) {
         font-size: calc(
           #{$min-font-size} + #{strip-unit($max-font-size - $min-font-size)} *
-            ((100vw - #{$min-vw}) / #{strip-unit($max-vw - $min-vw)})
+            calc((100vw - #{$min-vw}) / #{strip-unit($max-vw - $min-vw)})
         );
       }
 

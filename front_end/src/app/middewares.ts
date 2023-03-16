@@ -8,12 +8,12 @@ export const loggerMiddleware: Middleware = (storeAPI) => (next) => (action) => 
 };
 
 export const logmMiddleware = (...args: unknown[]) => {
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.REACT_APP_LOGGING === 'log') {
     console.log(...args);
   }
 };
 export const logm = (...args: unknown[]) => {
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.REACT_APP_LOGGING === 'log') {
     console.log('----------------------------- ', ...args, '-------------------------');
   }
 };

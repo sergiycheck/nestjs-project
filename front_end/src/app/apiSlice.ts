@@ -19,7 +19,7 @@ export const apiSlice = createApi({
       return headers;
     },
   }),
-  tagTypes: ['User', 'Post'],
+  tagTypes: ['User', 'Post', 'RESULT_IS_UNDEFINED'],
   endpoints: (builder) => ({
     getDefaultResponse: builder.query<string, string>({
       query: () => '/',
