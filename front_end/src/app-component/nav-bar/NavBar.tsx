@@ -42,7 +42,7 @@ export function NavBar() {
   if (authStatus !== 'loading' && !user) {
     renderedLoginResult = (
       <Grid className="col-auto" item component={ListItem}>
-        <Link href="login">login</Link>
+        <Link href="login">Login</Link>
       </Grid>
     );
   } else if (user && isAuthenticated) {
@@ -67,12 +67,17 @@ export function NavBar() {
   return (
     <div className="container-md">
       <Grid component="nav" className="row">
-        <Grid className="col d-flex justify-content-center" item component={ListItem}>
-          <Link href="/">users</Link>
+        <Grid className="col">
+          <Grid className="row">
+            <Grid className="col-auto d-flex justify-content-center" item component={ListItem}>
+              <Link href="/">Users</Link>
+            </Grid>
+            <Grid className="col-auto d-flex justify-content-center" item component={ListItem}>
+              <Link href="posts">Posts</Link>
+            </Grid>
+          </Grid>
         </Grid>
-        <Grid className="col d-flex justify-content-center" item component={ListItem}>
-          <Link href="posts">posts</Link>
-        </Grid>
+
         {renderedLoginResult}
         <Grid className="col-auto" item component={ListItem}>
           <IconButton sx={{ ml: 1 }} onClick={colorModeManager.toggleColorMode}>

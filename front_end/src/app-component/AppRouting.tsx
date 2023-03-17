@@ -81,8 +81,8 @@ export const AppContent = () => {
       <footer className="page__footer">
         <Divider />
         <div className="container">
-          <div className="row">
-            <Typography variant="h5">footer</Typography>
+          <div className="row  d-flex justify-content-center">
+            <Typography className="col-auto">Blog app {new Date().getFullYear()}</Typography>
           </div>
         </div>
       </footer>
