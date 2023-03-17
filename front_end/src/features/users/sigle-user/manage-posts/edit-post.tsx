@@ -107,7 +107,7 @@ function EditPostContent({ post, ownerId }: { post: UpdatePostReqType; ownerId: 
         {renderedFormFields}
 
         <div className="col-12 d-flex justify-content-end">
-          <Button disabled={!schemaIsValid} variant="contained" type="submit">
+          <Button disabled={!schemaIsValid} variant="outlined" type="submit">
             Save post
           </Button>
         </div>

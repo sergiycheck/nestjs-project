@@ -123,12 +123,18 @@ export const PostsList = ({
                   name="searchText"
                   defaultValue=""
                   render={({ field }) => (
-                    <TextField size="small" fullWidth {...field} placeholder="search for a post" />
+                    <TextField
+                      size="small"
+                      variant="standard"
+                      fullWidth
+                      {...field}
+                      placeholder="search for a post"
+                    />
                   )}
                 />
               </div>
               <div className="col-auto d-flex align-items-center">
-                <Button variant="contained" type="submit">
+                <Button variant="outlined" type="submit">
                   search
                 </Button>
               </div>

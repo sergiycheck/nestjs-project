@@ -58,33 +58,21 @@ const SingleUserContent = ({ user }: { user: UserRootData | undefined }) => {
 
   return (
     <React.Fragment>
-      {/* user info */}
       <section className="row">
-        <div className="row">
-          <Typography variant="h5" gutterBottom component="div">
-            {user?.username} page
-          </Typography>
-        </div>
-        <div className="row">
-          <div className="col-6">
-            <div className="row">
-              <Typography>username: {user?.username}</Typography>{' '}
-            </div>
-            <div className="row">
-              full name: {user?.firstName} {user?.lastName}
-            </div>
-            <div className="row">
-              <div className="col-auto p-0">created:</div>
-              <div className="col-auto">
-                <TimeAgo timeStamp={user?.createdAt}></TimeAgo>
-              </div>
-            </div>
-            <div className="row">number of articles: {user?.numberOfArticles}</div>
-          </div>
-        </div>
+        <Typography margin={0} padding={0} variant="h5" gutterBottom component="div">
+          {user?.username}
+        </Typography>
+
+        <Typography>
+          {user?.firstName} {user?.lastName}
+        </Typography>
+        <Typography>
+          Created: <TimeAgo timeStamp={user?.createdAt}></TimeAgo>
+        </Typography>
+        <Typography>Number of articles: {user?.numberOfArticles}</Typography>
       </section>
       {isAuth && userAuth?.id === user?.id && (
-        <div className="row">
+        <div className="row mt-2">
           <div className="col-auto">
             <Button
               component={RouterLink}
@@ -92,7 +80,7 @@ const SingleUserContent = ({ user }: { user: UserRootData | undefined }) => {
               className="align-self-start flex-shrink-0"
               to={`/users/edit/${user?.id}`}
             >
-              edit user
+              Edit user
             </Button>
           </div>
           <div className="col-auto">
@@ -102,7 +90,7 @@ const SingleUserContent = ({ user }: { user: UserRootData | undefined }) => {
               className="align-self-start flex-shrink-0"
               to={`/user/${user?.id}/add-post`}
             >
-              add post
+              Add post
             </Button>
           </div>
         </div>
@@ -125,7 +113,7 @@ const PostsForUser = ({
   const userAuth = useAppSelector(selectIsAuthUser);
 
   const renderedArticles = articles.map((article) => (
-    <div key={article.id} className="row">
+    <div key={article.id} className="row mt-2 mb-2">
       <div className="row">
         <div className="col-9">
           <div className="row">
